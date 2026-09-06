@@ -2,77 +2,144 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>cth-instrument — lab</title>
+<meta name="description" content="Thirty full-screen dashboards built out of cth-instrument: cockpits, sonar, reactors, server walls and world clocks.">
+<link rel="canonical" href="https://tanghoong.github.io/cth-instrument/lab/">
+
+<meta name="theme-color" content="#0a0c10">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="manifest" href="../site.webmanifest">
+
+<!-- The tanghoong design system. Linked, never copied. -->
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/tokens.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/base.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/layout.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/components.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/overlays.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/utilities.css">
 <style>
+  /* ======================================================================
+     A property skin, loaded after tokens.css exactly as the system asks.
+     Only what a skin is allowed to redefine: the four surfaces, the inks,
+     the two hairlines and the accent. The space scale, the radii, the
+     easing and the durations are the system's and stay untouched.
+
+     The lab is deliberately one theme. Every dashboard inside it is a lit
+     instrument panel in a dark room, so a light shell around them would be
+     a different product — hence color-scheme: dark and no theme toggle in
+     the header, which the system permits for a single-purpose property.
+
+     The hairlines carry the ground's own blue rather than a neutral white
+     alpha, which reads as grey scum over this near-black.
+     ====================================================================== */
   :root {
     color-scheme: dark;
     --bg: #0a0c10;
-    --bar: #12151b;
-    --line: #232833;
-    --fg: #e8ecf2;
-    --dim: #8b95a5;
+    --bg-sunken: #070910;
+    --bg-elevated: #12151b;
+    --bg-glass: #0a0c10b8;
+    --text: #e8ecf2;
+    --text-2: #aab4c2;
+    --text-3: #8b95a5;
+    --text-hi: #ffffff;
+    --hairline: #d7e6ff26;
+    --hairline-soft: #d7e6ff14;
     --accent: #4cc4ff;
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body {
-    margin: 0; background: var(--bg); color: var(--fg);
-    font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    display: flex; flex-direction: column;
+    --accent-ink: #04121a;
+    --sh-sm: none; --sh-md: none; --sh-lg: none;
   }
 
-  header {
-    flex: none; display: flex; align-items: center; gap: 1rem;
-    padding: 0 .75rem; height: 48px;
-    background: var(--bar); border-bottom: 1px solid var(--line);
-  }
-  .brand {
-    font: 600 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-    letter-spacing: -.02em; white-space: nowrap;
-  }
-  .brand span { color: var(--dim); font-weight: 400; }
+  /* Upstream bug: overlays.css sets .navsheet__trigger{display:grid} after
+     layout.css hides it at 900px, so the menu button never goes away on a
+     wide screen. Re-apply the system's own rule until the source is fixed. */
+  @media (width >= 900px) { .navsheet__trigger { display: none; } }
 
-  nav { display: flex; align-items: center; gap: .2rem; overflow-x: auto; flex: 1;
-        scrollbar-width: none; }
-  nav::-webkit-scrollbar { display: none; }
-  nav a {
-    padding: .3rem .55rem; border-radius: 6px; text-decoration: none;
-    color: var(--dim); white-space: nowrap;
-    font: 500 11.5px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
-    border: 1px solid transparent;
-  }
-  nav a:hover { color: var(--fg); background: #1a1f28; }
-  nav a[aria-current="page"] { color: #0a0c10; background: var(--accent); border-color: var(--accent); }
+  /* ---------- the shell ---------- */
+  html, body { block-size: 100%; }
+  body { display: flex; flex-direction: column; overflow: hidden; }
 
+  /* The picker is a second strip under the header rather than the header's
+     own nav: thirty destinations do not fit the system's row, and they are
+     the content of this page rather than the site around it. */
+  .lab-nav {
+    flex: none;
+    display: flex; align-items: stretch; gap: var(--s-1);
+    padding: var(--s-2) var(--gutter);
+    background: var(--bg-elevated);
+    border-block-end: 1px solid var(--hairline-soft);
+    overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+  }
+  .lab-nav::-webkit-scrollbar { display: none; }
+  .lab-nav a {
+    display: inline-flex; align-items: center; white-space: nowrap;
+    min-block-size: 44px; padding-inline: var(--s-3);
+    border: 1px solid transparent; border-radius: var(--r-sm);
+    font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 500;
+    color: var(--text-2);
+  }
+  .lab-nav a:hover {
+    color: var(--text); text-decoration: none;
+    background: color-mix(in oklab, var(--text) 8%, transparent);
+  }
+  .lab-nav a[aria-current="page"] {
+    color: var(--accent-ink); background: var(--accent); border-color: var(--accent);
+  }
   .grp {
-    font: 600 9px/1 ui-monospace, monospace; letter-spacing: .16em; text-transform: uppercase;
-    color: #4d5768; padding: 0 .3rem 0 .6rem; white-space: nowrap;
-    border-left: 1px solid var(--line); margin-left: .25rem; align-self: stretch;
-    display: flex; align-items: center;
+    display: flex; align-items: center; white-space: nowrap;
+    margin-inline-start: var(--s-1);
+    padding-inline: var(--s-3) var(--s-2);
+    border-inline-start: 1px solid var(--hairline);
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3);
   }
-  .grp:first-child { border-left: 0; margin-left: 0; padding-left: 0; }
+  .grp:first-child { margin-inline-start: 0; padding-inline-start: 0; border-inline-start: 0; }
 
-  .home {
-    flex: none; color: var(--dim); text-decoration: none; font-size: 11.5px;
-    padding: .3rem .6rem; border: 1px solid var(--line); border-radius: 6px; white-space: nowrap;
-  }
-  .home:hover { color: var(--fg); border-color: var(--dim); }
-
-  iframe { flex: 1; width: 100%; border: 0; display: block; background: var(--bg); }
-
-  @media (max-width: 860px) {
-    header { height: auto; flex-wrap: wrap; padding: .5rem .6rem; gap: .4rem; }
-    nav { order: 3; width: 100%; }
-    .grp { align-self: center; }
-  }
+  #stage { flex: 1; inline-size: 100%; border: 0; display: block; background: var(--bg); }
 </style>
 </head>
 <body>
+<a class="skip" href="#stage">Skip to the dashboard</a>
 
-<header>
-  <div class="brand">cth-instrument <span>/ lab</span></div>
-  <nav id="nav">
+<header class="site-head">
+  <div class="container container--flush head-in">
+    <a class="brand" href="../">
+      <svg class="brand__mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14.3" fill="#1d1d1f"/><path d="M37 22a13 13 0 1 0 0 20" fill="none" stroke="#4dff9b" stroke-width="5.6" stroke-linecap="round"/><circle cx="49" cy="32" r="4.6" fill="#4dff9b"/></svg>
+      <span>cth-instrument <span class="t3">lab</span></span>
+    </a>
+
+    <nav class="head-nav" aria-label="Primary">
+      <a href="../">Component</a>
+      <a href="../#examples">Examples</a>
+      <a href="../#api">API</a>
+    </nav>
+
+    <div class="head-end">
+      <button class="iconbtn navsheet__trigger" type="button" data-navsheet-open aria-label="Menu" aria-haspopup="dialog">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog class="drawer navsheet" data-navsheet aria-label="Site menu">
+  <div class="navsheet__panel">
+    <div class="navsheet__head">
+      <span class="navsheet__title">cth-instrument lab</span>
+      <button class="iconbtn" type="button" data-close aria-label="Close menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="sheet-row" href="../">Component</a>
+    <a class="sheet-row" href="../#examples">Examples</a>
+    <a class="sheet-row" href="../#api">API</a>
+    <a class="sheet-row" href="https://github.com/tanghoong/cth-instrument">GitHub</a>
+  </div>
+</dialog>
+
+<nav class="lab-nav" id="nav" aria-label="Dashboards">
     <span class="grp">Vehicles</span>
     <a href="#aviation">Aviation</a>
     <a href="#submarine">Submarine</a>
@@ -116,9 +183,7 @@
     <a href="#singapore">Singapore</a>
     <a href="#malaysia">Malaysia</a>
     <a href="#worldclock">World Clock</a>
-  </nav>
-  <a class="home" href="../">&larr; component</a>
-</header>
+</nav>
 
 <iframe id="stage" title="Instrument dashboard"></iframe>
 
@@ -147,6 +212,8 @@
   addEventListener('hashchange', show);
   show();
 </script>
+
+<script src="https://design.tanghoong.com/assets/js/nav.js" defer></script>
 
 </body>
 </html>

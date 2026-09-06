@@ -2,361 +2,409 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>cth-instrument — one element, every dial</title>
-<meta name="description" content="A knob, gauge and meter as a single custom element. Zero dependencies, no build step, 23.6 KB gzipped. Works in plain HTML, React, Vue and Svelte.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>cth-instrument — seven instruments, one tag each</title>
+<meta name="description" content="Seven SVG instruments as custom elements: a dial, a waveform, a heat ring, a radar scope, a level column, an attitude indicator, and the layout that nests them.">
+<link rel="canonical" href="https://tanghoong.github.io/cth-instrument/">
+<meta property="og:title" content="cth-instrument — seven instruments, one tag each">
+<meta property="og:description" content="A dial, a waveform, a heat ring, a radar scope, a level column and an attitude indicator. No framework, no build step, no dependencies.">
+<meta property="og:url" content="https://tanghoong.github.io/cth-instrument/">
+<meta property="og:image" content="https://tanghoong.github.io/cth-instrument/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+
+<meta name="theme-color" content="#fbfbfd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+
+<!-- Runs before the stylesheets so the page never paints the wrong theme.
+     try/catch because a browser with storage blocked must still render Auto. -->
+<script>try{var t=localStorage.getItem('th');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}</script>
+
+<!-- The tanghoong design system. Linked, never copied — design.tanghoong.com
+     is the source of truth and a copied token set goes stale in silence.
+     Order matters: tokens must resolve before anything references them, and
+     utilities come last so they can win. -->
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/tokens.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/base.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/layout.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/components.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/overlays.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/content.css">
+<link rel="stylesheet" href="https://design.tanghoong.com/assets/css/utilities.css">
+
 <!-- Holds each element's space before its module lands, so the page does not
      jump when they upgrade. No JavaScript; it stops applying by itself. -->
 <link rel="stylesheet" href="src/cth-skeleton.css">
 <style>
-  :root {
-    color-scheme: light dark;
-    --bg: #fbfbfc;
-    --bg-soft: #f3f4f7;
-    --fg: #14161a;
-    --dim: #6b7280;
-    --card: #fff;
-    --line: #e6e8ec;
-    --accent: #019ae6;
-    --accent-ink: #0b6fa4;
-    --code-bg: #0f1218;
-    --code-fg: #e6ebf2;
-    --radius: 12px;
-    --head-h: 56px;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0f1115; --bg-soft: #14171d; --fg: #f2f4f7; --dim: #98a2b3;
-      --card: #171a20; --line: #262a32; --accent: #38b6ff; --accent-ink: #7fd2ff;
-      --code-bg: #0b0d12; --code-fg: #e6ebf2;
-    }
-  }
+  /* ======================================================================
+     Landing page only. The design system carries the chrome, the type and
+     the rhythm; what is left here is the handful of shapes this page has
+     that the system has no class for — the hero card, the example tiles,
+     the playground controls.
 
-  * { box-sizing: border-box; }
+     Every value resolves to a design-system token. The instruments are not
+     styled here beyond their size: they theme themselves.
+     ====================================================================== */
+
+  /* Upstream bug: overlays.css sets .navsheet__trigger{display:grid} and it
+     loads after layout.css, which hides the trigger at 900px — so the menu
+     button never goes away on a wide screen. design.tanghoong.com has the
+     same thing on its own header. Re-apply the system's own rule until the
+     source is fixed; delete this block when it is. */
+  @media (width >= 900px) { .navsheet__trigger { display: none; } }
+
   html { scroll-behavior: smooth; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  /* An anchored section has to clear the sticky header. */
+  [id] { scroll-margin-block-start: calc(var(--nav-h) + var(--s-6)); }
 
-  body {
-    margin: 0; background: var(--bg); color: var(--fg);
-    font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1.25rem; }
-  a { color: inherit; }
-
-  /* ---------- header ---------- */
-  .site-head {
-    position: sticky; top: 0; z-index: 40; height: var(--head-h);
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    -webkit-backdrop-filter: saturate(180%) blur(12px);
-    backdrop-filter: saturate(180%) blur(12px);
-    border-bottom: 1px solid var(--line);
-  }
-  .site-head .wrap { height: 100%; display: flex; align-items: center; gap: 1rem; }
-  .brand {
-    display: flex; align-items: center; gap: .5rem; text-decoration: none;
-    font: 700 15px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: -.03em;
-  }
-  .brand .ver {
-    font: 500 10px/1 ui-monospace, monospace; color: var(--dim);
-    border: 1px solid var(--line); border-radius: 99px; padding: .2rem .4rem;
-  }
-  .site-nav { display: flex; gap: .1rem; margin-left: auto; align-items: center; }
-  .site-nav a {
-    padding: .4rem .65rem; border-radius: 8px; text-decoration: none;
-    font-size: 13.5px; color: var(--dim); white-space: nowrap;
-  }
-  .site-nav a:hover { color: var(--fg); background: var(--bg-soft); }
-  .site-nav a[aria-current="true"] { color: var(--fg); font-weight: 600; }
-  .site-nav .cta { color: #fff; background: var(--accent); font-weight: 600; margin-left: .35rem; }
-  .site-nav .cta:hover { color: #fff; background: var(--accent-ink); }
-  @media (max-width: 760px) { .site-nav a:not(.cta) { display: none; } }
+  cth-knob  { --cth-size: 104px; }
+  cth-level { --cthl-height: 150px; }
 
   /* ---------- hero ---------- */
-  .hero { padding: 3.5rem 0 2.5rem; }
-  .hero .wrap {
-    display: grid; gap: 2.5rem; align-items: center;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
-  }
-  @media (max-width: 880px) { .hero .wrap { grid-template-columns: 1fr; } }
+  /* base.css zeroes every margin, so the hero states its own rhythm. */
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero .eyebrow { display: block; margin-block-end: var(--s-3); }
+  .hero .lede { margin-block-start: var(--s-5); }
+  .hero .lede code { white-space: nowrap; }
+  .hero .install { margin-block-start: var(--s-6); }
 
-  .eyebrow {
-    display: inline-flex; align-items: center; gap: .4rem; margin-bottom: 1rem;
-    font: 600 11px/1 ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--accent-ink); background: color-mix(in srgb, var(--accent) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
-    padding: .35rem .6rem; border-radius: 99px;
+  .hero-facts {
+    display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-6);
+    margin-block: var(--s-8); padding: 0; list-style: none;
   }
-  h1 {
-    font-size: clamp(2rem, 5.2vw, 3.1rem); line-height: 1.05; letter-spacing: -.035em;
-    margin: 0 0 .85rem; font-weight: 700;
+  .hero-facts li { display: grid; gap: 2px; margin: 0; }
+  .hero-facts b {
+    font-family: var(--font-mono); font-size: var(--fs-lead); font-weight: 700;
+    letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1;
   }
-  h1 em { font-style: normal; color: var(--accent); }
-  .lede { font-size: 1.05rem; color: var(--dim); margin: 0 0 1.5rem; max-width: 34rem; }
-  .lede code { font-size: .9em; white-space: nowrap; }
-
-  .facts { display: flex; flex-wrap: wrap; gap: 1.35rem; margin: 0 0 1.75rem; padding: 0; list-style: none; }
-  .facts li { display: grid; gap: .1rem; }
-  .facts b { font: 700 1.15rem/1 ui-monospace, monospace; letter-spacing: -.02em; }
-  .facts span { font-size: 11px; color: var(--dim); letter-spacing: .06em; text-transform: uppercase; }
-
-  .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
-  .btn {
-    display: inline-flex; align-items: center; gap: .4rem; text-decoration: none;
-    padding: .6rem 1rem; border-radius: 9px; font-weight: 600; font-size: 14px;
-    border: 1px solid var(--line); background: var(--card); color: var(--fg);
+  .hero-facts span {
+    font-size: var(--fs-xs); color: var(--text-3);
+    letter-spacing: 0.06em; text-transform: uppercase;
   }
-  .btn:hover { border-color: var(--dim); }
-  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .btn.primary:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
 
+  /* The install line. A form of code block, so it borrows the same ground. */
   .install {
-    display: flex; align-items: center; gap: .5rem; margin-bottom: 1.25rem;
-    background: var(--code-bg); color: var(--code-fg); border-radius: 9px;
-    padding: .55rem .6rem .55rem .85rem; font: 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-    max-width: 26rem;
+    display: flex; align-items: center; gap: var(--s-2);
+    margin-block-end: var(--s-5);
+    padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-sm);
+    background: var(--bg-sunken);
+    font-family: var(--font-mono); font-size: var(--fs-sm);
+    max-inline-size: 26rem;
   }
-  .install .p { color: #5f7186; }
-  .install code { flex: 1; }
-  .install button {
-    font: 600 11px/1 ui-monospace, monospace; color: #9fb0c4; cursor: pointer;
-    background: #1b2230; border: 1px solid #2a3446; border-radius: 6px; padding: .35rem .5rem;
-  }
-  .install button:hover { color: #fff; }
+  .install .p { color: var(--text-3); }
+  .install code { flex: 1; overflow-x: auto; }
 
   .hero-art {
-    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
-    padding: 1.5rem; display: grid; gap: 1rem; justify-items: center;
-    box-shadow: 0 1px 3px rgba(16,24,40,.05), 0 12px 32px -18px rgba(16,24,40,.25);
+    inline-size: 100%;
+    padding: var(--s-5) var(--s-5) var(--s-4);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-xl);
+    background: var(--bg-elevated); box-shadow: var(--sh-md);
+    display: grid; gap: var(--s-3); justify-items: center;
   }
-  .hero-art { padding: 1.25rem 1.25rem 1rem; gap: .75rem; }
-  /* every scene shares one cell, so the card never resizes as they change */
+  /* Every scene shares one cell, so the card never resizes as they change. */
   .scenes { display: grid; inline-size: 100%; }
-  .scene { grid-area: 1 / 1; display: grid; justify-items: center; gap: .7rem; }
+  .scene { grid-area: 1 / 1; display: grid; justify-items: center; gap: var(--s-3); }
   .scene[hidden] { display: none; }
-  .scene .lead { display: flex; align-items: center; justify-content: center; gap: 1rem; }
-  .scene .strip { display: flex; gap: .9rem; flex-wrap: wrap; justify-content: center; }
+  .scene .pair { display: flex; align-items: center; justify-content: center; gap: var(--s-4); }
+  .scene .strip { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-4); }
   .hero-art .big { --cth-size: 168px; --cth-thickness: 6; }
   .hero-art .mid { --cth-size: 116px; --cth-thickness: 7; }
   .hero-art .strip cth-knob,
   .hero-art .strip cth-heat { --cth-size: 78px; --cth-thickness: 9; }
   .hero-art .wave { inline-size: min(300px, 100%); }
-  .hero-art .cap { font: 500 10px/1 ui-monospace, monospace; color: var(--dim);
-                   letter-spacing: .06em; text-align: center; margin-top: .35rem; }
   .hero-art figure { margin: 0; display: grid; justify-items: center; }
+  .hero-art .cap {
+    margin-block-start: var(--s-1); text-align: center;
+    font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+    letter-spacing: 0.06em; color: var(--text-3);
+  }
 
-  .hero-foot { display: flex; align-items: center; gap: .75rem; justify-content: center;
-               inline-size: 100%; }
-  .dots { display: flex; gap: .3rem; }
+  .hero-foot { display: flex; align-items: center; justify-content: center; gap: var(--s-3); inline-size: 100%; }
+  .dots { display: flex; gap: var(--s-1); }
   .dots button {
     inline-size: 7px; block-size: 7px; padding: 0; border: 0; border-radius: 50%;
-    background: var(--line); cursor: pointer; transition: background .2s, transform .2s;
+    background: var(--hairline); cursor: pointer;
+    transition: background var(--dur-fast) var(--ease), scale var(--dur-fast) var(--ease);
   }
-  .dots button:hover { background: var(--dim); }
-  .dots button[aria-current="true"] { background: var(--accent); transform: scale(1.35); }
-  .scene-name { font: 600 10px/1 ui-monospace, monospace; color: var(--dim);
-                letter-spacing: .09em; text-transform: uppercase; min-inline-size: 7ch; }
+  .dots button:hover { background: var(--text-3); }
+  .dots button[aria-current="true"] { background: var(--accent); scale: 1.35; }
+  .scene-name, .cue {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-3);
+  }
+  .scene-name { min-inline-size: 7ch; }
   .yr-mid { text-align: center; line-height: 1.15; }
-  .yr-mid b { display: block; font-size: 1.6rem; letter-spacing: -.02em; }
-  .yr-mid span { font-size: .8rem; color: var(--dim); }
-  .hint { font: 500 11px/1 ui-monospace, monospace; color: var(--dim);
-          letter-spacing: .08em; text-transform: uppercase; }
+  .yr-mid b { display: block; font-size: var(--fs-stat); letter-spacing: -0.02em; }
+  .yr-mid span { font-size: var(--fs-sm); color: var(--text-2); }
 
-  /* ---------- sections ---------- */
-  section { scroll-margin-top: calc(var(--head-h) + 1rem); }
-  .band { border-top: 1px solid var(--line); padding: 3.5rem 0; }
-  .band.soft { background: var(--bg-soft); }
-  h2 { font-size: 1.6rem; letter-spacing: -.025em; margin: 0 0 .5rem; font-weight: 700; }
-  .sub { color: var(--dim); margin: 0 0 2rem; max-width: 42rem; }
-  h3 { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--dim);
-       margin: 2.25rem 0 .75rem; font-weight: 600; }
+  /* ---------- section furniture ---------- */
+  .sub { max-inline-size: 56ch; margin-block: var(--s-3) var(--s-8); color: var(--text-2); }
+  h3 {
+    margin-block: var(--s-10) var(--s-4);
+    font-size: var(--fs-xs); font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3);
+  }
+
+  /* ---------- code ---------- */
+  /* One block style, on the system's sunken ground. The four syntax colours
+     are tokens too, so both themes are covered without a second palette. */
+  pre {
+    overflow-x: auto; padding: var(--s-4);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-sm);
+    background: var(--bg-sunken);
+    font-family: var(--font-mono); font-size: var(--fs-xs); line-height: 1.65;
+    tab-size: 2;
+  }
+  pre .t { color: var(--accent); }
+  pre .a { color: var(--accent-2); }
+  pre .s { color: var(--info); }
+  pre .c { color: var(--text-3); }
 
   /* ---------- quick start ---------- */
-  .steps { display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 880px) { .steps { grid-template-columns: 1fr; } }
-  .step {
-    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 1.1rem; display: grid; gap: .6rem; align-content: start;
+  .start-steps { display: grid; gap: var(--s-4); grid-template-columns: minmax(0, 1fr); }
+  @media (width >= 900px) { .start-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .start-step {
+    display: grid; gap: var(--s-3); align-content: start;
+    padding: var(--s-5);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-md);
+    background: var(--bg-elevated);
   }
-  .step .n {
-    width: 22px; height: 22px; border-radius: 99px; display: grid; place-items: center;
-    background: var(--accent); color: #fff; font: 700 11px/1 ui-monospace, monospace;
+  .start-step .n {
+    inline-size: 22px; block-size: 22px; border-radius: var(--r-chip);
+    display: grid; place-items: center;
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700;
   }
-  .step h4 { margin: 0; font-size: .95rem; letter-spacing: -.01em; }
-  .step p { margin: 0; font-size: 13.5px; color: var(--dim); }
-  .step pre { font-size: 11.5px; }
-
-  pre {
-    margin: 0; background: var(--code-bg); color: var(--code-fg); border-radius: 9px;
-    padding: .8rem .9rem; overflow-x: auto;
-    font: 12.5px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  }
-  pre .t { color: #7dd3fc; }
-  pre .a { color: #c4b5fd; }
-  pre .s { color: #86efac; }
-  pre .c { color: #5f7186; }
+  .start-step h4 { letter-spacing: -0.01em; }
+  .start-step p { font-size: var(--fs-sm); color: var(--text-2); }
 
   .demo-of {
-    display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 1.25rem; align-items: center;
-    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 1.1rem; margin-top: 1rem;
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-5);
+    align-items: center;
+    margin-block-start: var(--s-4); padding: var(--s-5);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-md);
+    background: var(--bg-elevated);
   }
-  @media (max-width: 660px) { .demo-of { grid-template-columns: 1fr; justify-items: center; } }
-  .demo-of .out { display: grid; justify-items: center; gap: .4rem; }
+  @media (width >= 660px) { .demo-of { grid-template-columns: minmax(0, 1fr) auto; } }
+  /* The code column stretches; only the instrument beside it is centred. A
+     centred grid item is sized to max-content, and a wide <pre> then hangs
+     off both edges of the phone. */
+  .demo-of .out { display: grid; justify-self: center; justify-items: center; gap: var(--s-2); }
 
-  .frameworks { display: grid; gap: .75rem; grid-template-columns: repeat(4, 1fr); }
-  @media (max-width: 880px) { .frameworks { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 460px) { .frameworks { grid-template-columns: 1fr; } }
-  .fw { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-        padding: .9rem; display: grid; gap: .55rem; }
-  .fw b { font-size: 12.5px; letter-spacing: .02em; }
-  .fw pre { font-size: 11.5px; padding: .6rem .7rem; }
+  .frameworks { display: grid; gap: var(--s-3); grid-template-columns: minmax(0, 1fr); }
+  @media (width >= 460px) { .frameworks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (width >= 900px) { .frameworks { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .fw {
+    display: grid; gap: var(--s-2); padding: var(--s-4);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-md);
+    background: var(--bg-elevated);
+  }
+  .fw b { font-size: var(--fs-sm); }
 
-  /* ---------- features ---------- */
-  .features { display: grid; gap: .75rem; grid-template-columns: repeat(4, 1fr); }
-  @media (max-width: 920px) { .features { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 500px) { .features { grid-template-columns: 1fr; } }
-  .feat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-          padding: 1rem; display: grid; gap: .35rem; align-content: start; }
-  .feat .ic { font-size: 1.1rem; line-height: 1; }
-  .feat b { font-size: 13.5px; letter-spacing: -.01em; }
-  .feat p { margin: 0; font-size: 12.5px; color: var(--dim); line-height: 1.5; }
-  .feat code { font-size: .92em; color: var(--accent-ink); }
+  /* ---------- why ---------- */
+  .features { display: grid; gap: var(--s-3); grid-template-columns: minmax(0, 1fr); }
+  @media (width >= 500px) { .features { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (width >= 920px) { .features { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .feat {
+    display: grid; gap: var(--s-1); align-content: start; padding: var(--s-4);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-md);
+    background: var(--bg-elevated);
+  }
+  .feat__ic { font-size: var(--fs-lead); line-height: 1; }
+  .feat b { font-size: var(--fs-sm); letter-spacing: -0.01em; }
+  .feat p { font-size: var(--fs-xs); color: var(--text-2); line-height: 1.5; }
+  .feat code { color: var(--accent); }
 
   /* ---------- examples ---------- */
-  .grid { display: grid; gap: .625rem;
-          grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
-          padding: .875rem .625rem .75rem; display: grid; justify-items: center; gap: .625rem; }
-  .card code { font-size: .625rem; line-height: 1.45; color: var(--dim); text-align: center;
-               word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  cth-knob { --cth-size: 104px; }
-  cth-level { --cthl-height: 150px; }
-  .tubes .card { padding-top: 1rem; }
-  .scale { display: flex; align-items: center; justify-content: center; gap: 1.5rem;
-           flex-wrap: wrap; background: var(--card); border: 1px solid var(--line);
-           border-radius: 10px; padding: 1.25rem; }
-  .scale figure { margin: 0; display: grid; justify-items: center; gap: .5rem; }
-  .scale figcaption { font-size: .625rem; color: var(--dim);
-                      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .stack { display: grid; place-items: center; }
-  .stack > * { grid-area: 1 / 1; }
-  .clock-time { font: 600 14px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-                font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
-  @keyframes cth-spin { to { rotate: 360deg; } }
-  .spinner { animation: cth-spin 900ms linear infinite; }
+  .tiles { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); }
+  .tile {
+    display: grid; justify-items: center; gap: var(--s-3);
+    padding: var(--s-4) var(--s-3) var(--s-3);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-sm);
+    background: var(--bg-elevated);
+  }
+  .tile code {
+    font-family: var(--font-mono); font-size: 10px; line-height: 1.45;
+    color: var(--text-3); text-align: center; word-break: break-word;
+  }
+  .tubes .tile { padding-block-start: var(--s-5); }
   .wide { grid-column: span 2; }
+  .scale {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--s-6);
+    padding: var(--s-5);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-sm);
+    background: var(--bg-elevated);
+  }
+  .scale figure { margin: 0; display: grid; justify-items: center; gap: var(--s-2); }
+  .scale figcaption { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+  .layer { display: grid; place-items: center; }
+  .layer > * { grid-area: 1 / 1; }
+  .clock-time {
+    font-family: var(--font-mono); font-size: 14px; font-weight: 600;
+    font-variant-numeric: tabular-nums; letter-spacing: -0.03em;
+  }
+  @keyframes cth-spin { to { rotate: 360deg; } }
+  .spin-demo { animation: cth-spin 900ms linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .spin-demo { animation: none; } }
 
   /* ---------- playground ---------- */
-  .play { display: grid; gap: .75rem; margin-bottom: 1.25rem;
+  .play { display: grid; gap: var(--s-3); margin-block-end: var(--s-5);
           grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
   .play-card {
-    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 1.1rem .8rem .85rem; display: grid; justify-items: center; gap: .7rem;
-    align-content: start;
+    display: grid; justify-items: center; align-content: start; gap: var(--s-3);
+    padding: var(--s-5) var(--s-4) var(--s-4);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-md);
+    background: var(--bg-elevated);
   }
-  .ctl { display: flex; flex-wrap: wrap; gap: .3rem; justify-content: center; }
+  .ctl { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-1); }
   .ctl button {
-    font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-    padding: .4rem .55rem; border-radius: 7px; cursor: pointer;
-    border: 1px solid var(--line); background: var(--bg-soft); color: var(--fg);
-    min-width: 2.1rem;
+    min-inline-size: 2.1rem; min-block-size: 32px; padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--hairline); border-radius: var(--r-sm);
+    background: var(--bg-sunken); color: var(--text);
+    font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 600;
+    cursor: pointer; transition: background var(--dur-fast) var(--ease);
   }
-  .ctl button:hover { border-color: var(--accent); color: var(--accent-ink); }
-  .ctl button:active { transform: translateY(1px); }
-  .ctl button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .play-card .cap { font-size: 11px; color: var(--dim); text-align: center; line-height: 1.5; }
+  .ctl button:hover { border-color: var(--accent); color: var(--accent); }
+  .ctl button:active { scale: 0.97; }
+  .ctl button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .play-card .cap { font-size: var(--fs-xs); color: var(--text-2); text-align: center; line-height: 1.5; }
   .play-card .cap span { font-variant-numeric: tabular-nums; }
-  .note {
-    margin: 0 0 .75rem; padding: .5rem .7rem; font-size: 12.5px;
-    border-radius: 8px; color: var(--accent-ink);
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
-  }
+  .note { margin-block-end: var(--s-3); }
   .note[hidden] { display: none; }
 
-  /* ---------- API table ---------- */
-  .api { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  .api th, .api td { text-align: left; padding: .5rem .65rem; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .api th { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); font-weight: 600; }
-  .api tr:last-child td { border-bottom: 0; }
-  .api td:first-child { white-space: nowrap; }
-  .api code { font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent-ink); }
-  .api td:nth-child(3) { color: var(--dim); }
-  .table-scroll { overflow-x: auto; background: var(--card); border: 1px solid var(--line);
-                  border-radius: var(--radius); padding: .35rem .5rem; }
+  /* ---------- API ---------- */
+  .table td:first-child { white-space: nowrap; }
+  .table code { color: var(--accent); }
+  .table td:nth-child(3) { color: var(--text-2); }
 
   /* ---------- lab banner ---------- */
   .lab {
-    border-radius: 18px; padding: 2rem; border: 1px solid var(--line);
+    display: grid; gap: var(--s-6); align-items: center;
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--s-8);
+    border: 1px solid var(--hairline-soft); border-radius: var(--r-xl);
     background:
-      radial-gradient(700px 320px at 12% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 62%),
-      var(--card);
-    display: grid; gap: 1.5rem; grid-template-columns: minmax(0,1fr) auto; align-items: center;
+      radial-gradient(700px 320px at 12% 0%, var(--accent-wash), transparent 62%),
+      var(--bg-elevated);
   }
-  @media (max-width: 820px) { .lab { grid-template-columns: 1fr; } }
-  .lab h2 { margin-bottom: .4rem; }
-  .lab-tags { display: flex; flex-wrap: wrap; gap: .35rem; margin: 1rem 0 1.35rem; }
-  .lab-tags span {
-    font: 500 11.5px/1 ui-monospace, monospace; color: var(--dim);
-    border: 1px solid var(--line); border-radius: 99px; padding: .35rem .6rem;
+  @media (width >= 820px) { .lab { grid-template-columns: minmax(0, 1fr) auto; } }
+  .lab-tags { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-block: var(--s-4) var(--s-5); }
+  .lab-art {
+    display: grid; grid-template-columns: repeat(4, 64px);
+    gap: var(--s-4) var(--s-3); margin: 0; padding: 0; list-style: none;
   }
-  .lab-art { display: grid; grid-template-columns: repeat(3, auto); gap: .75rem; }
-  .lab-art cth-knob { --cth-size: 62px; --cth-thickness: 10; }
-
-  /* ---------- footer ---------- */
-  footer { border-top: 1px solid var(--line); padding: 2rem 0 3rem; color: var(--dim); font-size: 13px; }
-  footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
-  footer a { color: var(--dim); }
-  footer a:hover { color: var(--fg); }
-  footer .sp { margin-left: auto; }
+  /* One 62px box per specimen so a short one and a tall one still line up. */
+  .lab-art li { display: grid; grid-template-rows: 62px auto; align-items: center;
+                justify-items: center; gap: var(--s-2); margin: 0; }
+  .lab-art li.wide2 { grid-column: span 2; }
+  .lab-art span {
+    font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.04em;
+    color: var(--text-3); white-space: nowrap;
+  }
+  /* Every specimen is drawn to the same 62px box so the row reads as a set. */
+  .lab-art cth-knob  { --cth-size: 62px; --cth-thickness: 10; }
+  .lab-art cth-heat  { --cth-size: 62px; }
+  .lab-art cth-radar { --cthr-size: 62px; }
+  .lab-art cth-horizon { --cthh-size: 62px; }
+  .lab-art cth-rings { --cths-size: 62px; }
+  .lab-art cth-level { --cthl-height: 62px; }
+  /* On a trace --cth-width is the pen, not the box: a strip sizes its own
+     width from the cell it sits in. */
+  .lab-art cth-trace { --cth-height: 46px; }
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
 <header class="site-head">
-  <div class="wrap">
-    <a class="brand" href="#top">cth-instrument <span class="ver">v1.0</span></a>
-    <nav class="site-nav">
+  <div class="container container--wide head-in">
+    <a class="brand" href="#top">
+      <svg class="brand__mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><rect width="64" height="64" rx="14.3" fill="#1d1d1f"/><path d="M37 22a13 13 0 1 0 0 20" fill="none" stroke="#4dff9b" stroke-width="5.6" stroke-linecap="round"/><circle cx="49" cy="32" r="4.6" fill="#4dff9b"/></svg>
+      <span>cth-instrument <span class="t3">v1.0</span></span>
+    </a>
+
+    <nav class="head-nav" aria-label="Primary">
       <a href="#start">Quick start</a>
       <a href="#why">Why</a>
       <a href="#examples">Examples</a>
       <a href="#playground">Playground</a>
       <a href="#api">API</a>
-      <a class="cta" href="lab/">Instrument lab &rarr;</a>
+      <a href="lab/">Lab</a>
     </nav>
+
+    <div class="head-end">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Theme">
+        <svg class="ic ic--auto" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18Z" fill="currentColor" stroke="none"/></svg><svg class="ic ic--light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="ic ic--dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+      <button class="iconbtn navsheet__trigger" type="button" data-navsheet-open aria-label="Menu" aria-haspopup="dialog">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
   </div>
 </header>
 
+<!-- The sheet is a sibling of the header, never a child: the header sets
+     backdrop-filter, which would trap a fixed child inside its own 56px box. -->
+<dialog class="drawer navsheet" data-navsheet aria-label="Site menu">
+  <div class="navsheet__panel">
+    <div class="navsheet__head">
+      <span class="navsheet__title">cth-instrument</span>
+      <button class="iconbtn" type="button" data-close aria-label="Close menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="sheet-row" href="#start">Quick start</a>
+    <a class="sheet-row" href="#why">Why</a>
+    <a class="sheet-row" href="#examples">Examples</a>
+    <a class="sheet-row" href="#playground">Playground</a>
+    <a class="sheet-row" href="#api">API</a>
+    <a class="sheet-row" href="lab/">Lab</a>
+    <div class="sheet-tools">
+      <button class="iconbtn" type="button" data-theme-toggle aria-label="Theme">
+        <svg class="ic ic--auto" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18Z" fill="currentColor" stroke="none"/></svg><svg class="ic ic--light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="ic ic--dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<main id="main">
+
 <!-- ============================== HERO ============================== -->
-<section class="hero" id="top">
-  <div class="wrap">
+<section class="section section--tight s-page" id="top">
+  <div class="container container--wide hero">
     <div>
       <span class="eyebrow">◆ since 2013 · rewritten for 2026</span>
-      <h1>One element.<br><em>Every dial.</em></h1>
+      <h1>Seven instruments.<br><em>One tag each.</em></h1>
       <p class="lede">
-        A knob, gauge, meter and radial chart in a single custom element.
-        No framework, no build step, no dependencies — paste one script tag and write
+        A dial, a waveform, a heat ring, a radar scope, a level column, an
+        attitude indicator, and the layout that nests them. No framework, no
+        build step, no dependencies — paste one script tag and write
         <code>&lt;cth-knob value="78"&gt;</code>.
       </p>
 
       <div class="install">
         <span class="p">$</span>
         <code id="npm-cmd">npm install cth-instrument</code>
-        <button type="button" id="copy">Copy</button>
+        <button class="btn btn--quiet btn--sm" type="button" id="copy">Copy</button>
       </div>
 
-      <ul class="facts">
-        <li><b>23.6 KB</b><span>gzipped</span></li>
-        <li><b>0</b><span>dependencies</span></li>
-        <li><b>42</b><span>attributes</span></li>
+      <ul class="hero-facts">
         <li><b>7</b><span>elements</span></li>
+        <li><b>0</b><span>dependencies</span></li>
+        <li><b>23.6 KB</b><span>the dial, gzipped</span></li>
+        <li><b>42</b><span>attributes on it</span></li>
       </ul>
 
-      <div class="actions">
-        <a class="btn primary" href="#start">Get started</a>
-        <a class="btn" href="lab/">See 30 dashboards</a>
-        <a class="btn" href="https://github.com/tanghoong/cth-instrument">GitHub</a>
+      <div class="cluster">
+        <a class="btn btn--filled" href="#start">Get started</a>
+        <a class="btn btn--quiet" href="lab/">See 30 dashboards</a>
+        <a class="btn btn--outline" href="https://github.com/tanghoong/cth-instrument">GitHub</a>
       </div>
     </div>
 
@@ -367,7 +415,7 @@
            year of bars, a price with its direction, and a face that turns. -->
       <div class="scenes">
         <div class="scene" data-name="vitals">
-          <div class="lead">
+          <div class="pair">
             <cth-knob class="big" id="hero" value="72" min="40" max="180" readout="value"
                      unit="bpm" label="resting" pulse="auto" color="#e0433f" animate-in>
               <cth-trace slot="inset" beat="72" readout="none" pen="none" samples="150"
@@ -404,7 +452,7 @@
         </div>
 
         <div class="scene" data-name="sound" hidden>
-          <div class="lead">
+          <div class="pair">
             <cth-knob class="big" id="hero-vinyl" button toggle spin="33" value="21"
                      readout="none" label="Blue Train" color="#e0b04a">
               <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
@@ -453,7 +501,7 @@
         </div>
 
         <div class="scene" data-name="house" hidden>
-          <div class="lead">
+          <div class="pair">
             <cth-knob class="big" value="21.5" min="10" max="32" step=".5" decimals="1"
                      readout="value" unit="°C" label="living room" interactive
                      ticks="22" tick-major="4" color="#0ea5e9"
@@ -496,7 +544,7 @@
         </div>
 
         <div class="scene" data-name="numbers" hidden>
-          <div class="lead">
+          <div class="pair">
             <cth-heat class="big" id="hero-year" shape="bars" readout="none" scale="#22c55e"
                      labels="D,J,F,M,A,M,J,J,A,S,O,N"
                      style="--cth-size:168px">
@@ -539,16 +587,16 @@
 </section>
 
 <!-- =========================== QUICK START =========================== -->
-<section class="band soft" id="start">
-  <div class="wrap">
+<section class="section s-sunken" id="start">
+  <div class="container container--wide">
     <h2>Three lines to your first gauge</h2>
     <p class="sub">
       It is a standard custom element, so there is nothing to configure, register or wrap.
       The browser does the rest.
     </p>
 
-    <div class="steps">
-      <div class="step">
+    <div class="start-steps">
+      <div class="start-step">
         <div class="n">1</div>
         <h4>Load it</h4>
         <p>One module script. No bundler, no config file, no peer dependencies.</p>
@@ -557,13 +605,13 @@
  <span class="a">src</span>=<span class="s">"https://esm.sh/cth-instrument"</span><span class="t">&gt;</span>
 <span class="t">&lt;/script&gt;</span></pre>
       </div>
-      <div class="step">
+      <div class="start-step">
         <div class="n">2</div>
         <h4>Write the tag</h4>
         <p>Attributes are the whole API. Change one and the dial re-renders itself.</p>
 <pre><span class="t">&lt;cth-knob</span> <span class="a">value</span>=<span class="s">"78"</span><span class="t">&gt;&lt;/cth-knob&gt;</span></pre>
       </div>
-      <div class="step">
+      <div class="start-step">
         <div class="n">3</div>
         <h4>Make it yours</h4>
         <p>Every colour and size is a CSS custom property. There is no options object.</p>
@@ -585,7 +633,7 @@
         <cth-knob value="64" sweep="270" ticks="12" tick-major="3"
                  zones="85-100:#ef4444" color="#7c3aed" label="CPU"
                  style="--cth-size:132px" animate-in></cth-knob>
-        <span class="hint">that markup, rendered</span>
+        <span class="cue">that markup, rendered</span>
       </div>
     </div>
 
@@ -604,94 +652,94 @@
 </section>
 
 <!-- ============================== WHY ============================== -->
-<section class="band" id="why">
-  <div class="wrap">
+<section class="section s-page" id="why">
+  <div class="container container--wide">
     <h2>Small on purpose. Complete anyway.</h2>
     <p class="sub">
-      Everything below ships inside the 23.6 KB. There is no pro tier, no plugin system,
+      Everything below ships inside the dial’s 23.6 KB. There is no pro tier, no plugin system,
       and nothing to install alongside it.
     </p>
 
     <div class="features">
-      <div class="feat"><div class="ic">📦</div><b>Zero dependencies</b>
+      <div class="feat"><div class="feat__ic">📦</div><b>Zero dependencies</b>
         <p>One file of standard JavaScript. Nothing to audit, nothing to keep updated.</p></div>
-      <div class="feat"><div class="ic">🎯</div><b>Any arc</b>
+      <div class="feat"><div class="feat__ic">🎯</div><b>Any arc</b>
         <p><code>sweep</code> takes any angle — a 360° ring, a 270° gauge, a 180° half, or your own.</p></div>
-      <div class="feat"><div class="ic">🎨</div><b>Themed with CSS</b>
+      <div class="feat"><div class="feat__ic">🎨</div><b>Themed with CSS</b>
         <p>Custom properties and <code>::part()</code>. Style it like any other element.</p></div>
-      <div class="feat"><div class="ic">♿</div><b>Accessible by default</b>
+      <div class="feat"><div class="feat__ic">♿</div><b>Accessible by default</b>
         <p><code>role="meter"</code>, live ARIA values, arrow keys, and reduced-motion aware.</p></div>
-      <div class="feat"><div class="ic">🖱️</div><b>It is an input too</b>
+      <div class="feat"><div class="feat__ic">🖱️</div><b>It is an input too</b>
         <p>Add <code>interactive</code> and it becomes a draggable, keyboard-operable slider.</p></div>
-      <div class="feat"><div class="ic">📊</div><b>Zones, ticks, segments</b>
+      <div class="feat"><div class="feat__ic">📊</div><b>Zones, ticks, segments</b>
         <p>Red-line bands, graduations and stacked slices without a chart library.</p></div>
-      <div class="feat"><div class="ic">🌗</div><b>Light and dark</b>
+      <div class="feat"><div class="feat__ic">🌗</div><b>Light and dark</b>
         <p>Both palettes are built in, and anything you set from outside wins.</p></div>
-      <div class="feat"><div class="ic">🔍</div><b>Sharp at any size</b>
+      <div class="feat"><div class="feat__ic">🔍</div><b>Sharp at any size</b>
         <p>Pure SVG — 40 px or 400 px, no blur, no retina hacks, no canvas.</p></div>
     </div>
   </div>
 </section>
 
 <!-- ============================ EXAMPLES ============================ -->
-<section class="band soft" id="examples">
-  <div class="wrap">
+<section class="section s-sunken" id="examples">
+  <div class="container container--wide">
     <h2>Everything it can do</h2>
     <p class="sub">Every dial below is the same element with different attributes.</p>
 
 <h3>Basics</h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob value="78"></cth-knob>
     <code>&lt;cth-knob value="78"&gt;</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="42" color="#16a34a" label="Storage"></cth-knob>
     <code>color="#16a34a" label="Storage"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="91" color="#dc2626" benchmark="70" label="CPU"></cth-knob>
     <code>benchmark="70"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="145" color="#f59e0b" label="Peak"></cth-knob>
     <code>value="145" &rarr; overflow ring</code>
   </div>
 </div>
 
 <h3>Shapes — any arc via <code>sweep</code></h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob value="64" sweep="270" color="#7c3aed" label="Gauge"></cth-knob>
     <code>sweep="270"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="30" sweep="180" color="#0891b2" label="Half"></cth-knob>
     <code>sweep="180"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="55" sweep="240" start="150" color="#db2777"></cth-knob>
     <code>sweep="240" start="150"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="88" style="--cth-thickness: 3" color="currentColor"></cth-knob>
     <code>--cth-thickness: 3</code>
   </div>
 </div>
 
 <h3>Readout &amp; units</h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob value="36.6" min="34" max="42" readout="value" unit="°C" decimals="1"
              sweep="270" color="#ef4444" label="Temperature"></cth-knob>
     <code>readout="value" unit="°C" decimals="1"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="7300" max="10000" readout="value" label="steps today"
              color="#22c55e"></cth-knob>
     <code>max="10000" readout="value"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="68" readout="none" color="#3b82f6">
       <svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
            stroke-linecap="round" stroke-linejoin="round">
@@ -700,32 +748,32 @@
     </cth-knob>
     <code>readout="none" + slot="icon"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="25" style="--cth-duration: 2s" color="#8b5cf6" id="anim"></cth-knob>
     <code>--cth-duration: 2s (click me)</code>
   </div>
 </div>
 
 <h3>Zones, ticks &amp; stacked segments</h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob value="82" sweep="270" ticks="12" tick-major="3" label="RPM"
              zones="0-60:#22c55e, 60-85:#f59e0b, 85-100:#ef4444"
              color="#14161a" style="--cth-thickness:6"></cth-knob>
     <code>zones + ticks + tick-major</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="42" min="0" max="360" readout="value" unit="°" needle
              ticks="24" tick-major="6" labels="N,E,S,W" color="transparent"
              style="--cth-thickness:4"></cth-knob>
     <code>needle + labels="N,E,S,W"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob readout="none" label="disk"
              segments="42:#3b82f6, 23:#8b5cf6, 14:#f59e0b, 9:#64748b"><span slot="icon">💾</span></cth-knob>
     <code>segments="42:… 23:… 14:… 9:…"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="7.4" min="0" max="10" decimals="1" readout="value" sweep="240" start="150"
              ticks="10" tick-major="5" label="score" color="#16a34a"
              zones="0-4:#fecaca, 4-7:#fde68a, 7-10:#bbf7d0" style="--cth-thickness:7"></cth-knob>
@@ -742,27 +790,27 @@
 </div>
 
 <h3>VU &amp; peak hold — a needle with ballistics</h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob class="vu" data-vu="0" sweep="100" needle="hand" readout="none"
              ballistics=".02 .5" peak-hold="1" ticks="10" tick-major="5"
              zones="80-100:#fee2e2" color="#14161a"
              style="--cth-thickness:5"></cth-knob>
     <code>ballistics=".02 .5" peak-hold="1"<br>a classic VU face</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob class="vu" data-vu="1" sweep="270" readout="value" unit="dB" label="left"
              ballistics=".01 .8" peak-hold="1.4" ticks="10" tick-major="5"
              zones="85-100:#fee2e2" color="#16a34a"></cth-knob>
     <code>the bar reads, the tick holds the peak</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob class="vu" data-vu="2" sweep="270" readout="value" unit="dB" label="right"
              ballistics=".01 .8" peak-hold="1.4" ticks="10" tick-major="5"
              zones="85-100:#fee2e2" color="#16a34a"></cth-knob>
     <code>same signal, its own peak</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob class="vu" data-vu="3" sweep="270" readout="value" unit="dB" label="no ballistics"
              ticks="10" tick-major="5" zones="85-100:#fee2e2" color="#64748b"></cth-knob>
     <code>the same numbers, unsmoothed<br>— every transient reads the same</code>
@@ -770,19 +818,19 @@
 </div>
 
 <h3>Range &amp; endless — two ways to take input</h3>
-<div class="grid">
-  <div class="card wide">
+<div class="tiles">
+  <div class="tile wide">
     <cth-knob id="ex-range" range="18 26" min="10" max="32" sweep="270" step="0.5" decimals="1"
              unit="°C" label="comfort band" interactive color="#0ea5e9"
              ticks="11" tick-major="5" style="--cth-size:136px"></cth-knob>
     <code>range="18 26" — drag either handle<br>arrows move the high one, shift+arrows the low</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob id="ex-endless" endless value="0" readout="value" label="turn me" interactive
              ticks="24" tick-major="6" color="#7c3aed"></cth-knob>
     <code>endless — no ends to hit.<br>Keep dragging; the count keeps going.</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob range="30 70" readout="none" sweep="360" color="#f43f5e"
              style="--cth-thickness:14"></cth-knob>
     <code>without <code>interactive</code> the same band<br>is a read-only display</code>
@@ -790,17 +838,17 @@
 </div>
 
 <h3>&lt;cth-trace&gt; — the one reading a dial cannot give</h3>
-<div class="grid">
-  <div class="card wide">
+<div class="tiles">
+  <div class="tile wide">
     <cth-trace beat="72" label="heart" grid style="--cth-trace:#16a34a;--cth-height:120px"></cth-trace>
     <code>beat="72" grid — a built-in ECG,<br>no script at all</code>
   </div>
-  <div class="card wide">
+  <div class="tile wide">
     <cth-trace id="ex-trace-live" label="cpu" readout="value" unit="%" grid
               samples="180" style="--cth-trace:#f59e0b;--cth-height:120px"></cth-trace>
     <code>trace.push(v) — feed it your own numbers</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-trace shape="ring" beat="66" label="pulse"
               style="--cth-trace:#0ea5e9;--cth-size:150px"></cth-trace>
     <code>shape="ring" — the same trace,<br>wrapped round the dial</code>
@@ -810,18 +858,18 @@
 <h3>Life is full of dials</h3>
 <p class="note">Temperature, brightness, a switch, a price, a signal, a light —
   none of these are charts. They are all the same ring, read differently.</p>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob id="w-stock" value="68" min="0" max="120" readout="value" decimals="2"
              unit="$" label="ACME" trend="1.84" trend-unit="%" color="#16a34a"></cth-knob>
     <code><code>trend</code> — a price is two readings:<br>where it is and which way it went</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob id="w-light" button readout="none" style="--cth-thickness:11"
              states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cth-knob>
     <code><code>states</code> — press to advance.<br>A light is not a low value of green.</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob id="w-sky" button toggle turn="180" readout="none" label="day" color="#fbbf24">
       <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
         <defs><linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1">
@@ -837,35 +885,35 @@
     </cth-knob>
     <code><code>turn="180"</code> — press and it<br>swings round to the other half</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="2841" min="0" max="4000" readout="value" unit="kWh" label="meter"
              decimals="0" ticks="20" tick-major="5" gradient="#22c55e,#f59e0b,#ef4444"></cth-knob>
     <code>an electricity meter — <code>gradient</code><br>maps the scale, not the value</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="63" readout="value" unit="%" label="data" decimals="0"
              benchmark="80" zones="80-100:#fee2e2" color="#7c3aed"></cth-knob>
     <code>mobile data against its cap —<br><code>benchmark</code> is the allowance</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="86" readout="value" label="safety" decimals="0" sweep="270"
              zones="0-40:#fee2e2, 40-70:#fef3c7, 70-100:#dcfce7" color="#16a34a"
              ticks="10" tick-major="5"></cth-knob>
     <code>a safety index — <code>zones</code> say<br>what the number means</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob id="w-bright" value="72" readout="value" unit="%" label="brightness"
              interactive color="#f59e0b" style="--cth-thickness:12"></cth-knob>
     <code>brightness — drag it.<br>The same ring, now an input.</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob id="w-switch" button toggle readout="none" label="off" color="#64748b"
              style="--cth-thickness:10">
       <span slot="icon">⏻</span><span slot="icon-on">⏻</span>
     </cth-knob>
     <code>a switch — <code>toggle</code> and two<br>icon slots is the whole of it</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="41" min="0" max="100" liquid readout="value" unit="%" label="tank"
              ticks="10" tick-major="5" color="#0ea5e9" style="--cth-liquid:#0ea5e9"></cth-knob>
     <code>a water tank — the face is the vessel</code>
@@ -873,8 +921,8 @@
 </div>
 
 <h3>Buttons, gas and voice</h3>
-<div class="grid">
-  <div class="card wide">
+<div class="tiles">
+  <div class="tile wide">
     <cth-knob id="ex-play" button toggle value="37" readout="none" label="Midnight City"
              color="#16a34a" style="--cth-size:150px">
     <svg slot="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.4a1.2 1.2 0 0 1 0 2l-8.2 5.4a1 1 0 0 1-1.52-.85z"/></svg>
@@ -882,17 +930,17 @@
     </cth-knob>
     <code><code>button toggle</code> with two icon slots.<br>The ring is how far through the song you are.</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob gas value="26" readout="value" unit="ppm" label="CO₂" color="#a3e635"
              style="--cth-gas:#a3e635"></cth-knob>
     <code><code>gas</code> — liquid has a surface,<br>a gas only has density</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob gas value="81" readout="value" unit="ppm" label="CO₂" color="#f87171"
              style="--cth-gas:#f87171"></cth-knob>
     <code>the same dial, thicker air</code>
   </div>
-  <div class="card wide">
+  <div class="tile wide">
     <cth-knob id="ex-listen" value="0" readout="none" label="listening" color="#0ea5e9"
              style="--cth-size:150px;--cth-thickness:6">
       <cth-trace slot="inset" id="ex-voice" voice mirror pen="none"
@@ -905,8 +953,8 @@
 </div>
 
 <h3>The dial as a turntable</h3>
-<div class="grid">
-  <div class="card wide">
+<div class="tiles">
+  <div class="tile wide">
     <cth-knob id="ex-vinyl" button toggle spin="33" value="21" readout="none" label="Blue Train"
              color="#e0b04a" style="--cth-size:170px;--cth-thickness:5">
       <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
@@ -951,7 +999,7 @@
     <code><code>spin="33"</code> on a <code>toggle</code> button. It winds up
       like a motor and coasts down like friction, and the track carries the song.</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob spin="78" value="64" readout="value" unit="%" label="platter"
              color="#94a3b8" style="--cth-thickness:5">
       <span slot="icon">💿</span>
@@ -961,8 +1009,8 @@
 </div>
 
 <h3>Dials with something inside them</h3>
-<div class="grid">
-  <div class="card wide">
+<div class="tiles">
+  <div class="tile wide">
     <cth-knob id="ex-heart" value="72" min="40" max="180" readout="value" unit="bpm" label="heart"
              pulse="auto" color="#e0433f" style="--cth-size:172px;--cth-thickness:6">
       <cth-trace slot="inset" beat="72" readout="none" pen="none" samples="150"
@@ -971,7 +1019,7 @@
     <code>a <code>&lt;cth-trace&gt;</code> in <code>slot="inset"</code>, and
       <code>pulse="auto"</code> — the ring breathes at whatever the number says</code>
   </div>
-  <div class="card wide">
+  <div class="tile wide">
     <cth-knob id="ex-tube" value="62" min="0" max="100" liquid readout="value" unit="°C"
              label="coolant" ticks="20" tick-major="5" color="#35a7ff"
              style="--cth-size:172px;--cth-thickness:6;--cth-liquid:#35a7ff"></cth-knob>
@@ -979,9 +1027,28 @@
   </div>
 </div>
 
+<h3>&lt;cth-heat&gt; — a hundred values on one ring</h3>
+<div class="tiles">
+  <div class="tile">
+    <cth-heat label="a day" unit="°C" interactive decimals="0" style="--cth-size:150px"
+      values="7,6,6,5,5,6,8,11,14,17,20,22,24,25,24,22,19,16,14,12,10,9,8,7"></cth-heat>
+    <code>24 hours round a clock face.<br>Hover a cell to read it.</code>
+  </div>
+  <div class="tile wide">
+    <cth-heat id="ex-heat-week" rows="7" label="a week" unit="%" interactive
+             style="--cth-size:206px;--cth-thickness:5"></cth-heat>
+    <code>rows="7" — a polar calendar:<br>seven days, twenty-four hours each</code>
+  </div>
+  <div class="tile">
+    <cth-heat id="ex-heat-year" label="a year" unit="mm" sweep="340" start="100"
+             style="--cth-size:150px;--cth-thickness:7;--cth-gap:.22"></cth-heat>
+    <code>52 weeks, and the scale<br>fits itself to your data</code>
+  </div>
+</div>
+
 <h3>&lt;cth-heat shape="bars"&gt; — a year you can read like a skyline</h3>
-<div class="grid">
-  <div class="card wide">
+<div class="tiles">
+  <div class="tile wide">
     <cth-heat id="ex-year" shape="bars" readout="none" scale="#22c55e" interactive
              labels="Dec,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov"
              style="--cth-size:212px">
@@ -991,7 +1058,7 @@
     </cth-heat>
     <code id="ex-year-cap">365 days round one ring</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-heat shape="bars" label="months" decimals="0" scale="#22c55e"
              style="--cth-size:150px;--cth-gap:.3"
              values="42,38,55,71,96,120,141,133,101,74,52,45"></cth-heat>
@@ -999,28 +1066,9 @@
   </div>
 </div>
 
-<h3>&lt;cth-heat&gt; — a hundred values on one ring</h3>
-<div class="grid">
-  <div class="card">
-    <cth-heat label="a day" unit="°C" interactive decimals="0" style="--cth-size:150px"
-      values="7,6,6,5,5,6,8,11,14,17,20,22,24,25,24,22,19,16,14,12,10,9,8,7"></cth-heat>
-    <code>24 hours round a clock face.<br>Hover a cell to read it.</code>
-  </div>
-  <div class="card wide">
-    <cth-heat id="ex-heat-week" rows="7" label="a week" unit="%" interactive
-             style="--cth-size:206px;--cth-thickness:5"></cth-heat>
-    <code>rows="7" — a polar calendar:<br>seven days, twenty-four hours each</code>
-  </div>
-  <div class="card">
-    <cth-heat id="ex-heat-year" label="a year" unit="mm" sweep="340" start="100"
-             style="--cth-size:150px;--cth-thickness:7;--cth-gap:.22"></cth-heat>
-    <code>52 weeks, and the scale<br>fits itself to your data</code>
-  </div>
-</div>
-
 <h3>&lt;cth-rings&gt; — concentric knobs without the arithmetic</h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-rings id="ring-clock" style="--cths-size:118px">
       <cth-knob readout="none" max="12" data-h ticks="12" tick-major="3" color="#019ae6"></cth-knob>
       <cth-knob readout="none" max="60" data-m color="#7c3aed"></cth-knob>
@@ -1029,7 +1077,7 @@
     </cth-rings>
     <code>three knobs, sizes worked out for you</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-rings style="--cths-size:118px">
       <cth-knob readout="none" value="82" color="#22c55e"></cth-knob>
       <cth-knob readout="none" value="64" color="#0ea5e9"></cth-knob>
@@ -1038,7 +1086,7 @@
     </cth-rings>
     <code>activity rings + a centre slot</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-rings thickness=".09" gap=".03" style="--cths-size:118px">
       <cth-knob readout="none" value="80" color="#f59e0b"></cth-knob>
       <cth-knob readout="none" value="55" color="#8b5cf6"></cth-knob>
@@ -1046,7 +1094,7 @@
     </cth-rings>
     <code>thickness=".09" gap=".03"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-rings style="--cths-size:118px">
       <cth-knob readout="none" value="90" gradient="#22c55e,#ef4444"></cth-knob>
       <cth-knob readout="none" value="70" gradient="#0ea5e9,#a855f7"></cth-knob>
@@ -1057,9 +1105,9 @@
 </div>
 
 <h3>Composed — the ring as time, with no digits at all</h3>
-<div class="grid">
-  <div class="card wide">
-    <div class="stack" id="clock">
+<div class="tiles">
+  <div class="tile wide">
+    <div class="layer" id="clock">
       <cth-knob readout="none" max="12" style="--cth-size:148px;--cth-thickness:4.2;--cth-duration:0ms" color="#019ae6" data-hand="h"></cth-knob>
       <cth-knob readout="none" max="60" style="--cth-size:110px;--cth-thickness:5.7;--cth-duration:0ms" color="#7c3aed" data-hand="m"></cth-knob>
       <cth-knob readout="none" max="60" style="--cth-size:72px;--cth-thickness:8.7;--cth-duration:0ms"  color="#f59e0b" data-hand="s"></cth-knob>
@@ -1068,13 +1116,13 @@
     <code>three concentric knobs = a clock<br>hours / minutes / seconds, no numbers on the rings</code>
   </div>
 
-  <div class="card">
-    <cth-knob class="spinner" readout="none" sweep="70" value="100"
+  <div class="tile">
+    <cth-knob class="spin-demo" readout="none" sweep="70" value="100"
              style="--cth-track:transparent;--cth-thickness:9;--cth-size:88px" color="#019ae6"></cth-knob>
     <code>indeterminate<br>sweep="70" + CSS rotate</code>
   </div>
 
-  <div class="card">
+  <div class="tile">
     <cth-knob id="timer" max="10" value="10" readout="value" unit="s" decimals="1"
              sweep="360" color="#dc2626" label="countdown"
              style="--cth-duration:0ms;--cth-size:88px"></cth-knob>
@@ -1082,31 +1130,31 @@
   </div>
 </div>
 
-<h3>Radar — a filled field instead of a rim arc</h3>
+<h3>&lt;cth-radar&gt; — a filled field instead of a rim arc</h3>
 <p class="note" id="motion-note" hidden>
   Your system asks for reduced motion, so the sweep is parked rather than turning.
   Turn animation effects back on to watch it run.
 </p>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-radar period="4" rings="4" spokes="8" labels="N,E,S,W"
               blips="35:0.62, 118:0.34, 214:0.78, 300:0.5"
               style="--cthr-size:132px"></cth-radar>
     <code>period="4" — sweeping</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-radar rings="6" spokes="12" labels="N,E,S,W"
               blips="20:0.9, 75:0.45, 160:0.66, 250:0.28, 330:0.82"
               style="--cthr-size:132px"></cth-radar>
     <code>no period — static range rings</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-radar period="2.4" rings="3" spokes="0" blips="90:0.5, 270:0.5"
               style="--cthr-size:132px;--cthr-field:#0b1020;--cthr-grid:#2b4a8a;
                      --cthr-beam:#5b9cff;--cthr-blip:#5b9cff"></cth-radar>
     <code>themed with --cthr-* variables</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-radar period="6" rings="5" spokes="16" labels="N,NE,E,SE,S,SW,W,NW"
               blips="10:0.3, 55:0.7, 140:0.5, 200:0.9, 280:0.4"
               style="--cthr-size:132px;--cthr-field:#1a0f14;--cthr-grid:#7a2a3a;
@@ -1116,23 +1164,23 @@
 </div>
 
 <h3>Gradient — a colour ramp that follows the arc</h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob gradient="#22c55e,#f59e0b,#ef4444" value="82" sweep="270"
              ticks="10" tick-major="5" readout="value" unit="%" label="load"></cth-knob>
     <code>gradient="#22c55e,#f59e0b,#ef4444"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob gradient="#0ea5e9,#8b5cf6,#ec4899" value="68"
              readout="value" unit="%" label="full ring"></cth-knob>
     <code>the ramp bends round the whole circle</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob gradient="#facc15,#f97316,#dc2626" value="35" sweep="240" start="150"
              ticks="8" tick-major="4" readout="value" unit="°C" label="oven"></cth-knob>
     <code>colour is the scale, not the value<br>— 35% only reaches the yellow</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob id="gradlive" gradient="#22c55e,#a3e635,#facc15,#f97316,#ef4444"
              value="20" sweep="270" readout="value" unit="%" label="click me"
              style="--cth-duration:900ms"></cth-knob>
@@ -1141,19 +1189,19 @@
 </div>
 
 <h3>Liquid — for anything that really is a fluid</h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob liquid value="72" readout="value" unit="%" label="H₂O"
              style="--cth-thickness:5" color="#35a7ff"></cth-knob>
     <code>liquid — waves drift while it sits</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob id="tank" liquid value="34" readout="value" unit="L" min="0" max="60"
              label="petrol" style="--cth-thickness:5;--cth-liquid:#f0a020;
              --cth-liquid-back:rgba(240,160,32,.45)" color="#f0a020"></cth-knob>
     <code>themed with --cth-liquid<br>(click to pour)</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob liquid value="18" readout="value" unit="%" label="reagent"
              sweep="270" ticks="10" tick-major="5"
              style="--cth-thickness:5;--cth-liquid:#a3e635;
@@ -1161,7 +1209,7 @@
              zones="0-20:#fee2e2"></cth-knob>
     <code>liquid + zones + ticks</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob liquid value="91" readout="value" unit="%" label="coolant"
              style="--cth-thickness:5;--cth-liquid:#f472b6;
              --cth-liquid-back:rgba(244,114,182,.4)" color="#f472b6"></cth-knob>
@@ -1170,47 +1218,47 @@
 </div>
 
 <h3>&lt;cth-level&gt; — the straight tube a ring cannot give you</h3>
-<div class="grid tubes">
-  <div class="card">
+<div class="tiles tubes">
+  <div class="tile">
     <cth-level value="62" unit="L" label="fryer oil" liquid ticks="10" tick-major="5"
               color="#e8b33c" style="--cthl-fill-back:rgba(232,179,60,.45)"></cth-level>
     <code>liquid + ticks</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-level value="9" min="0" max="60" unit="L" label="milk" liquid
               ticks="6" tick-major="3" zones="0-12:#ef4444"
               color="#dbe4ee" style="--cthl-fill-back:rgba(219,228,238,.4)"></cth-level>
     <code>zones tint the fluid sitting in them</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-level value="36.6" min="34" max="42" decimals="1" unit="°C" label="body"
               bulb liquid ticks="8" tick-major="2" color="#ef4444"
               style="--cthl-fill-back:rgba(239,68,68,.4)"></cth-level>
     <code>bulb — a thermometer</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-level id="tube" value="74" unit="%" label="tank" ticks="10" tick-major="5"></cth-level>
     <code>no liquid — a plain column<br>(click to fill)</code>
   </div>
 </div>
 
-<h3>Instruments — hands, attitude, gyro, two pointers</h3>
-<div class="grid">
-  <div class="card">
+<h3>&lt;cth-horizon&gt; — attitude, hands, gyro, two pointers</h3>
+<div class="tiles">
+  <div class="tile">
     <cth-horizon pitch="0" roll="0" style="--cthh-size:132px"></cth-horizon>
-    <code>&lt;cth-horizon&gt; — wings level</code>
+    <code>pitch="0" roll="0" — wings level</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-horizon pitch="12" roll="-25" style="--cthh-size:132px"></cth-horizon>
     <code>pitch="12" roll="-25"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="120" min="0" max="360" rotating readout="value" unit="°"
              ticks="36" tick-major="9" labels="N,3,6,E,12,15,S,21,24,W,30,33"
              color="transparent" style="--cth-thickness:4"></cth-knob>
     <code>rotating — the card turns, the index stays</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="20" value-2="70" needle ticks="12" tick-major="3"
              readout="none" label="min · max" color="#019ae6"
              style="--cth-thickness:6"></cth-knob>
@@ -1218,26 +1266,26 @@
   </div>
 </div>
 
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob id="handclock" needle="hand" min="0" max="60" value="0" value-2="0"
              ticks="60" tick-major="5" labels="12,1,2,3,4,5,6,7,8,9,10,11"
              readout="none" color="transparent" style="--cth-thickness:3"></cth-knob>
     <code>needle="hand" + value-2<br>= a live clock face</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob needle="hand" value="72" min="0" max="160" sweep="270"
              ticks="8" tick-major="4" readout="none" label="psi"
              zones="130-160:#fee2e2" color="#019ae6" style="--cth-thickness:5"></cth-knob>
     <code>a hand on a pressure gauge</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob needle="hand" value="6200" min="0" max="9000" sweep="240" start="150"
              ticks="9" tick-major="3" readout="value" label="rpm"
              zones="7000-9000:#fee2e2" color="#dc2626" style="--cth-thickness:5"></cth-knob>
     <code>tachometer — hand + red line</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob needle value="88" min="0" max="100" sweep="270"
              ticks="10" tick-major="5" readout="value" unit="dB" label="peak"
              color="#16a34a" style="--cth-thickness:6"></cth-knob>
@@ -1246,17 +1294,17 @@
 </div>
 
 <h3>Interactive — drag or use arrow keys</h3>
-<div class="grid">
-  <div class="card">
+<div class="tiles">
+  <div class="tile">
     <cth-knob value="60" interactive color="#019ae6" label="Volume" id="vol"></cth-knob>
     <code id="vol-out">cth-change &rarr; —</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="18" min="0" max="30" step="1" sweep="270" interactive
              readout="value" unit="°" color="#f97316" label="Thermostat"></cth-knob>
     <code>min/max/step + sweep="270"</code>
   </div>
-  <div class="card">
+  <div class="tile">
     <cth-knob value="50" interactive disabled color="#019ae6" label="Disabled"></cth-knob>
     <code>disabled</code>
   </div>
@@ -1265,8 +1313,8 @@
 </section>
 
 <!-- =========================== PLAYGROUND =========================== -->
-<section class="band" id="playground">
-  <div class="wrap">
+<section class="section s-page" id="playground">
+  <div class="container container--wide">
     <h2>Driven by your own buttons</h2>
     <p class="sub">
       The element holds no state you cannot reach. Set <code>value</code> from a click
@@ -1402,15 +1450,17 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
 </section>
 
 <!-- =============================== API =============================== -->
-<section class="band" id="api">
-  <div class="wrap">
+<section class="section s-page" id="api">
+  <div class="container container--wide">
     <h2>The whole API</h2>
-    <p class="sub">Forty-two attributes on <code>&lt;cth-knob&gt;</code>, thirteen on
+    <p class="sub">Forty-two attributes on <code>&lt;cth-knob&gt;</code>, twenty on
+      <code>&lt;cth-trace&gt;</code>, fifteen on <code>&lt;cth-heat&gt;</code>, thirteen on
       <code>&lt;cth-level&gt;</code>, six on <code>&lt;cth-radar&gt;</code>, four on
-      <code>&lt;cth-horizon&gt;</code>. That is all of it — there is no second page.</p>
+      <code>&lt;cth-horizon&gt;</code> and two on <code>&lt;cth-rings&gt;</code>. All seven
+      elements, and there is no second page.</p>
 
-    <div class="table-scroll">
-      <table class="api">
+    <div class="table-wrap">
+      <table class="table">
         <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
         <tbody>
           <tr><td><code>value</code></td><td><code>min</code></td><td>Current value. Above <code>max</code>, an inner overflow ring appears.</td></tr>
@@ -1433,7 +1483,7 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
           <tr><td><code>label-radius</code></td><td><code>29.5</code></td><td>How far out the captions sit, in the 0–100 viewBox.</td></tr>
           <tr><td><code>value-2</code></td><td>—</td><td>A second value, drawn as a second pointer alongside the first.</td></tr>
           <tr><td><code>rotating</code></td><td>—</td><td>The card turns under a fixed index, the way a heading indicator works.</td></tr>
-          <tr><td><code>button</code></td><td>—</td><td>The dial becomes a button: focusable, Enter/Space activates it, and it fires <code>cth-press</code>. Add <code>toggle</code> to make it latch, and <code>slot="icon-on"</code> for the pressed glyph.</td></tr>
+          <tr><td><code>button</code></td><td>—</td><td>The dial becomes a button: focusable, Enter/Space activates it, and it fires <code>cth-press</code>. Add <code>toggle</code> to make it latch, <code>pressed</code> to read or set whether it is on, and <code>slot="icon-on"</code> for the pressed glyph.</td></tr>
           <tr><td><code>trend</code></td><td>—</td><td>A rise or a fall shown beside the number, with a drawn arrow and a sign colour. <code>trend-unit</code> suffixes it.</td></tr>
           <tr><td><code>states</code></td><td>—</td><td>A button that cycles: <code>"stop:#ef4444, go:#22c55e"</code>. Each press advances, the lamp and ring take the colour, the caption the name. Read it back as <code>.state</code>.</td></tr>
           <tr><td><code>turn</code></td><td><code>180</code></td><td>The middle swings round to this angle and stays. On a <code>toggle</code> button it swings back when released.</td></tr>
@@ -1453,9 +1503,55 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
       </table>
     </div>
 
+    <h3>&lt;cth-trace&gt;</h3>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>shape</code></td><td><code>line</code></td><td><code>line</code> for a strip, <code>ring</code> to wrap it round a circle.</td></tr>
+          <tr><td><code>mode</code></td><td><code>sweep</code></td><td><code>sweep</code> travels a pen over the old trace; <code>scroll</code> slides the window so the newest sample is always at the end.</td></tr>
+          <tr><td><code>samples</code></td><td><code>240</code></td><td>How many samples the window holds.</td></tr>
+          <tr><td><code>points</code></td><td>—</td><td>A written-out waveform: <code>"12,40,38,90"</code>. No pen, nothing faded.</td></tr>
+          <tr><td><code>beat</code></td><td>—</td><td>Beats per minute of a built-in ECG. Omit to feed it yourself.</td></tr>
+          <tr><td><code>voice</code></td><td>—</td><td>A built-in talker instead: bursts of speech and real silences. Optionally <code>0</code>–<code>1</code> for how loud.</td></tr>
+          <tr><td><code>mirror</code></td><td>—</td><td>The waveform straddles the centre line instead of rising from the floor.</td></tr>
+          <tr><td><code>rate</code></td><td><code>125</code></td><td>Samples per second while self-driving — the paper speed.</td></tr>
+          <tr><td><code>min</code> / <code>max</code></td><td><code>0</code> / <code>100</code></td><td>The vertical scale.</td></tr>
+          <tr><td><code>grid</code></td><td>—</td><td>Graph paper behind the trace, ruled square or polar to match the shape.</td></tr>
+          <tr><td><code>pen</code></td><td>—</td><td><code>pen="none"</code> hides the writing head.</td></tr>
+          <tr><td><code>readout-at</code></td><td><code>top left</code></td><td>Which corner the readout sits in. A resting trace sits low, so the bottom corner is the one place it must not go by default.</td></tr>
+          <tr><td><code>sweep</code> / <code>start</code> / <code>amplitude</code></td><td><code>360</code> / <code>-90</code> / <code>.18</code></td><td>Ring shape only: the arc it covers and how far it deflects.</td></tr>
+          <tr><td><code>readout</code></td><td>auto</td><td>The rate when <code>beat</code> is set, else the last sample. <code>none</code> to hide.</td></tr>
+          <tr><td><code>unit</code> / <code>decimals</code> / <code>label</code> / <code>color</code></td><td>—</td><td>As on <code>&lt;cth-knob&gt;</code>.</td></tr>
+          <tr><td colspan="3" class="t3">Feed it from script with <code>.push(v)</code>; <code>.clear()</code>, <code>.last</code>, <code>.level</code> and <code>.speaking</code> read it back. Height comes from <code>--cth-height</code> and a strip takes its width from the box it sits in — on a trace <code>--cth-width</code> is the pen, not the frame.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>&lt;cth-heat&gt;</h3>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>values</code></td><td>—</td><td>The list: <code>"4,6,9,14,19"</code>. Also <code>.values = [...]</code> from script.</td></tr>
+          <tr><td><code>shape</code></td><td><code>cells</code></td><td><code>cells</code> for blocks of colour, <code>bars</code> for towers standing off a baseline.</td></tr>
+          <tr><td><code>labels</code></td><td>—</td><td>Captions spaced round the ring: <code>"Jan,Feb,…"</code>.</td></tr>
+          <tr><td><code>label-radius</code></td><td><code>49</code> / <code>47</code></td><td>How far out the captions sit, in the 0–100 viewBox.</td></tr>
+          <tr><td><code>scale</code></td><td>5-stop blue→red</td><td>Colour stops the values are mapped across.</td></tr>
+          <tr><td><code>min</code> / <code>max</code></td><td>the data</td><td>The colour domain. Omit to fit the data.</td></tr>
+          <tr><td><code>rows</code></td><td><code>1</code></td><td>Split the list across this many concentric rings.</td></tr>
+          <tr><td><code>sweep</code> / <code>start</code></td><td><code>360</code> / <code>-90</code></td><td>The arc the cells cover.</td></tr>
+          <tr><td><code>interactive</code></td><td>—</td><td>Hovering lifts a cell out of the ring and reads it in the middle.</td></tr>
+          <tr><td><code>readout</code></td><td>auto</td><td>The hovered cell, else the ring’s <code>average</code>; <code>sum</code> for a total, <code>max</code> for the biggest, <code>none</code> to hide.</td></tr>
+          <tr><td><code>unit</code> / <code>decimals</code> / <code>label</code></td><td>—</td><td>As on <code>&lt;cth-knob&gt;</code>.</td></tr>
+          <tr><td colspan="3" class="t3">Length already carries the value, so <code>bars</code> defaults to one colour: pass <code>scale</code> when you want the ramp back. <code>cth-hover</code> fires with <code>{index, value}</code>, and <code>index</code> is <code>-1</code> when the pointer leaves.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
     <h3>&lt;cth-radar&gt;</h3>
-    <div class="table-scroll">
-      <table class="api">
+    <div class="table-wrap">
+      <table class="table">
         <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
         <tbody>
           <tr><td><code>rings</code></td><td><code>4</code></td><td>Concentric range rings.</td></tr>
@@ -1464,7 +1560,7 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
           <tr><td><code>labels</code></td><td>—</td><td>Bearing captions, spaced evenly from north.</td></tr>
           <tr><td><code>blips</code></td><td>—</td><td>Contacts as <code>bearing:range</code> pairs: <code>"45:0.6, 210:0.35"</code>.</td></tr>
           <tr><td><code>interactive</code></td><td>—</td><td>Clicking the scope adds a contact where you clicked.</td></tr>
-          <tr><td colspan="3" style="color:var(--dim)">Under <code>prefers-reduced-motion</code> the sweep parks rather than turning — it stays visible, it just holds still.</td></tr>
+          <tr><td colspan="3" class="t3">Under <code>prefers-reduced-motion</code> the sweep parks rather than turning — it stays visible, it just holds still.</td></tr>
         </tbody>
       </table>
     </div>
@@ -1475,20 +1571,20 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
       needles and zones all still work on them and script still sets their values
       directly. All it solves is the arithmetic of nesting rings evenly.
     </p>
-    <div class="table-scroll">
-      <table class="api">
+    <div class="table-wrap">
+      <table class="table">
         <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
         <tbody>
           <tr><td><code>thickness</code></td><td><code>0.043</code></td><td>Ring weight as a fraction of the box, so every ring gets the same pixel stroke.</td></tr>
           <tr><td><code>gap</code></td><td><code>0.065</code></td><td>Space between rings, also a fraction of the box.</td></tr>
-          <tr><td colspan="3" style="color:var(--dim)">Size comes from <code>--cths-size</code>. Put anything in the middle with <code>slot="center"</code>. A ring the box has no room for is dropped rather than drawn inside out, and the layout redoes itself on resize.</td></tr>
+          <tr><td colspan="3" class="t3">Size comes from <code>--cths-size</code>. Put anything in the middle with <code>slot="center"</code>. A ring the box has no room for is dropped rather than drawn inside out, and the layout redoes itself on resize.</td></tr>
         </tbody>
       </table>
     </div>
 
     <h3>&lt;cth-level&gt;</h3>
-    <div class="table-scroll">
-      <table class="api">
+    <div class="table-wrap">
+      <table class="table">
         <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
         <tbody>
           <tr><td><code>value</code> / <code>min</code> / <code>max</code></td><td><code>0</code> / <code>100</code></td><td>The column and its scale.</td></tr>
@@ -1504,8 +1600,8 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
     </div>
 
     <h3>&lt;cth-horizon&gt;</h3>
-    <div class="table-scroll">
-      <table class="api">
+    <div class="table-wrap">
+      <table class="table">
         <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
         <tbody>
           <tr><td><code>pitch</code></td><td><code>0</code></td><td>Nose-up in degrees. Positive slides the horizon down the face.</td></tr>
@@ -1538,42 +1634,80 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
 </section>
 
 <!-- =============================== LAB =============================== -->
-<section class="band soft">
-  <div class="wrap">
+<section class="section s-sunken">
+  <div class="container container--wide">
     <div class="lab">
       <div>
         <h2>30 dashboards. Seven elements.</h2>
         <p class="sub" style="margin-bottom:0">
           The instrument lab is a stress test disguised as a showcase: aircraft six-packs,
           a submarine sonar, brass steampunk dials, a reactor core, a 96-dial server wall
-          and a world-clock departure board — all driven by <code>&lt;cth-knob&gt;</code>
+          and a world-clock departure board — all built from the seven elements
           and a handful of CSS variables.
         </p>
         <div class="lab-tags">
-          <span>Aviation</span><span>Submarine</span><span>Spacecraft</span><span>Race</span>
-          <span>Steampunk</span><span>Reactor</span><span>Server</span><span>World Clock</span>
-          <span>Kitchen</span><span>+21 more</span>
+          <span class="chip chip--outline">Aviation</span><span class="chip chip--outline">Submarine</span><span class="chip chip--outline">Spacecraft</span><span class="chip chip--outline">Race</span>
+          <span class="chip chip--outline">Steampunk</span><span class="chip chip--outline">Reactor</span><span class="chip chip--outline">Server</span><span class="chip chip--outline">World Clock</span>
+          <span class="chip chip--outline">Kitchen</span><span class="chip chip--outline">+21 more</span>
         </div>
-        <a class="btn primary" href="lab/">Open the instrument lab &rarr;</a>
+        <a class="btn btn--tinted" href="lab/">Open the instrument lab &rarr;</a>
       </div>
-      <div class="lab-art">
-        <cth-knob value="82" sweep="270" ticks="10" color="#019ae6" readout="none"></cth-knob>
-        <cth-knob value="46" color="#16a34a" readout="none"></cth-knob>
-        <cth-knob value="91" sweep="270" color="#ef4444" readout="none"></cth-knob>
-        <cth-knob readout="none" segments="40:#f59e0b, 35:#7c3aed, 25:#334155"></cth-knob>
-        <cth-knob value="67" sweep="180" color="#0891b2" readout="none"></cth-knob>
-        <cth-knob value="30" ticks="24" color="#db2777" readout="none"></cth-knob>
-      </div>
+      <!-- One of each, named. The heading says seven elements, so the art
+           counts them out rather than repeating one of them six times.
+           The dial, the column, the waveform and the rings take the page
+           accent; the heat ring, the scope and the horizon keep their own
+           palettes, because in those three the colour is the reading. -->
+      <ul class="lab-art">
+        <li><cth-knob value="72" sweep="270" ticks="10" readout="none"
+                    style="--cth-value: var(--accent)"></cth-knob><span>cth-knob</span></li>
+        <li><cth-heat readout="none"
+                     values="7,6,5,6,9,13,17,21,24,25,23,19,15,12,10,8"></cth-heat><span>cth-heat</span></li>
+        <li><cth-radar rings="3" spokes="8" blips="40:0.6, 165:0.35, 280:0.72"></cth-radar><span>cth-radar</span></li>
+        <li><cth-horizon pitch="8" roll="-14"></cth-horizon><span>cth-horizon</span></li>
+        <li><cth-level value="64" readout="none" liquid
+                      style="--cthl-fill: var(--accent)"></cth-level><span>cth-level</span></li>
+        <li><cth-rings>
+              <cth-knob value="78" readout="none" style="--cth-value: var(--accent)"></cth-knob>
+              <cth-knob value="52" readout="none" style="--cth-value: var(--accent-2)"></cth-knob>
+              <cth-knob value="34" readout="none" style="--cth-value: var(--info)"></cth-knob>
+            </cth-rings><span>cth-rings</span></li>
+        <li class="wide2"><cth-trace mirror pen="none" readout="none"
+                      points="46,52,49,58,51,47,53,88,12,64,50,49,54,50,47,52,50,55,48,51,72,30,58,50"
+                      style="--cth-trace: var(--accent)"></cth-trace><span>cth-trace</span></li>
+      </ul>
     </div>
   </div>
 </section>
 
-<footer>
-  <div class="wrap">
-    <span>cth-instrument — started 19 June 2013, rewritten 2026.</span>
-    <span class="sp"><a href="https://github.com/tanghoong/cth-instrument">GitHub</a></span>
-    <span><a href="lab/">Lab</a></span>
-    <span>MIT</span>
+</main>
+
+<footer class="site-foot">
+  <div class="container container--wide">
+    <div class="foot-grid">
+      <div>
+        <p class="foot-name">cth-instrument</p>
+        <p class="foot-role">Seven SVG instruments as custom elements. Started 19 June 2013, rewritten 2026.</p>
+      </div>
+      <div>
+        <p class="foot-h">This page</p>
+        <ul class="foot-list">
+          <li><a href="#start">Quick start</a></li>
+          <li><a href="#examples">Examples</a></li>
+          <li><a href="#playground">Playground</a></li>
+          <li><a href="#api">API</a></li>
+          <li><a href="lab/">Instrument lab</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="foot-h">Elsewhere</p>
+        <ul class="foot-list">
+          <li><a href="https://github.com/tanghoong/cth-instrument">GitHub</a></li>
+          <li><a href="https://www.tanghoong.com/">www.tanghoong.com</a></li>
+          <li><a href="https://design.tanghoong.com/">design.tanghoong.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="foot-legal">&copy; 2027 Charlie Tang Hoong. MIT licensed.</p>
   </div>
 </footer>
 
@@ -1587,8 +1721,8 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
     const b = document.createElement('div');
     b.style.cssText = 'position:fixed;inset:0 0 auto 0;padding:1rem 1.25rem;background:#b91c1c;color:#fff;font:14px/1.5 ui-monospace,monospace;z-index:99';
     b.innerHTML = '<strong>cth-instrument failed to load.</strong> Serve from the repository root, not from a subfolder &mdash;'
-      + ' <code>php -S localhost:8000</code> in the folder that contains <code>src/</code>, then open'
-      + ' <code>http://localhost:8000/</code>. Opening this file over <code>file://</code> will not work either.';
+      + ' <code>npm run dev</code> in the folder that contains <code>src/</code>, then open'
+      + ' <code>http://127.0.0.1:8765/</code>. Opening this file over <code>file://</code> will not work either.';
     document.body.append(b);
   }, 1000);
 </script>
@@ -1618,7 +1752,7 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
   // The bands are contiguous, so "which sections intersect a strip" is ambiguous at
   // every boundary — the one above always clips in. Ask the simpler question instead:
   // which is the LAST section whose top has passed under the header.
-  const navLinks = [...document.querySelectorAll('.site-nav a[href^="#"]')];
+  const navLinks = [...document.querySelectorAll('.head-nav a[href^="#"]')];
   const sections = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
   if (sections.length) {
     const mark = () => {
@@ -2089,6 +2223,9 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
   swPaint();
   requestAnimationFrame(frame);
 </script>
+
+<script src="https://design.tanghoong.com/assets/js/theme.js" defer></script>
+<script src="https://design.tanghoong.com/assets/js/nav.js" defer></script>
 
 </body>
 </html>
