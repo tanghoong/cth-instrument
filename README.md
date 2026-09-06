@@ -1,13 +1,13 @@
-# cj-knob
+# cth-instrument
 
 A knob, gauge and meter as a single custom element. **Zero runtime dependencies, no build step, no framework.**
 
 ```html
-<script type="module" src="cj-knob/src/cj-knob.js"></script>
+<script type="module" src="cth-instrument/src/cth-knob.js"></script>
 
-<cj-knob value="78"></cj-knob>
-<cj-knob value="64" sweep="270" color="#7c3aed" label="Gauge"></cj-knob>
-<cj-knob value="60" interactive label="Volume"></cj-knob>
+<cth-knob value="78"></cth-knob>
+<cth-knob value="64" sweep="270" color="#7c3aed" label="Gauge"></cth-knob>
+<cth-knob value="60" interactive label="Volume"></cth-knob>
 ```
 
 Because it is a custom element it works the same in plain HTML, React, Vue, Svelte, Astro or anything else that renders DOM.
@@ -24,7 +24,7 @@ the very moment the element upgrades, which is exactly too late to have helped.
 So it is a stylesheet:
 
 ```html
-<link rel="stylesheet" href="cj-knob/src/cj-skeleton.css">
+<link rel="stylesheet" href="cth-instrument/src/cth-skeleton.css">
 ```
 
 It reserves each element's exact box from the same custom properties the element
@@ -39,18 +39,18 @@ Progress, the reasoning behind the awkward parts, and what is next:
 ## Install
 
 ```sh
-npm install cj-knob
+npm install cth-instrument
 ```
 
 ```js
-import 'cj-knob';           // registers <cj-knob>
-import { CJKnob } from 'cj-knob';  // if you need the class
+import 'cth-instrument';           // registers <cth-knob>
+import { CTHKnob } from 'cth-instrument';  // if you need the class
 ```
 
 Or drop it in with no tooling at all:
 
 ```html
-<script type="module" src="https://esm.sh/cj-knob"></script>
+<script type="module" src="https://esm.sh/cth-instrument"></script>
 ```
 
 ## Attributes
@@ -66,7 +66,7 @@ Or drop it in with no tooling at all:
 | `unit` | `%` / `""` | Suffix after the number. |
 | `decimals` | `0` | Decimal places in the readout. |
 | `label` | — | Caption under the number. Also used as the accessible name. |
-| `color` | — | Shorthand for `--cj-value`. |
+| `color` | — | Shorthand for `--cth-value`. |
 | `interactive` | — | Makes it draggable and keyboard-operable. |
 | `step` | `1` | Increment for dragging and arrow keys. |
 | `disabled` | — | Dims it and ignores input. |
@@ -78,7 +78,7 @@ Or drop it in with no tooling at all:
 | `rotating` | — | The card turns under a fixed index, the way a heading indicator works. |
 | `range` | — | Two handles with a band between them: `range="20 70"`. Reads back as `{low, high}`. |
 | `endless` | — | No ends: dragging reports movement, so the value keeps counting past `max` while the ring wraps. |
-| `button` | — | The dial becomes a button: focusable, Enter/Space activates it, fires `cj-press`. |
+| `button` | — | The dial becomes a button: focusable, Enter/Space activates it, fires `cth-press`. |
 | `toggle` | — | Makes a `button` latch. Pairs with `slot="icon-on"` for the pressed glyph. |
 | `pressed` | — | Whether a `toggle` button is on. Also `.pressed`. |
 | `gas` | — | Fills the face with drifting haze whose density is the value. |
@@ -91,7 +91,7 @@ Or drop it in with no tooling at all:
 | `pulse` | `60` | A ring that swells and fades at this many beats per minute. `pulse="auto"` takes the rate from the dial's own reading. |
 | `inset` | `low` | Where `slot="inset"` content sits: `low` under the number, `fill` up the middle. |
 | `ballistics` | — | Meter ballistics: `"attack release"` in seconds, one number for both. |
-| `peak-hold` | `1.2` | Seconds to hold the highest reading before it falls. Draws a marker in `--cj-peak`. |
+| `peak-hold` | `1.2` | Seconds to hold the highest reading before it falls. Draws a marker in `--cth-peak`. |
 | `peak-fall` | — | How fast the held peak decays, in value units per second. |
 | `liquid` | — | Fills the dial with fluid whose surface sits at the value, with drifting waves. Good for tanks, fuel, reagents. |
 | `gradient` | — | A colour ramp that follows the arc: `"#22c55e,#f59e0b,#ef4444"`. Colour maps to the scale, so the value reveals part of the ramp rather than compressing all of it. |
@@ -107,30 +107,30 @@ Properties `value`, `min`, `max`, `step`, `interactive` and the read-only `ratio
 Everything is a CSS custom property, so you theme it from the outside — no options object:
 
 ```css
-cj-knob {
-  --cj-size: 180px;
-  --cj-thickness: 10;      /* unitless, in a 0-100 viewBox */
-  --cj-value: #019ae6;
-  --cj-track: #d9dce1;
-  --cj-benchmark: #94cefe;
-  --cj-text: #14161a;
-  --cj-muted: #6b7280;
-  --cj-num-size: 2rem;     /* defaults to 20% of --cj-size, floored at 13px */
-  --cj-label-size: .8rem;  /* defaults to 8.2% of --cj-size, floored at 9px  */
-  --cj-needle: #e0433f;     /* the pointer */
-  --cj-mark: #6b7280;       /* bearing captions */
-  --cj-mark-major: #14161a; /* every fourth caption */
-  --cj-mark-size: 7px;      /* in the 0-100 viewBox, so it scales */
-  --cj-needle-2: #2f7ae5;   /* the second pointer */
-  --cj-liquid: #35a7ff;     /* the fluid, and --cj-liquid-back behind it */
-  --cj-gas: #9ca3af;        /* the haze a gas dial fills with */
-  --cj-icon-size: 3rem;     /* 20% of --cj-size beside a number, 34% without one */
-  --cj-hit: rgba(127,127,127,.13);  /* the press highlight on a button dial */
-  --cj-pulse: currentColor; /* the breathing ring; defaults to --cj-value */
-  --cj-handle: #ffffff;     /* the two range handles */
-  --cj-peak: #ffc61a;       /* the held peak marker */
-  --cj-duration: 600ms;
-  --cj-easing: cubic-bezier(.22,.61,.36,1);
+cth-knob {
+  --cth-size: 180px;
+  --cth-thickness: 10;      /* unitless, in a 0-100 viewBox */
+  --cth-value: #019ae6;
+  --cth-track: #d9dce1;
+  --cth-benchmark: #94cefe;
+  --cth-text: #14161a;
+  --cth-muted: #6b7280;
+  --cth-num-size: 2rem;     /* defaults to 20% of --cth-size, floored at 13px */
+  --cth-label-size: .8rem;  /* defaults to 8.2% of --cth-size, floored at 9px  */
+  --cth-needle: #e0433f;     /* the pointer */
+  --cth-mark: #6b7280;       /* bearing captions */
+  --cth-mark-major: #14161a; /* every fourth caption */
+  --cth-mark-size: 7px;      /* in the 0-100 viewBox, so it scales */
+  --cth-needle-2: #2f7ae5;   /* the second pointer */
+  --cth-liquid: #35a7ff;     /* the fluid, and --cth-liquid-back behind it */
+  --cth-gas: #9ca3af;        /* the haze a gas dial fills with */
+  --cth-icon-size: 3rem;     /* 20% of --cth-size beside a number, 34% without one */
+  --cth-hit: rgba(127,127,127,.13);  /* the press highlight on a button dial */
+  --cth-pulse: currentColor; /* the breathing ring; defaults to --cth-value */
+  --cth-handle: #ffffff;     /* the two range handles */
+  --cth-peak: #ffc61a;       /* the held peak marker */
+  --cth-duration: 600ms;
+  --cth-easing: cubic-bezier(.22,.61,.36,1);
 }
 ```
 
@@ -174,17 +174,17 @@ Light and dark palettes are built in via `prefers-color-scheme`; anything you se
 Put anything you like in the middle with the `icon` slot:
 
 ```html
-<cj-knob value="68" readout="none">
+<cth-knob value="68" readout="none">
   <img slot="icon" src="sun.svg" alt="">
-</cj-knob>
+</cth-knob>
 ```
 
 ## Events
 
-Interactive knobs fire `cj-input` continuously and `cj-change` when the interaction settles. Both carry `detail.value` and bubble.
+Interactive knobs fire `cth-input` continuously and `cth-change` when the interaction settles. Both carry `detail.value` and bubble.
 
 ```js
-knob.addEventListener('cj-change', (e) => console.log(e.detail.value));
+knob.addEventListener('cth-change', (e) => console.log(e.detail.value));
 ```
 
 ## Accessibility
@@ -203,9 +203,9 @@ asymmetry is what makes a needle readable on music, and it is what `ballistics` 
 you — two time constants, one for rising and one for falling.
 
 ```html
-<cj-knob sweep="100" needle="hand" readout="none"
+<cth-knob sweep="100" needle="hand" readout="none"
          ballistics=".02 .5" peak-hold="1"
-         ticks="10" tick-major="5" zones="80-100:#fee2e2"></cj-knob>
+         ticks="10" tick-major="5" zones="80-100:#fee2e2"></cth-knob>
 ```
 
 `peak-hold` adds a marker parked at the highest reading, held for that many seconds
@@ -219,14 +219,14 @@ once the needle has settled and the peak has caught up.
 ### The dial as a button
 
 ```html
-<cj-knob button toggle value="37" readout="none" label="Midnight City">
+<cth-knob button toggle value="37" readout="none" label="Midnight City">
   <span slot="icon">▶</span>
   <span slot="icon-on">❚❚</span>
-</cj-knob>
+</cth-knob>
 ```
 
 `button` makes the whole face a control: focusable, activated by click, Enter or
-Space, and `role="button"` to anything reading the page. It fires `cj-press`
+Space, and `role="button"` to anything reading the page. It fires `cth-press`
 with `{pressed}`. `toggle` makes it latch and keeps `aria-pressed` in step, and
 `slot="icon-on"` is the glyph shown while it is down — which is a play/pause
 button with no script at all, the ring left free to carry progress.
@@ -238,10 +238,10 @@ not both: one wants a click and the other wants a drag.
 ### The dial as a turntable
 
 ```html
-<cj-knob button toggle spin="33" value="21" readout="none" label="Blue Train">
+<cth-knob button toggle spin="33" value="21" readout="none" label="Blue Train">
   <svg slot="icon" viewBox="0 0 100 100">…a record…</svg>
   <svg slot="icon-on" viewBox="0 0 100 100">…the same record…</svg>
-</cj-knob>
+</cth-knob>
 ```
 
 `spin` turns whatever is in the middle, in revolutions per minute; bare `spin`
@@ -271,24 +271,24 @@ several things they are, and for those the ring is a lamp and the press is a
 selector:
 
 ```html
-<cj-knob button readout="none"
-         states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cj-knob>
+<cth-knob button readout="none"
+         states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cth-knob>
 ```
 
 Each press advances one step and wraps. The lamp and the ring take the state's
 colour, the caption takes its name unless you gave the dial one of its own, and
-`cj-press` carries `{state, name}`. Read it back as `.state`.
+`cth-press` carries `{state, name}`. Read it back as `.state`.
 
 ### Rises and falls
 
 ```html
-<cj-knob value="68" readout="value" decimals="2" unit="$" label="ACME"
-         trend="1.84" trend-unit="%"></cj-knob>
+<cth-knob value="68" readout="value" decimals="2" unit="$" label="ACME"
+         trend="1.84" trend-unit="%"></cth-knob>
 ```
 
 A price is two readings — where it is and which way it went — and a dial that
 only shows the first is half a dial. `trend` puts the move under the number
-with an arrow and a sign colour (`--cj-up`, `--cj-down`, `--cj-flat`). The
+with an arrow and a sign colour (`--cth-up`, `--cth-down`, `--cth-flat`). The
 arrow is drawn rather than typed: a glyph is at the mercy of whatever font the
 page happens to be in, and a triangle that renders as a box on one machine is
 not a trend. The delta drops its own sign, because the arrow is already
@@ -301,9 +301,9 @@ move rather than `spin`'s continuous one. On a `toggle` button it swings back
 when released, which is a day/night face in markup:
 
 ```html
-<cj-knob button toggle turn="180" readout="none" label="day">
+<cth-knob button toggle turn="180" readout="none" label="day">
   <svg slot="icon" viewBox="0 0 100 100">…sky above, night below…</svg>
-</cj-knob>
+</cth-knob>
 ```
 
 ### Gas
@@ -312,8 +312,8 @@ Liquid has a surface and a solid has an edge. A gas has neither, so the only
 thing left to carry a value is how much of the dial is occupied by it:
 
 ```html
-<cj-knob gas value="26" readout="value" unit="ppm" label="CO₂"
-         style="--cj-gas:#a3e635"></cj-knob>
+<cth-knob gas value="26" readout="value" unit="ppm" label="CO₂"
+         style="--cth-gas:#a3e635"></cth-knob>
 ```
 
 Eleven blurred blobs are scattered on the golden angle so they never band, and
@@ -329,36 +329,36 @@ face itself is the vessel. `liquid` fills it, and a thermometer is just that
 plus graduations.
 
 ```html
-<cj-knob value="62" liquid readout="value" unit="°C" label="coolant"
-         ticks="20" tick-major="5" style="--cj-liquid:#35a7ff"></cj-knob>
+<cth-knob value="62" liquid readout="value" unit="°C" label="coolant"
+         ticks="20" tick-major="5" style="--cth-liquid:#35a7ff"></cth-knob>
 ```
 
 ### Putting something inside the face
 
 A dial answers *how much*. A trace beside it answers *and how has it been going*.
-Putting the second inside the first is one glance instead of two, so `<cj-knob>`
+Putting the second inside the first is one glance instead of two, so `<cth-knob>`
 has a slot for it:
 
 ```html
-<cj-knob value="72" min="40" max="180" readout="value" unit="bpm" label="heart" pulse="72">
-  <cj-trace slot="inset" beat="72" readout="none" pen="none"
-            style="--cj-height:40px"></cj-trace>
-</cj-knob>
+<cth-knob value="72" min="40" max="180" readout="value" unit="bpm" label="heart" pulse="72">
+  <cth-trace slot="inset" beat="72" readout="none" pen="none"
+            style="--cth-height:40px"></cth-trace>
+</cth-knob>
 
-<cj-knob value="62" readout="none" inset="fill" ticks="24" tick-major="6">
-  <cj-level slot="inset" value="62" liquid bulb style="--cjl-height:96px"></cj-level>
-</cj-knob>
+<cth-knob value="62" readout="none" inset="fill" ticks="24" tick-major="6">
+  <cth-level slot="inset" value="62" liquid bulb style="--cthl-height:96px"></cth-level>
+</cth-knob>
 ```
 
 The knob lays the slotted element out and nothing more — it stays an ordinary
-element you style and script directly, the same bargain `<cj-rings>` makes. What
+element you style and script directly, the same bargain `<cth-rings>` makes. What
 it solves is the arithmetic: the room inside a ring is a circle, so a box low on
 the face is much narrower than one across the middle, and the defaults are the
 deepest and widest box whose corners all still fall inside the track. With
 `inset="low"` the number and its label lift out of the way, and the chart does
 not lift with them — or the two would never come apart. Content taller than the
 region is clipped rather than allowed to hang out through the ring, so set the
-child's own height (`--cj-height`, `--cjl-height`) to about a fifth of the dial.
+child's own height (`--cth-height`, `--cthl-height`) to about a fifth of the dial.
 
 `pulse="72"` breathes a ring at 72 beats a minute. It carries no number — it is
 there so the rhythm is legible from across the room, where the digits are not.
@@ -369,14 +369,14 @@ Under `prefers-reduced-motion` it parks as a still ring rather than vanishing.
 Two ways of taking input that a single value cannot express.
 
 ```html
-<cj-knob range="18 26" min="10" max="32" step=".5" interactive></cj-knob>
-<cj-knob endless value="0" readout="value" interactive></cj-knob>
+<cth-knob range="18 26" min="10" max="32" step=".5" interactive></cth-knob>
+<cth-knob endless value="0" readout="value" interactive></cth-knob>
 ```
 
 A **range** draws a band between two handles instead of a fill from the start of
 the arc. Drag either handle; they may meet but never cross, and a drag keeps the
 handle it grabbed even when the pointer passes the other one. Arrow keys move the
-high handle, shift+arrows the low one. `cj-input` and `cj-change` carry
+high handle, shift+arrows the low one. `cth-input` and `cth-change` carry
 `{low, high}` instead of `{value}`. Read and write it from script as `.range`,
 which takes `[20, 70]` or `{low: 20, high: 70}`.
 
@@ -387,21 +387,21 @@ The running total is kept unrounded and only the committed value is snapped to
 `step`; rounding the total itself would let each small movement round up, and a
 slow half-turn would arrive as two thirds of one.
 
-## `<cj-rings>`
+## `<cth-rings>`
 
 Concentric knobs without the arithmetic. It lays out; it does not draw — the children
 stay ordinary knobs, so ticks, gradients, needles and zones all still work on them and
 script still sets their values directly.
 
 ```html
-<script type="module" src="cj-knob/src/cj-rings.js"></script>
+<script type="module" src="cth-instrument/src/cth-rings.js"></script>
 
-<cj-rings style="--cjs-size:160px">
-  <cj-knob readout="none" max="12" value="3"  color="#e8b64c"></cj-knob>
-  <cj-knob readout="none" max="60" value="42" color="#64b5f6"></cj-knob>
-  <cj-knob readout="none" max="60" value="17" color="#ef6c6c"></cj-knob>
+<cth-rings style="--cths-size:160px">
+  <cth-knob readout="none" max="12" value="3"  color="#e8b64c"></cth-knob>
+  <cth-knob readout="none" max="60" value="42" color="#64b5f6"></cth-knob>
+  <cth-knob readout="none" max="60" value="17" color="#ef6c6c"></cth-knob>
   <div slot="center">03:42:17</div>
-</cj-rings>
+</cth-rings>
 ```
 
 | Attribute | Default | Description |
@@ -409,23 +409,23 @@ script still sets their values directly.
 | `thickness` | `0.043` | Ring weight as a fraction of the box, so every ring gets the same pixel stroke. |
 | `gap` | `0.065` | Space between rings, also a fraction of the box. |
 
-Size comes from `--cjs-size`; the middle takes anything you put in `slot="center"`.
+Size comes from `--cths-size`; the middle takes anything you put in `slot="center"`.
 A ring the box has no room left for is dropped rather than drawn inside out, and the
 layout redoes itself on resize, so one stack of markup works at any size.
 
-Nesting rings by hand means choosing a `--cj-size` and a `--cj-thickness` per ring so
+Nesting rings by hand means choosing a `--cth-size` and a `--cth-thickness` per ring so
 the gaps and the weights come out even — which is easy to get subtly wrong. The world
 clock and the reactor core in the lab were both hand-tuned that way; converting them
 produced almost exactly the same radii, but with stroke weights that are actually
 equal, which they had not been.
 
-## `<cj-trace>`
+## `<cth-trace>`
 
 ```html
-<script type="module" src="./src/cj-trace.js"></script>
+<script type="module" src="./src/cth-trace.js"></script>
 
-<cj-trace beat="72" label="heart" grid></cj-trace>
-<cj-trace shape="ring" beat="66"></cj-trace>
+<cth-trace beat="72" label="heart" grid></cth-trace>
+<cth-trace shape="ring" beat="66"></cth-trace>
 ```
 
 Every other element here answers *what is the value now*. A trace answers *what
@@ -443,7 +443,7 @@ that turn an index into a point differ.
 your own data, `push(v)` one sample at a time:
 
 ```js
-const trace = document.querySelector('cj-trace');
+const trace = document.querySelector('cth-trace');
 setInterval(() => trace.push(load()), 25);
 ```
 
@@ -469,11 +469,11 @@ which reads as the worst possible thing.
 
 A wash sits under the readout, dark at its corner and gone by the middle. The
 trace runs behind the text and the two are the same weight of line, so without it
-the digits and the waveform interleave. `--cj-scrim` is the colour; it flips for
+the digits and the waveform interleave. `--cth-scrim` is the colour; it flips for
 a light page on its own.
 | `sweep` / `start` / `amplitude` | `360` / `-90` / `.18` | Ring shape only: the arc it covers and how far it deflects. |
 | `readout` | auto | The rate when `beat` is set, else the last sample. `none` to hide. |
-| `unit` / `decimals` / `label` / `color` | — | As on `<cj-knob>`. |
+| `unit` / `decimals` / `label` / `color` | — | As on `<cth-knob>`. |
 
 `voice mirror` is the other kind of trace — a sound wave rather than a
 heartbeat, and it is meant for the inside of a dial rather than as a strip of its
@@ -481,16 +481,16 @@ own. It jumps while someone is talking and lies flat while nobody is, and the
 flat part is the point: a nearly-still line still reads as noise, so silence
 writes the baseline exactly. `.level` is how loud the talker is right now
 (exactly `0` between phrases), `.speaking` is the same thing as a boolean, and
-`cj-speech` fires on each change — which is enough to drive a ring around it:
+`cth-speech` fires on each change — which is enough to drive a ring around it:
 
 ```html
-<cj-knob id="listening" value="0" readout="none" label="listening">
-  <cj-trace slot="inset" voice mirror pen="none" style="--cj-height:34px"></cj-trace>
-</cj-knob>
+<cth-knob id="listening" value="0" readout="none" label="listening">
+  <cth-trace slot="inset" voice mirror pen="none" style="--cth-height:34px"></cth-trace>
+</cth-knob>
 ```
 
 ```js
-const trace = listening.querySelector('cj-trace');
+const trace = listening.querySelector('cth-trace');
 const tick = () => { listening.value = trace.level * 100; requestAnimationFrame(tick); };
 tick();
 ```
@@ -503,17 +503,17 @@ like it never stops talking.
 Properties: `.push(v)`, `.clear()`, `.last`, `.level`, `.speaking`, `.samples`,
 `.min`, `.max`, `.beat`.
 
-Tokens: `--cj-trace`, `--cj-trace-stale`, `--cj-stale-opacity`, `--cj-pen`, `--cj-grid`,
-`--cj-grid-step`, `--cj-face`, `--cj-width`, `--cj-height`, `--cj-size`.
+Tokens: `--cth-trace`, `--cth-trace-stale`, `--cth-stale-opacity`, `--cth-pen`, `--cth-grid`,
+`--cth-grid-step`, `--cth-face`, `--cth-width`, `--cth-height`, `--cth-size`.
 
-## `<cj-heat>`
+## `<cth-heat>`
 
 ```html
-<script type="module" src="./src/cj-heat.js"></script>
+<script type="module" src="./src/cth-heat.js"></script>
 
-<cj-heat values="7,6,6,5,8,11,14,17,20,22,24,25,24,22,19,16,14,12,10,9,8,7"
-         label="a day" unit="°C" interactive></cj-heat>
-<cj-heat rows="7" label="a week"></cj-heat>
+<cth-heat values="7,6,6,5,8,11,14,17,20,22,24,25,24,22,19,16,14,12,10,9,8,7"
+         label="a day" unit="°C" interactive></cth-heat>
+<cth-heat rows="7" label="a week"></cth-heat>
 ```
 
 A knob shows one value on a ring. This shows a hundred of them on the same ring,
@@ -543,17 +543,17 @@ them, which matters when there are three hundred.
 | `sweep` / `start` | `360` / `-90` | The arc the cells cover. |
 | `interactive` | — | Hovering lifts a cell out of the ring and reads it in the middle. |
 | `readout` | auto | The hovered cell, else the ring's `average`; `sum` for a total, `max` for the biggest, `none` to hide. |
-| `unit` / `decimals` / `label` | — | As on `<cj-knob>`. |
+| `unit` / `decimals` / `label` | — | As on `<cth-knob>`. |
 
 `shape="bars"` draws each value as a tower instead of a block, which is what
 turns a year into something you can read like a skyline:
 
 ```html
-<cj-heat shape="bars" label="2025" unit="mm" interactive></cj-heat>
+<cth-heat shape="bars" label="2025" unit="mm" interactive></cth-heat>
 ```
 
 ```js
-document.querySelector('cj-heat').values = rainfallByDay;   // 365 numbers
+document.querySelector('cth-heat').values = rainfallByDay;   // 365 numbers
 ```
 
 Length already carries the value, so bars default to **one colour** rather than a
@@ -569,28 +569,28 @@ without a ceiling a tall tower only looks tall; against one you can see how tall
 readout, which is how the year above gets a year and a total stacked:
 
 ```html
-<cj-heat shape="bars" readout="none" scale="#22c55e"
+<cth-heat shape="bars" readout="none" scale="#22c55e"
          labels="Dec,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov">
   <div slot="center"><b>2025</b><span>6,862</span></div>
-</cj-heat>
+</cth-heat>
 ```
 
-Properties: `.values`, `.rows`, `.hot`. Event: `cj-hover` with
+Properties: `.values`, `.rows`, `.hot`. Event: `cth-hover` with
 `{index, value}` — `index` is `-1` when the pointer leaves the cells.
 
-Tokens: `--cj-size`, `--cj-thickness`, `--cj-gap`, `--cj-empty`.
+Tokens: `--cth-size`, `--cth-thickness`, `--cth-gap`, `--cth-empty`.
 
-## `<cj-level>`
+## `<cth-level>`
 
 The straight tube a ring cannot give you: a tank, a cylinder, a thermometer. Same
-liquid engine as `<cj-knob liquid>`, in the container the quantity actually lives in,
+liquid engine as `<cth-knob liquid>`, in the container the quantity actually lives in,
 with a scale you read off the side.
 
 ```html
-<script type="module" src="cj-knob/src/cj-level.js"></script>
+<script type="module" src="cth-instrument/src/cth-level.js"></script>
 
-<cj-level value="62" unit="L" label="fryer oil" liquid ticks="10" tick-major="5"></cj-level>
-<cj-level value="36.6" min="34" max="42" decimals="1" unit="°C" bulb liquid></cj-level>
+<cth-level value="62" unit="L" label="fryer oil" liquid ticks="10" tick-major="5"></cth-level>
+<cth-level value="36.6" min="34" max="42" decimals="1" unit="°C" bulb liquid></cth-level>
 ```
 
 | Attribute | Default | Description |
@@ -601,23 +601,23 @@ with a scale you read off the side.
 | `ticks` / `tick-major` | — | Graduations down the side, every Nth one labelled in value units. |
 | `zones` | — | Bands painted *over* the column, so a low-level warning tints the fluid sitting in it. |
 | `readout` | `value` | `value`, `percent` or `none`. |
-| `unit` / `decimals` / `label` | — | As on `<cj-knob>`. |
-| `color` | — | Shorthand for `--cjl-fill`. |
+| `unit` / `decimals` / `label` | — | As on `<cth-knob>`. |
+| `color` | — | Shorthand for `--cthl-fill`. |
 
-Height comes from `--cjl-height` and the width follows. Theme with `--cjl-fill`,
-`--cjl-fill-back`, `--cjl-tube`, `--cjl-wall` and `--cjl-tick`.
+Height comes from `--cthl-height` and the width follows. Theme with `--cthl-fill`,
+`--cthl-fill-back`, `--cthl-tube`, `--cthl-wall` and `--cthl-tick`.
 
-## `<cj-radar>`
+## `<cth-radar>`
 
 A knob describes one value on a rim; a radar describes many contacts across a whole
 field. Different geometry and a different API, so it is a sibling element rather than
 a mode — import it only if you want it.
 
 ```html
-<script type="module" src="cj-knob/src/cj-radar.js"></script>
+<script type="module" src="cth-instrument/src/cth-radar.js"></script>
 
-<cj-radar period="4" rings="4" spokes="8" labels="N,E,S,W"
-          blips="35:0.62, 118:0.34, 214:0.78"></cj-radar>
+<cth-radar period="4" rings="4" spokes="8" labels="N,E,S,W"
+          blips="35:0.62, 118:0.34, 214:0.78"></cth-radar>
 ```
 
 | Attribute | Default | Description |
@@ -629,8 +629,8 @@ a mode — import it only if you want it.
 | `blips` | — | Contacts as `bearing:range` pairs, range 0 at the centre to 1 at the rim. |
 | `interactive` | — | Clicking the scope adds a contact where you clicked. |
 
-Tune the sweep with `--cjr-tail` (how far the luminous trail reaches behind the leading
-line) and `--cjr-fade` (how long a contact stays lit after a pass).
+Tune the sweep with `--cthr-tail` (how far the luminous trail reaches behind the leading
+line) and `--cthr-fade` (how long a contact stays lit after a pass).
 
 Contacts are also a property, so they do not have to go through an attribute:
 
@@ -641,11 +641,11 @@ radar.scatter(6);
 radar.clearBlips();
 
 // the sweep lights each contact as it crosses it
-radar.addEventListener("cj-detect", (e) => console.log(e.detail.bearing));
+radar.addEventListener("cth-detect", (e) => console.log(e.detail.bearing));
 ```
 
-Theme it with `--cjr-field`, `--cjr-grid`, `--cjr-beam`, `--cjr-blip`, `--cjr-mark`
-and `--cjr-size`. With no `period` the beam is not drawn at all and the contacts
+Theme it with `--cthr-field`, `--cthr-grid`, `--cthr-beam`, `--cthr-blip`, `--cthr-mark`
+and `--cthr-size`. With no `period` the beam is not drawn at all and the contacts
 carry their own contrast.
 
 The sweep winds up when it starts and coasts to a halt when it stops, rather than
@@ -657,16 +657,16 @@ visible, it just holds still. On Windows that is Settings → Accessibility → 
 effects → Animation effects; on macOS, System Settings → Accessibility → Display →
 Reduce motion.
 
-## `<cj-horizon>`
+## `<cth-horizon>`
 
 The artificial horizon an aircraft shows you: sky over ground, tipping with bank and
 sliding with pitch, read against a fixed aircraft symbol. Two angles across a whole
 face rather than one number on a rim, so it is a third element rather than a knob mode.
 
 ```html
-<script type="module" src="cj-knob/src/cj-horizon.js"></script>
+<script type="module" src="cth-instrument/src/cth-horizon.js"></script>
 
-<cj-horizon pitch="8" roll="-20"></cj-horizon>
+<cth-horizon pitch="8" roll="-20"></cth-horizon>
 ```
 
 | Attribute | Default | Description |
@@ -678,11 +678,11 @@ face rather than one number on a rim, so it is a third element rather than a kno
 
 `pitch` and `roll` are also properties, and `.attitude` returns the state in words
 (`"climbing, left bank"`) — which is what the element puts in its own `aria-label`.
-Theme it with `--cjh-sky`, `--cjh-ground`, `--cjh-craft`, `--cjh-index` and `--cjh-size`.
+Theme it with `--cthh-sky`, `--cthh-ground`, `--cthh-craft`, `--cthh-index` and `--cthh-size`.
 
 ## The instrument lab
 
-`lab/` is 30 full-screen dashboards. Every dial on every one of them is the same `<cj-knob>` —
+`lab/` is 30 full-screen dashboards. Every dial on every one of them is the same `<cth-knob>` —
 the only thing that changes is the CSS custom properties and the numbers fed in.
 
 Open `lab/` and switch panels from the header. Each page also stands alone at `lab/aviation.html`
@@ -705,7 +705,7 @@ declarative wrapper, so each panel is just a theme and a `tick()`:
 
 ```js
 buildPanel({
-  title: 'host cj-prod-01 — simulation',
+  title: 'host cth-prod-01 — simulation',
   status: [{ id: 'load', label: 'load', value: '—' }],
   rows: [{ size: 'lg', items: [
     { id: 'cpu', cap: 'CPU', min: 0, max: 100, sweep: 270, readout: 'value',
@@ -721,7 +721,7 @@ concentric clock (three knobs on one grid cell), the neon glow (`::part(value)` 
 
 ## Demo & tests
 
-The demo lives at the repository root so that `./src/cj-knob.js` never points outside the document root. **Serve from the repo root** (any static server works: `npm run dev`, `php -S localhost:8000`, `python -m http.server`) and open `/`. Serving from a subfolder, or opening the file over `file://`, breaks the ES module import.
+The demo lives at the repository root so that `./src/cth-knob.js` never points outside the document root. **Serve from the repo root** (any static server works: `npm run dev`, `php -S localhost:8000`, `python -m http.server`) and open `/`. Serving from a subfolder, or opening the file over `file://`, breaks the ES module import.
 
 ```sh
 npm run dev     # then open http://127.0.0.1:8765/
@@ -733,7 +733,7 @@ npm test        # 304 Playwright checks: geometry, needle, radar, horizon, keybo
 Any browser with custom elements and shadow DOM — Chrome/Edge 67+, Firefox 63+,
 Safari 12.1+. No polyfills, no transpiler.
 
-The one exception is `<cj-radar>`, whose phosphor tail is a CSS `conic-gradient`
+The one exception is `<cth-radar>`, whose phosphor tail is a CSS `conic-gradient`
 built with `color-mix`, so the sweep needs Chrome/Edge 111+, Firefox 113+ or
 Safari 16.2+. The scope, its rings and its blips draw fine below that; only the
 fading tail behind the beam does not.
@@ -744,18 +744,18 @@ The jQuery plugin is gone. The mapping is direct:
 
 | v0.x option | now |
 |---|---|
-| `$("#el").cjknob({ cColor: "green" })` | `<cj-knob color="green">` |
-| `bgcolor` | `--cj-track` |
-| `cBenchmark` / `cBenchmarkD` | `--cj-benchmark` / `benchmark` |
-| `width` / `height` | `--cj-size` |
+| `$("#el").cthknob({ cColor: "green" })` | `<cth-knob color="green">` |
+| `bgcolor` | `--cth-track` |
+| `cBenchmark` / `cBenchmarkD` | `--cth-benchmark` / `benchmark` |
+| `width` / `height` | `--cth-size` |
 | `mode: 'dknob'` | automatic once `value > max` |
 | `mode: 'gauge'` | `sweep="270"` |
-| `cjIcon` | `<img slot="icon">` |
+| `cthIcon` | `<img slot="icon">` |
 | value read from element text | `value` attribute |
 
 ## Origins
 
-cj-knob started on 19 June 2013 as a jQuery canvas plugin — the first thing I ever put on GitHub. Version 1.0 is a full rewrite as a standards-based custom element, but it is still the same knob.
+cth-instrument started on 19 June 2013 as a jQuery canvas plugin — the first thing I ever put on GitHub. Version 1.0 is a full rewrite as a standards-based custom element, but it is still the same knob.
 
 ## License
 

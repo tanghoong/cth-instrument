@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Futuristic — cj-knob lab</title>
+<title>Futuristic — cth-instrument lab</title>
 <style>
   :root {
     color-scheme: dark;
@@ -36,8 +36,8 @@
     .core { flex: 1.8; }
     .grid2 { flex: 1; }
     /* scoped to .side — the reactor rings carry their own sizes inline */
-    .core .side cj-knob { --cj-size: min(128px, 16vh); }
-    .grid2 cj-knob { --cj-size: min(112px, 14vh); }
+    .core .side cth-knob { --cth-size: min(128px, 16vh); }
+    .grid2 cth-knob { --cth-size: min(112px, 14vh); }
   }
 
   h1 {
@@ -76,8 +76,8 @@
 
   .side { display: grid; gap: .6rem; align-content: center; }
 
-  /* the reactor: five thin rings on one centre, spaced by cj-rings */
-  .reactor { --cjs-size: min(300px, 38vh); }
+  /* the reactor: five thin rings on one centre, spaced by cth-rings */
+  .reactor { --cths-size: min(300px, 38vh); }
   .reactor-core {
     text-align: center; z-index: 2;
     text-shadow: 0 0 22px rgba(53,230,255,.7);
@@ -92,24 +92,24 @@
   .drift-a { animation: drift 9s linear infinite; }
   .drift-b { animation: drift 14s linear infinite reverse; }
 
-  cj-knob {
-    --cj-track: var(--track);
-    --cj-text: var(--ink);
-    --cj-muted: var(--dim);
-    --cj-tick: rgba(120,190,255,.3);
-    --cj-duration: 260ms;
-    --cj-easing: linear;
-    --cj-size: 112px;
-    --cj-thickness: 4;
+  cth-knob {
+    --cth-track: var(--track);
+    --cth-text: var(--ink);
+    --cth-muted: var(--dim);
+    --cth-tick: rgba(120,190,255,.3);
+    --cth-duration: 260ms;
+    --cth-easing: linear;
+    --cth-size: 112px;
+    --cth-thickness: 4;
   }
   /* the glow is the whole look: a coloured drop-shadow on the value arc alone */
-  cj-knob::part(value)    { filter: drop-shadow(0 0 5px currentColor); }
-  cj-knob::part(segments) { filter: drop-shadow(0 0 4px rgba(53,230,255,.5)); }
+  cth-knob::part(value)    { filter: drop-shadow(0 0 5px currentColor); }
+  cth-knob::part(segments) { filter: drop-shadow(0 0 4px rgba(53,230,255,.5)); }
 </style>
 </head>
 <body>
 
-<h1>CJ-1013 · Reactor &amp; Systems Telemetry</h1>
+<h1>CTH-1013 · Reactor &amp; Systems Telemetry</h1>
 
 <div class="hud">
   <span><span class="t">Node</span> <b>ORBITAL-7</b></span>
@@ -123,41 +123,41 @@
 <div class="row core">
   <div class="side">
     <div class="cell">
-      <cj-knob id="shield" min="0" max="100" value="86" sweep="270" readout="value"
-               ticks="10" tick-major="5" color="var(--cyn)" label="shield"></cj-knob>
+      <cth-knob id="shield" min="0" max="100" value="86" sweep="270" readout="value"
+               ticks="10" tick-major="5" color="var(--cyn)" label="shield"></cth-knob>
       <div class="cap">Deflector</div>
     </div>
     <div class="cell">
-      <cj-knob id="warp" min="0" max="10" value="6.4" sweep="270" readout="value" decimals="1"
+      <cth-knob id="warp" min="0" max="10" value="6.4" sweep="270" readout="value" decimals="1"
                ticks="10" tick-major="2" color="var(--mag)"
-               zones="9-10:#ff5ce1" label="factor"></cj-knob>
+               zones="9-10:#ff5ce1" label="factor"></cth-knob>
       <div class="cap">Warp field</div>
     </div>
   </div>
 
-  <cj-rings class="reactor" thickness=".022" gap=".044">
-    <cj-knob id="r1" readout="none" value="92" color="var(--cyn)"></cj-knob>
-    <cj-knob id="r2" readout="none" value="74" color="var(--mag)" class="drift-a"></cj-knob>
-    <cj-knob id="r3" readout="none" value="58" color="var(--vio)" class="drift-b"></cj-knob>
-    <cj-knob id="r4" readout="none" ticks="48" tick-major="4" value="0" color="transparent"
-             style="--cj-track:transparent"></cj-knob>
-    <cj-knob id="r5" readout="none" value="41" color="var(--lim)"></cj-knob>
+  <cth-rings class="reactor" thickness=".022" gap=".044">
+    <cth-knob id="r1" readout="none" value="92" color="var(--cyn)"></cth-knob>
+    <cth-knob id="r2" readout="none" value="74" color="var(--mag)" class="drift-a"></cth-knob>
+    <cth-knob id="r3" readout="none" value="58" color="var(--vio)" class="drift-b"></cth-knob>
+    <cth-knob id="r4" readout="none" ticks="48" tick-major="4" value="0" color="transparent"
+             style="--cth-track:transparent"></cth-knob>
+    <cth-knob id="r5" readout="none" value="41" color="var(--lim)"></cth-knob>
     <div slot="center" class="reactor-core">
       <div class="n" id="core-n">—</div>
       <div class="u">TERAWATT</div>
     </div>
-  </cj-rings>
+  </cth-rings>
 
   <div class="side">
     <div class="cell">
-      <cj-knob id="hull" min="0" max="100" value="97" sweep="270" readout="value"
+      <cth-knob id="hull" min="0" max="100" value="97" sweep="270" readout="value"
                ticks="10" tick-major="5" color="var(--lim)"
-               zones="0-30:#ff5ce1" label="integrity"></cj-knob>
+               zones="0-30:#ff5ce1" label="integrity"></cth-knob>
       <div class="cap">Hull</div>
     </div>
     <div class="cell">
-      <cj-knob id="life" readout="none" label="O₂ · H₂O · PWR"
-               segments="38:#35e6ff, 33:#b6ff3d, 24:#9b7bff"></cj-knob>
+      <cth-knob id="life" readout="none" label="O₂ · H₂O · PWR"
+               segments="38:#35e6ff, 33:#b6ff3d, 24:#9b7bff"></cth-knob>
       <div class="cap">Life support</div>
     </div>
   </div>
@@ -165,51 +165,51 @@
 
 <div class="row grid2">
   <div class="cell">
-    <cj-knob id="plasma" min="0" max="5000" value="3120" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--mag)" label="K"></cj-knob>
+    <cth-knob id="plasma" min="0" max="5000" value="3120" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--mag)" label="K"></cth-knob>
     <div class="cap">Plasma temp</div>
   </div>
   <div class="cell">
-    <cj-knob id="antim" min="0" max="100" value="64" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--vio)" label="%"></cj-knob>
+    <cth-knob id="antim" min="0" max="100" value="64" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--vio)" label="%"></cth-knob>
     <div class="cap">Antimatter</div>
   </div>
   <div class="cell">
-    <cj-knob id="grav" min="0" max="2" value="1" sweep="240" start="150" readout="value" decimals="2"
-             ticks="8" tick-major="4" color="var(--cyn)" benchmark="1" label="g"></cj-knob>
+    <cth-knob id="grav" min="0" max="2" value="1" sweep="240" start="150" readout="value" decimals="2"
+             ticks="8" tick-major="4" color="var(--cyn)" benchmark="1" label="g"></cth-knob>
     <div class="cap">Gravity</div>
   </div>
   <div class="cell">
-    <cj-knob id="inert" min="0" max="100" value="91" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--lim)" label="%"></cj-knob>
+    <cth-knob id="inert" min="0" max="100" value="91" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--lim)" label="%"></cth-knob>
     <div class="cap">Inertial damp</div>
   </div>
   <div class="cell">
-    <cj-knob id="sens" min="0" max="100" value="72" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--cyn)" label="%"></cj-knob>
+    <cth-knob id="sens" min="0" max="100" value="72" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--cyn)" label="%"></cth-knob>
     <div class="cap">Sensor array</div>
   </div>
   <div class="cell">
-    <cj-knob id="comm" min="0" max="100" value="88" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--mag)" label="%"></cj-knob>
+    <cth-knob id="comm" min="0" max="100" value="88" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--mag)" label="%"></cth-knob>
     <div class="cap">Subspace link</div>
   </div>
   <div class="cell">
-    <cj-knob id="crew" readout="none" label="A · B · C"
-             segments="44:#35e6ff, 31:#9b7bff, 19:#ff5ce1"></cj-knob>
+    <cth-knob id="crew" readout="none" label="A · B · C"
+             segments="44:#35e6ff, 31:#9b7bff, 19:#ff5ce1"></cth-knob>
     <div class="cap">Crew decks</div>
   </div>
   <div class="cell">
-    <cj-knob id="heat" min="0" max="100" value="38" sweep="270" readout="value"
+    <cth-knob id="heat" min="0" max="100" value="38" sweep="270" readout="value"
              ticks="10" tick-major="5" color="var(--lim)"
-             zones="70-85:#ff5ce1, 85-100:#ff5ce1" label="%"></cj-knob>
+             zones="70-85:#ff5ce1, 85-100:#ff5ce1" label="%"></cth-knob>
     <div class="cap">Heat sink</div>
   </div>
 </div>
 
 <script type="module">
-  import '../src/cj-knob.js';
-  import '../src/cj-rings.js';
+  import '../src/cth-knob.js';
+  import '../src/cth-rings.js';
 
   const $ = (id) => document.getElementById(id);
   const wave = (t, period, amp, phase = 0) => Math.sin(t / period + phase) * amp;

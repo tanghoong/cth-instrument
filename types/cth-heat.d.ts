@@ -1,4 +1,4 @@
-export declare class CJHeat extends HTMLElement {
+export declare class CTHHeat extends HTMLElement {
   /**
    * The values as given. Assigning an array is the same as setting `values=`.
    * Reading returns a copy, so mutating it does not change the ring.
@@ -21,7 +21,7 @@ export declare class CJHeat extends HTMLElement {
    */
 }
 
-export interface CJHeatHoverDetail {
+export interface CTHHeatHoverDetail {
   /** Index into `values`, or -1 when the pointer left the cells. */
   index: number;
   /** The value at that index, or `null`. */
@@ -30,12 +30,12 @@ export interface CJHeatHoverDetail {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'cj-heat': CJHeat;
+    'cth-heat': CTHHeat;
   }
   interface HTMLElementEventMap {
     /** Fired when the pointer moves onto a different cell, or off the ring. */
-    'cj-hover': CustomEvent<CJHeatHoverDetail>;
+    'cth-hover': CustomEvent<CTHHeatHoverDetail>;
   }
 }
 
-export default CJHeat;
+export default CTHHeat;

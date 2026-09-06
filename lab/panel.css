@@ -1,6 +1,6 @@
 /* Reserves each element's box before its module upgrades it. Must come first:
    @import is only legal ahead of every other rule. */
-@import url("../src/cj-skeleton.css");
+@import url("../src/cth-skeleton.css");
 
 /* ---------------------------------------------------------------
    Shared instrument-panel skeleton.
@@ -58,9 +58,9 @@ body {
   .row.lg { flex: 1.4; }
   .row.md { flex: 1; }
   .row.sm { flex: .85; }
-  .row.lg cj-knob { --cj-size: min(210px, 27vh); }
-  .row.md cj-knob { --cj-size: min(114px, 14.5vh); }
-  .row.sm cj-knob { --cj-size: min(86px, 11vh); }
+  .row.lg cth-knob { --cth-size: min(210px, 27vh); }
+  .row.md cth-knob { --cth-size: min(114px, 14.5vh); }
+  .row.sm cth-knob { --cth-size: min(86px, 11vh); }
 }
 
 h1 {
@@ -123,27 +123,27 @@ h1 {
           font-size: 8.5px; color: var(--dim); }
 .legend i { display: inline-block; width: 6px; height: 6px; border-radius: 2px; margin-right: .2rem; }
 
-cj-knob {
-  --cj-track: var(--track);
-  --cj-text: var(--ink);
-  --cj-muted: var(--dim);
-  --cj-tick: var(--tick);
-  --cj-duration: 260ms;
-  --cj-easing: linear;
-  --cj-size: 114px;
-  --cj-thickness: 7;
+cth-knob {
+  --cth-track: var(--track);
+  --cth-text: var(--ink);
+  --cth-muted: var(--dim);
+  --cth-tick: var(--tick);
+  --cth-duration: 260ms;
+  --cth-easing: linear;
+  --cth-size: 114px;
+  --cth-thickness: 7;
 }
-.row.lg cj-knob { --cj-size: 186px; --cj-thickness: 6; }
-.row.sm cj-knob { --cj-size: 86px; --cj-thickness: 9; }
+.row.lg cth-knob { --cth-size: 186px; --cth-thickness: 6; }
+.row.sm cth-knob { --cth-size: 86px; --cth-thickness: 9; }
 
 /* The panels are dark whatever the OS is set to, so the elements' own
    prefers-color-scheme defaults never fire here — map the tokens explicitly. */
-cj-level {
-  --cjl-tube: var(--track);
-  --cjl-wall: var(--edge);
-  --cjl-tick: var(--tick);
-  --cjl-text: var(--ink);
-  --cjl-muted: var(--dim);
-  --cjl-duration: 260ms;
+cth-level {
+  --cthl-tube: var(--track);
+  --cthl-wall: var(--edge);
+  --cthl-tick: var(--tick);
+  --cthl-text: var(--ink);
+  --cthl-muted: var(--dim);
+  --cthl-duration: 260ms;
 }
-cj-horizon { --cjh-duration: 260ms; }
+cth-horizon { --cthh-duration: 260ms; }

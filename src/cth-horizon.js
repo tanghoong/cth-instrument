@@ -1,13 +1,13 @@
 // -------------------------------------------------
-// cj-horizon — a zero-dependency SVG attitude indicator
-// https://github.com/tanghoong/cj-knob
+// cth-horizon — a zero-dependency SVG attitude indicator
+// https://github.com/tanghoong/cth-instrument
 //
-// <cj-horizon pitch="8" roll="-20"></cj-horizon>
+// <cth-horizon pitch="8" roll="-20"></cth-horizon>
 //
 // The artificial horizon an aircraft shows you: sky over ground, tipping with
 // bank and sliding with pitch, read against a fixed aircraft symbol. A knob puts
-// one number on a rim; this puts two angles on a whole face, so like cj-radar it
-// is a sibling element rather than a mode of cj-knob.
+// one number on a rim; this puts two angles on a whole face, so like cth-radar it
+// is a sibling element rather than a mode of cth-knob.
 // -------------------------------------------------
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -25,27 +25,27 @@ template.innerHTML = `
 <style>
   :host {
     /* ---- public theming API ---- */
-    --cjh-size: 220px;
+    --cthh-size: 220px;
     /* each half is a two-stop gradient: lighter at the horizon, deeper away from it,
        which is what stops a flat blue-over-brown disc looking like a pie chart */
-    --cjh-sky: #57b0ee;
-    --cjh-sky-deep: #14538f;
-    --cjh-ground: #a9762f;
-    --cjh-ground-deep: #4b2f12;
-    --cjh-line: #ffffff;
-    --cjh-bezel: #191d24;
-    --cjh-bezel-hi: #3a424f;
-    --cjh-scale: #e9edf3;
-    --cjh-craft: #ffc61a;
-    --cjh-craft-edge: #17191d;
-    --cjh-index: #ff4d4d;
-    --cjh-text: #ffffff;
-    --cjh-text-size: 4.2px;
+    --cthh-sky: #57b0ee;
+    --cthh-sky-deep: #14538f;
+    --cthh-ground: #a9762f;
+    --cthh-ground-deep: #4b2f12;
+    --cthh-line: #ffffff;
+    --cthh-bezel: #191d24;
+    --cthh-bezel-hi: #3a424f;
+    --cthh-scale: #e9edf3;
+    --cthh-craft: #ffc61a;
+    --cthh-craft-edge: #17191d;
+    --cthh-index: #ff4d4d;
+    --cthh-text: #ffffff;
+    --cthh-text-size: 4.2px;
 
     display: inline-grid;
     place-items: center;
-    inline-size: var(--cjh-size);
-    block-size: var(--cjh-size);
+    inline-size: var(--cthh-size);
+    block-size: var(--cthh-size);
     font: inherit;
     -webkit-tap-highlight-color: transparent;
     /* A dial is an instrument, not text. Its numbers are drawn readings, and
@@ -56,34 +56,34 @@ template.innerHTML = `
     user-select: none;
   }
   :host([hidden]) { display: none; }
-  :host(:focus-visible) { outline: 2px solid var(--cjh-craft); outline-offset: 2px; }
+  :host(:focus-visible) { outline: 2px solid var(--cthh-craft); outline-offset: 2px; }
 
   svg { inline-size: 100%; block-size: 100%; }
 
-  .sky { fill: url(#cjh-sky); }
-  .ground { fill: url(#cjh-ground); }
-  .horizon { stroke: var(--cjh-line); stroke-width: .9; }
+  .sky { fill: url(#cthh-sky); }
+  .ground { fill: url(#cthh-ground); }
+  .horizon { stroke: var(--cthh-line); stroke-width: .9; }
   /* a vignette gives the face some depth instead of reading as flat paper */
-  .vignette { fill: url(#cjh-vig); pointer-events: none; }
+  .vignette { fill: url(#cthh-vig); pointer-events: none; }
 
   /* The card carries sky, ground and the pitch ladder. Roll turns it; pitch
      slides it. Both are transitioned so a change reads as the aircraft moving
      rather than the picture jumping. */
   .card {
-    transform: rotate(var(--cjh-roll, 0deg));
+    transform: rotate(var(--cthh-roll, 0deg));
     transform-origin: 50% 50%;
     transform-box: view-box;
-    transition: transform var(--cjh-duration, 320ms) linear;
+    transition: transform var(--cthh-duration, 320ms) linear;
   }
   .slide {
-    transform: translateY(var(--cjh-pitch, 0px));
-    transition: transform var(--cjh-duration, 320ms) linear;
+    transform: translateY(var(--cthh-pitch, 0px));
+    transition: transform var(--cthh-duration, 320ms) linear;
   }
 
-  .ladder line { stroke: var(--cjh-line); stroke-width: .55; }
+  .ladder line { stroke: var(--cthh-line); stroke-width: .55; }
   .ladder text {
-    fill: var(--cjh-text);
-    font-size: var(--cjh-text-size);
+    fill: var(--cthh-text);
+    font-size: var(--cthh-text-size);
     font-family: inherit;
     font-weight: 600;
     text-anchor: middle;
@@ -95,29 +95,29 @@ template.innerHTML = `
     stroke-linejoin: round;
   }
 
-  .bezel { fill: none; stroke: url(#cjh-bezel); stroke-width: 9; }
+  .bezel { fill: none; stroke: url(#cthh-bezel); stroke-width: 9; }
   .bezel-in { fill: none; stroke: rgba(0,0,0,.55); stroke-width: 1; }
-  .scale line { stroke: var(--cjh-scale); stroke-width: .7; stroke-linecap: round; }
+  .scale line { stroke: var(--cthh-scale); stroke-width: .7; stroke-linecap: round; }
   .scale line.major { stroke-width: 1.3; }
   /* the fixed sky pointer the bank index is read against */
-  .zero { fill: var(--cjh-scale); }
+  .zero { fill: var(--cthh-scale); }
 
   /* the bank pointer rides with the card and is read against the fixed scale */
   .bank {
-    fill: var(--cjh-index);
-    transform: rotate(var(--cjh-roll, 0deg));
+    fill: var(--cthh-index);
+    transform: rotate(var(--cthh-roll, 0deg));
     transform-origin: 50% 50%;
     transform-box: view-box;
-    transition: transform var(--cjh-duration, 320ms) linear;
+    transition: transform var(--cthh-duration, 320ms) linear;
   }
   /* The aircraft symbol is drawn twice: a dark under-stroke, then the amber on top.
      Without the outline it disappears into the sky on one side and the ground on
      the other, which is exactly what made the flat version look cheap. */
   .craft { fill: none; stroke-linecap: square; stroke-linejoin: miter; }
-  .craft.edge { stroke: var(--cjh-craft-edge); stroke-width: 3.4; }
-  .craft.body { stroke: var(--cjh-craft); stroke-width: 1.8; }
-  .craft-dot.edge { fill: var(--cjh-craft-edge); }
-  .craft-dot.body { fill: var(--cjh-craft); }
+  .craft.edge { stroke: var(--cthh-craft-edge); stroke-width: 3.4; }
+  .craft.body { stroke: var(--cthh-craft); stroke-width: 1.8; }
+  .craft-dot.edge { fill: var(--cthh-craft-edge); }
+  .craft-dot.body { fill: var(--cthh-craft); }
 
   @media (prefers-reduced-motion: reduce) {
     .card, .slide, .bank { transition: none; }
@@ -126,26 +126,26 @@ template.innerHTML = `
 
 <svg viewBox="0 0 100 100" part="svg" aria-hidden="true" focusable="false">
   <defs>
-    <clipPath id="cjh-clip"><circle cx="50" cy="50" r="40"/></clipPath>
-    <linearGradient id="cjh-sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0"  stop-color="var(--cjh-sky-deep)"/>
-      <stop offset="1"  stop-color="var(--cjh-sky)"/>
+    <clipPath id="cthh-clip"><circle cx="50" cy="50" r="40"/></clipPath>
+    <linearGradient id="cthh-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"  stop-color="var(--cthh-sky-deep)"/>
+      <stop offset="1"  stop-color="var(--cthh-sky)"/>
     </linearGradient>
-    <linearGradient id="cjh-ground" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0"  stop-color="var(--cjh-ground)"/>
-      <stop offset="1"  stop-color="var(--cjh-ground-deep)"/>
+    <linearGradient id="cthh-ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"  stop-color="var(--cthh-ground)"/>
+      <stop offset="1"  stop-color="var(--cthh-ground-deep)"/>
     </linearGradient>
-    <linearGradient id="cjh-bezel" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0"  stop-color="var(--cjh-bezel-hi)"/>
-      <stop offset="1"  stop-color="var(--cjh-bezel)"/>
+    <linearGradient id="cthh-bezel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"  stop-color="var(--cthh-bezel-hi)"/>
+      <stop offset="1"  stop-color="var(--cthh-bezel)"/>
     </linearGradient>
-    <radialGradient id="cjh-vig" cx="50%" cy="50%" r="50%">
+    <radialGradient id="cthh-vig" cx="50%" cy="50%" r="50%">
       <stop offset="0.55" stop-color="#000" stop-opacity="0"/>
       <stop offset="1"    stop-color="#000" stop-opacity="0.42"/>
     </radialGradient>
   </defs>
 
-  <g class="face" clip-path="url(#cjh-clip)">
+  <g class="face" clip-path="url(#cthh-clip)">
     <g class="card">
       <g class="slide">
         <!-- oversized so the card still covers the face when rolled and pitched -->
@@ -175,7 +175,7 @@ template.innerHTML = `
 </svg>
 `;
 
-export class CJHorizon extends HTMLElement {
+export class CTHHorizon extends HTMLElement {
   static observedAttributes = ['pitch', 'roll', 'ladder-step', 'ladder-max'];
 
   #root;
@@ -228,8 +228,8 @@ export class CJHorizon extends HTMLElement {
     const pitch = clamp(this.pitch, -90, 90);
     const roll = clamp(this.roll, -180, 180);
     // a nose-up attitude drops the horizon down the face, hence the positive sign
-    this.style.setProperty('--cjh-pitch', `${(pitch * PER_DEG).toFixed(2)}px`);
-    this.style.setProperty('--cjh-roll', `${(-roll).toFixed(2)}deg`);
+    this.style.setProperty('--cthh-pitch', `${(pitch * PER_DEG).toFixed(2)}px`);
+    this.style.setProperty('--cthh-roll', `${(-roll).toFixed(2)}deg`);
     this.setAttribute('aria-label',
       `Attitude: pitch ${pitch.toFixed(0)}°, roll ${roll.toFixed(0)}° — ${this.attitude}`);
   }
@@ -281,6 +281,6 @@ export class CJHorizon extends HTMLElement {
   }
 }
 
-if (!customElements.get('cj-horizon')) customElements.define('cj-horizon', CJHorizon);
+if (!customElements.get('cth-horizon')) customElements.define('cth-horizon', CTHHorizon);
 
-export default CJHorizon;
+export default CTHHorizon;

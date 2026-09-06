@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mobile Suit — cj-knob lab</title>
+<title>Mobile Suit — cth-instrument lab</title>
 <link rel="stylesheet" href="panel.css">
 <style>
   :root {
@@ -26,7 +26,7 @@
   }
   .cell::before { top: 3px; left: 3px; border-right: 0; border-bottom: 0; }
   .cell::after { bottom: 3px; right: 3px; border-left: 0; border-top: 0; }
-  cj-knob::part(value) { filter: drop-shadow(0 0 4px currentColor); }
+  cth-knob::part(value) { filter: drop-shadow(0 0 4px currentColor); }
 </style>
 </head>
 <body>
@@ -39,7 +39,7 @@
   ];
 
   buildPanel({
-    title: 'RX-1013 · pilot cj · linear seat — combat simulation',
+    title: 'RX-1013 · pilot cth · linear seat — combat simulation',
     status: [
       { id: 'state', lead: true, value: 'SORTIE' },
       { id: 'gen', label: 'generator', value: '—' },

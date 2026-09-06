@@ -1,42 +1,42 @@
 {
-  "name": "cj-knob",
+  "name": "cth-instrument",
   "version": "1.0.0",
   "description": "A zero-dependency SVG knob, gauge and meter web component.",
   "type": "module",
-  "main": "./src/cj-knob.js",
-  "module": "./src/cj-knob.js",
-  "types": "./types/cj-knob.d.ts",
+  "main": "./src/cth-knob.js",
+  "module": "./src/cth-knob.js",
+  "types": "./types/cth-knob.d.ts",
   "exports": {
     ".": {
-      "types": "./types/cj-knob.d.ts",
-      "default": "./src/cj-knob.js"
+      "types": "./types/cth-knob.d.ts",
+      "default": "./src/cth-knob.js"
     },
     "./radar": {
-      "types": "./types/cj-radar.d.ts",
-      "default": "./src/cj-radar.js"
+      "types": "./types/cth-radar.d.ts",
+      "default": "./src/cth-radar.js"
     },
     "./package.json": "./package.json",
     "./horizon": {
-      "types": "./types/cj-horizon.d.ts",
-      "default": "./src/cj-horizon.js"
+      "types": "./types/cth-horizon.d.ts",
+      "default": "./src/cth-horizon.js"
     },
     "./level": {
-      "types": "./types/cj-level.d.ts",
-      "default": "./src/cj-level.js"
+      "types": "./types/cth-level.d.ts",
+      "default": "./src/cth-level.js"
     },
     "./rings": {
-      "types": "./types/cj-rings.d.ts",
-      "default": "./src/cj-rings.js"
+      "types": "./types/cth-rings.d.ts",
+      "default": "./src/cth-rings.js"
     },
     "./trace": {
-      "types": "./types/cj-trace.d.ts",
-      "default": "./src/cj-trace.js"
+      "types": "./types/cth-trace.d.ts",
+      "default": "./src/cth-trace.js"
     },
     "./heat": {
-      "types": "./types/cj-heat.d.ts",
-      "default": "./src/cj-heat.js"
+      "types": "./types/cth-heat.d.ts",
+      "default": "./src/cth-heat.js"
     },
-    "./skeleton.css": "./src/cj-skeleton.css"
+    "./skeleton.css": "./src/cth-skeleton.css"
   },
   "files": [
     "src",
@@ -44,11 +44,11 @@
     "README.md"
   ],
   "sideEffects": [
-    "./src/cj-knob.js",
-    "./src/cj-radar.js",
-    "./src/cj-horizon.js",
-    "./src/cj-level.js",
-    "./src/cj-rings.js"
+    "./src/cth-knob.js",
+    "./src/cth-radar.js",
+    "./src/cth-horizon.js",
+    "./src/cth-level.js",
+    "./src/cth-rings.js"
   ],
   "keywords": [
     "knob",
@@ -77,15 +77,15 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tanghoong/cj-knob.git"
+    "url": "git+https://github.com/tanghoong/cth-instrument.git"
   },
-  "homepage": "https://github.com/tanghoong/cj-knob#readme",
+  "homepage": "https://github.com/tanghoong/cth-instrument#readme",
   "bugs": {
-    "url": "https://github.com/tanghoong/cj-knob/issues"
+    "url": "https://github.com/tanghoong/cth-instrument/issues"
   },
   "scripts": {
     "dev": "npx --yes serve -l 8765 .",
-    "check": "node --check src/cj-knob.js && node --check src/cj-radar.js && node --check src/cj-horizon.js && node --check src/cj-level.js && node --check src/cj-rings.js && node --check src/cj-trace.js && node --check src/cj-heat.js",
+    "check": "node --check src/cth-knob.js && node --check src/cth-radar.js && node --check src/cth-horizon.js && node --check src/cth-level.js && node --check src/cth-rings.js && node --check src/cth-trace.js && node --check src/cth-heat.js",
     "test": "node test/knob.test.mjs"
   },
   "devDependencies": {

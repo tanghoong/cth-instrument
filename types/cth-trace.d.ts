@@ -1,4 +1,4 @@
-export declare class CJTrace extends HTMLElement {
+export declare class CTHTrace extends HTMLElement {
   /** How many samples the window holds. Attribute: `samples` (default 240). */
   samples: number;
   /** Bottom of the vertical scale. Attribute: `min` (default 0). */
@@ -19,7 +19,7 @@ export declare class CJTrace extends HTMLElement {
    * Exactly zero between phrases. Read-only.
    */
   readonly level: number;
-  /** Whether anyone is talking. Changes fire `cj-speech`. Read-only. */
+  /** Whether anyone is talking. Changes fire `cth-speech`. Read-only. */
   readonly speaking: boolean;
   /** Write one sample. This is the whole input API; everything else is styling. */
   push(value: number): void;
@@ -38,12 +38,12 @@ export declare class CJTrace extends HTMLElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'cj-trace': CJTrace;
+    'cth-trace': CTHTrace;
   }
   interface HTMLElementEventMap {
     /** Fired when a `voice` trace starts or stops talking. */
-    'cj-speech': CustomEvent<{ speaking: boolean; level: number }>;
+    'cth-speech': CustomEvent<{ speaking: boolean; level: number }>;
   }
 }
 
-export default CJTrace;
+export default CTHTrace;

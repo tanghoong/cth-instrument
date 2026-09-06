@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>World Clock — cj-knob lab</title>
+<title>World Clock — cth-instrument lab</title>
 <style>
   :root {
     color-scheme: dark;
@@ -60,7 +60,7 @@
   .clock[data-night] { background: var(--night); }
   .clock[data-night] .city { color: var(--dim); }
 
-  .face { --cjs-size: 118px; }
+  .face { --cths-size: 118px; }
 
   .digital {
     font-size: 15px; font-weight: 600; letter-spacing: -.02em;
@@ -73,10 +73,10 @@
   }
   .off { font-size: 9.5px; color: var(--dim); letter-spacing: .06em; white-space: nowrap; }
 
-  cj-knob {
-    --cj-track: var(--track);
-    --cj-duration: 0ms;
-    --cj-tick: #38455a;
+  cth-knob {
+    --cth-track: var(--track);
+    --cth-duration: 0ms;
+    --cth-tick: #38455a;
   }
 </style>
 </head>
@@ -95,8 +95,8 @@
 <div class="board" id="board"></div>
 
 <script type="module">
-  import '../src/cj-knob.js';
-  import '../src/cj-rings.js';
+  import '../src/cth-knob.js';
+  import '../src/cth-rings.js';
 
   const CITIES = [
     { name: 'Kuala Lumpur', tz: 'Asia/Kuala_Lumpur' },
@@ -161,13 +161,13 @@
     const el = document.createElement('div');
     el.className = 'clock';
     el.innerHTML = `
-      <cj-rings class="face">
-        <cj-knob readout="none" max="12" data-h ticks="12" tick-major="3"
-                 style="--cj-value:var(--hour)"></cj-knob>
-        <cj-knob readout="none" max="60" data-m style="--cj-value:var(--min)"></cj-knob>
-        <cj-knob readout="none" max="60" data-s style="--cj-value:var(--sec)"></cj-knob>
+      <cth-rings class="face">
+        <cth-knob readout="none" max="12" data-h ticks="12" tick-major="3"
+                 style="--cth-value:var(--hour)"></cth-knob>
+        <cth-knob readout="none" max="60" data-m style="--cth-value:var(--min)"></cth-knob>
+        <cth-knob readout="none" max="60" data-s style="--cth-value:var(--sec)"></cth-knob>
         <div slot="center" class="digital" data-t>--:--</div>
-      </cj-rings>
+      </cth-rings>
       <div class="city">${name}</div>
       <div class="off"><span data-d>—</span> · <span data-o>—</span></div>`;
     board.append(el);

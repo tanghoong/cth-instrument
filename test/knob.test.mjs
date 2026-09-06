@@ -10,7 +10,7 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
 page.on('console', (m) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
 
-const BASE = process.env.CJ_TEST_URL ?? 'http://127.0.0.1:8765/';
+const BASE = process.env.CTH_TEST_URL ?? 'http://127.0.0.1:8765/';
 await page.goto(BASE, { waitUntil: 'networkidle' });
 await page.waitForTimeout(800);
 
@@ -18,8 +18,8 @@ check('no page errors on load', errors.length === 0, errors.join(' | '));
 
 // --- upgrade + shadow DOM ---
 const upgraded = await page.evaluate(() => {
-  const k = document.querySelector('#examples cj-knob');
-  return { defined: !!customElements.get('cj-knob'), hasShadow: !!k.shadowRoot, role: k.getAttribute('role') };
+  const k = document.querySelector('#examples cth-knob');
+  return { defined: !!customElements.get('cth-knob'), hasShadow: !!k.shadowRoot, role: k.getAttribute('role') };
 });
 check('custom element defined', upgraded.defined);
 check('shadow root attached', upgraded.hasShadow);
@@ -27,7 +27,7 @@ check('non-interactive knob gets role=meter', upgraded.role === 'meter', upgrade
 
 // --- geometry: dashoffset for a 78% full ring (arc=100) ---
 const geo = await page.evaluate(() => {
-  const k = document.querySelector('#examples cj-knob[value="78"]');
+  const k = document.querySelector('#examples cth-knob[value="78"]');
   const v = k.shadowRoot.querySelector('.value');
   return { dasharray: v.getAttribute('stroke-dasharray'), dashoffset: +v.getAttribute('stroke-dashoffset') };
 });
@@ -36,12 +36,12 @@ check('78% → dashoffset 22', Math.abs(geo.dashoffset - 22) < 1e-9, String(geo.
 
 // --- geometry: 270deg gauge at 64% ---
 const gauge = await page.evaluate(() => {
-  const k = document.querySelector('#examples cj-knob[sweep="270"][value="64"]');
+  const k = document.querySelector('#examples cth-knob[sweep="270"][value="64"]');
   const v = k.shadowRoot.querySelector('.value');
   return {
     dasharray: v.getAttribute('stroke-dasharray'),
     dashoffset: +v.getAttribute('stroke-dashoffset'),
-    start: getComputedStyle(k).getPropertyValue('--cj-start').trim(),
+    start: getComputedStyle(k).getPropertyValue('--cth-start').trim(),
   };
 });
 check('270° gauge dasharray = "75 100"', gauge.dasharray === '75 100', gauge.dasharray);
@@ -50,8 +50,8 @@ check('270° default start = 135deg', gauge.start === '135deg', gauge.start);
 
 // --- overflow ring only past max ---
 const of = await page.evaluate(() => {
-  const under = document.querySelector('#examples cj-knob[value="78"]').shadowRoot.querySelector('.overflow-group');
-  const over = document.querySelector('#examples cj-knob[value="145"]').shadowRoot.querySelector('.overflow-group');
+  const under = document.querySelector('#examples cth-knob[value="78"]').shadowRoot.querySelector('.overflow-group');
+  const over = document.querySelector('#examples cth-knob[value="145"]').shadowRoot.querySelector('.overflow-group');
   return {
     underHidden: under.hasAttribute('hidden'),
     overHidden: over.hasAttribute('hidden'),
@@ -64,7 +64,7 @@ check('value 145 → overflow dashoffset 55', Math.abs(of.overOffset - 55) < 1e-
 
 // --- reactive updates ---
 const reactive = await page.evaluate(async () => {
-  const k = document.querySelector('#examples cj-knob[value="78"]');
+  const k = document.querySelector('#examples cth-knob[value="78"]');
   k.value = 10;
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   const v = k.shadowRoot.querySelector('.value');
@@ -91,7 +91,7 @@ check('cannot exceed max', (await vol.evaluate((el) => el.value)) === 100);
 await page.keyboard.press('Home');
 check('Home clamps to min', (await vol.evaluate((el) => el.value)) === 0);
 
-check('cj-change fired on keyboard', (await page.textContent('#vol-out')).includes('cj-change'));
+check('cth-change fired on keyboard', (await page.textContent('#vol-out')).includes('cth-change'));
 
 // --- pointer drag: click the 3 o'clock edge of a full ring → 25% ---
 // Mouse coordinates are viewport-relative, so the knob has to be on screen. The
@@ -112,7 +112,7 @@ const at6 = await vol.evaluate((el) => el.value);
 check('click at 6 o\'clock → 50', at6 === 50, String(at6));
 
 // --- disabled knob ignores pointer ---
-const dis = page.locator('cj-knob[disabled]');
+const dis = page.locator('cth-knob[disabled]');
 await dis.scrollIntoViewIfNeeded();
 const dbox = await dis.boundingBox();
 await page.mouse.click(dbox.x + dbox.width - 6, dbox.y + dbox.height / 2);
@@ -133,7 +133,7 @@ check('aria-valuemax present', a11y.max === '100', a11y.max);
 // width, so no two knobs in a dashboard would line up. Measure it rather than trust it.
 const centring = await page.evaluate(() => {
   let worst = 0, culprit = '';
-  for (const k of document.querySelectorAll('cj-knob')) {
+  for (const k of document.querySelectorAll('cth-knob')) {
     const numEl = k.shadowRoot.querySelector('.num');
     if (!numEl.textContent) continue;
     const host = k.getBoundingClientRect();
@@ -148,7 +148,7 @@ check('number is horizontally centred on the ring', centring.worst < 0.6,
 
 // widening the unit must not move the number
 const unitShift = await page.evaluate(() => {
-  const k = document.querySelector('#examples cj-knob'); // value was mutated by an earlier check
+  const k = document.querySelector('#examples cth-knob'); // value was mutated by an earlier check
   const numEl = k.shadowRoot.querySelector('.num');
   const before = numEl.getBoundingClientRect().left;
   k.setAttribute('unit', ' kWh/day');
@@ -161,7 +161,7 @@ check('a wider unit does not shift the number', unitShift < 0.6, `${unitShift}px
 // A label lifts the number so the lower half of the dial is free for the text, but it
 // must lift it straight up — never sideways — and by a predictable fraction of the type.
 const labelShift = await page.evaluate(() => {
-  const k = document.querySelector('#examples cj-knob[value="145"]');
+  const k = document.querySelector('#examples cth-knob[value="145"]');
   const numEl = k.shadowRoot.querySelector('.num');
   const withLabel = numEl.getBoundingClientRect();
   k.removeAttribute('label');
@@ -181,7 +181,7 @@ check('a label never shifts the number sideways', labelShift.sideways < 0.6, `${
 // the label must stay inside the ring rather than sitting on it
 const labelInside = await page.evaluate(() => {
   let worst = 0;
-  for (const k of document.querySelectorAll('cj-knob[label]')) {
+  for (const k of document.querySelectorAll('cth-knob[label]')) {
     const lab = k.shadowRoot.querySelector('.label');
     if (lab.hasAttribute('hidden')) continue;
     const host = k.getBoundingClientRect();
@@ -202,17 +202,17 @@ check('labels stay inside the ring', labelInside < 0.76, `reaches ${(labelInside
 
 // type stays legible when the knob gets small
 const smallType = await page.evaluate(() => {
-  const k = document.querySelector('#examples cj-knob[style*="56px"]');
+  const k = document.querySelector('#examples cth-knob[style*="56px"]');
   return parseFloat(getComputedStyle(k.shadowRoot.querySelector('.readout')).fontSize);
 });
 check('readout keeps a legible floor at 56px', smallType >= 13, `${smallType}px`);
 
 // --- zones, ticks and segments ---
 const extras = await page.evaluate(() => {
-  const k = document.querySelector('#examples cj-knob[zones][ticks]');
+  const k = document.querySelector('#examples cth-knob[zones][ticks]');
   const r = k.shadowRoot;
   const zones = [...r.querySelectorAll('.zones circle')];
-  const seg = document.querySelector('#examples cj-knob[segments]').shadowRoot;
+  const seg = document.querySelector('#examples cth-knob[segments]').shadowRoot;
   return {
     zoneCount: zones.length,
     // "0-60" of a 270° sweep is 60% of arc 75 = 45 units, starting at 0
@@ -233,23 +233,23 @@ check('tick-major=3 marks every third', extras.majorCount === 5, String(extras.m
 check('segments render one arc each', extras.segCount === 4, String(extras.segCount));
 check('segments replace the value ring', extras.valueHidden);
 
-// --- the component must not clobber an author's own inline --cj-value ---
+// --- the component must not clobber an author's own inline --cth-value ---
 const inlineColor = await page.evaluate(() => {
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('value', '50');
-  k.style.setProperty('--cj-value', 'rgb(1, 2, 3)');
+  k.style.setProperty('--cth-value', 'rgb(1, 2, 3)');
   document.body.append(k);
   const stroke = getComputedStyle(k.shadowRoot.querySelector('.value')).stroke;
   k.remove();
   return stroke;
 });
-check('an inline --cj-value survives rendering', inlineColor === 'rgb(1, 2, 3)', inlineColor);
+check('an inline --cth-value survives rendering', inlineColor === 'rgb(1, 2, 3)', inlineColor);
 
 // --- with readout="none" there is no number, so the label must take the centre ---
 // It used to orbit an invisible number and drift onto the ring instead.
 const noNumber = await page.evaluate(() => {
   const mk = (attrs, icon) => {
-    const k = document.createElement('cj-knob');
+    const k = document.createElement('cth-knob');
     for (const [n, v] of Object.entries(attrs)) k.setAttribute(n, v);
     if (icon) { const s = document.createElement('span'); s.slot = 'icon'; s.textContent = icon; k.append(s); }
     document.body.append(k);
@@ -277,7 +277,7 @@ check('label sits below the icon', noNumber.labelWithIcon > 2, `${noNumber.label
 
 // --- needle and bearing labels ---
 const compass = await page.evaluate(() => {
-  const k = document.querySelector('#playground cj-knob[needle]');
+  const k = document.querySelector('#playground cth-knob[needle]');
   const r = k.shadowRoot;
   return {
     hidden: r.querySelector('.needle').hasAttribute('hidden'),
@@ -296,8 +296,8 @@ check('captions sit outside the rotating group', compass.outsideRings);
 
 // A closed dial must take the short way round: 350° -> 10° is +20°, not -340°.
 const shortWay = await page.evaluate(async () => {
-  const k = document.querySelector('#playground cj-knob[needle]');
-  const angle = () => parseFloat(k.style.getPropertyValue('--cj-needle-angle'));
+  const k = document.querySelector('#playground cth-knob[needle]');
+  const angle = () => parseFloat(k.style.getPropertyValue('--cth-needle-angle'));
   k.value = 350; const a = angle();
   k.value = 10;  const b = angle();
   return +(b - a).toFixed(2);
@@ -306,7 +306,7 @@ check('needle unwraps across the 0° seam', Math.abs(shortWay - 20) < 0.5, `${sh
 
 // --- radar ---
 const radar = await page.evaluate(async () => {
-  const el = document.createElement('cj-radar');
+  const el = document.createElement('cth-radar');
   el.setAttribute('rings', '5');
   el.setAttribute('spokes', '12');
   el.setAttribute('labels', 'N,E,S,W');
@@ -316,7 +316,7 @@ const radar = await page.evaluate(async () => {
   const r = el.shadowRoot;
   const first = r.querySelector('.blips .dot');
   const out = {
-    defined: !!customElements.get('cj-radar'),
+    defined: !!customElements.get('cth-radar'),
     rings: r.querySelectorAll('.grid circle').length,
     spokes: r.querySelectorAll('.grid line').length,
     marks: r.querySelectorAll('.marks text').length,
@@ -331,7 +331,7 @@ const radar = await page.evaluate(async () => {
   el.remove();
   return out;
 });
-check('cj-radar is defined', radar.defined);
+check('cth-radar is defined', radar.defined);
 check('rings="5" draws 5 range rings', radar.rings === 5, String(radar.rings));
 check('spokes="12" draws 12 spokes', radar.spokes === 12, String(radar.spokes));
 check('radar labels render', radar.marks === 4, String(radar.marks));
@@ -343,7 +343,7 @@ check('clearBlips empties the scope', radar.afterClear === 0, String(radar.after
 
 // --- a second pointer, and the rotating-card dial ---
 const twoUp = await page.evaluate(async () => {
-  const k = document.querySelector('#examples cj-knob[value-2]');
+  const k = document.querySelector('#examples cth-knob[value-2]');
   const r = k.shadowRoot;
   const deg = (p) => parseFloat(k.style.getPropertyValue(p));
   return {
@@ -351,8 +351,8 @@ const twoUp = await page.evaluate(async () => {
     // on a 0-100 full dial, value 20 is 72deg and value-2 70 is 252deg. Compare
     // each pointer on its own: at exactly 180deg apart the signed gap is ambiguous,
     // and the unwrapping legitimately reports -108deg rather than +252deg.
-    a1: ((deg('--cj-needle-angle') % 360) + 360) % 360,
-    a2: ((deg('--cj-needle-2-angle') % 360) + 360) % 360,
+    a1: ((deg('--cth-needle-angle') % 360) + 360) % 360,
+    a2: ((deg('--cth-needle-2-angle') % 360) + 360) % 360,
   };
 });
 check('value-2 shows a second pointer', twoUp.shown);
@@ -360,12 +360,12 @@ check('the first pointer sits on value', Math.abs(twoUp.a1 - 72) < 0.5, `${twoUp
 check('the second pointer sits on value-2', Math.abs(twoUp.a2 - 252) < 0.5, `${twoUp.a2}deg`);
 
 const card = await page.evaluate(async () => {
-  const k = document.querySelector('#playground cj-knob[rotating]');
+  const k = document.querySelector('#playground cth-knob[rotating]');
   k.value = 90;
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   return {
     lubber: !k.shadowRoot.querySelector('.lubber').hasAttribute('hidden'),
-    angle: parseFloat(k.style.getPropertyValue('--cj-card-angle')),
+    angle: parseFloat(k.style.getPropertyValue('--cth-card-angle')),
   };
 });
 check('rotating shows the fixed index', card.lubber);
@@ -373,8 +373,8 @@ check('the card turns opposite the heading', Math.abs(card.angle + 90) < 0.5, `$
 
 // --- attitude indicator ---
 const att = await page.evaluate(async () => {
-  const h = document.createElement('cj-horizon');
-  h.style.setProperty('--cjh-duration', '0ms');
+  const h = document.createElement('cth-horizon');
+  h.style.setProperty('--cthh-duration', '0ms');
   document.body.append(h);
   await new Promise((r) => requestAnimationFrame(r));
 
@@ -400,7 +400,7 @@ const att = await page.evaluate(async () => {
   const climbing = (endsOf().l + endsOf().r) / 2;
 
   const out = {
-    defined: !!customElements.get('cj-horizon'),
+    defined: !!customElements.get('cth-horizon'),
     levelFlat: Math.abs(level.l - level.r) < 0.5,
     // a right bank lifts the horizon's right-hand end
     rightUp: banked.r < banked.l,
@@ -413,7 +413,7 @@ const att = await page.evaluate(async () => {
   h.remove();
   return out;
 });
-check('cj-horizon is defined', att.defined);
+check('cth-horizon is defined', att.defined);
 check('wings level draws a flat horizon', att.levelFlat);
 check('a right bank lifts the horizon on the right', att.rightUp);
 check('nose up drops the horizon down the face', att.noseUp);
@@ -423,11 +423,11 @@ check('attitude reads in words', att.attitude === 'climbing, left bank', att.att
 
 // --- radar sweep trail ---
 const trail = await page.evaluate(() => {
-  const r = document.querySelector('#playground cj-radar');
+  const r = document.querySelector('#playground cth-radar');
   const s = getComputedStyle(r.shadowRoot.querySelector('.beam'));
   const line = r.shadowRoot.querySelector('.beam-line');
   return {
-    tail: getComputedStyle(r).getPropertyValue('--cjr-tail').trim(),
+    tail: getComputedStyle(r).getPropertyValue('--cthr-tail').trim(),
     hasGradient: s.backgroundImage.includes('conic-gradient'),
     lineVisible: getComputedStyle(line).display !== 'none',
     blipParts: r.shadowRoot.querySelectorAll('.blip .halo').length,
@@ -440,10 +440,10 @@ check('each contact carries a halo for the ping', trail.blipParts > 0, String(tr
 
 // --- liquid fill and the centre-mounted hand ---
 const fluid = await page.evaluate(async () => {
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('liquid', '');
   k.setAttribute('value', '0');
-  k.style.setProperty('--cj-duration', '0ms');
+  k.style.setProperty('--cth-duration', '0ms');
   document.body.append(k);
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
@@ -452,10 +452,10 @@ const fluid = await page.evaluate(async () => {
   // the wave has to stay wider than the vessel at every drift offset, or sliding
   // it left drags its right-hand edge into the circle and the fluid "empties"
   const xs = [...path.matchAll(/M?(-?\d+),/g)].map((m) => +m[1]);
-  const empty = liquid.style.getPropertyValue('--cj-level');
+  const empty = liquid.style.getPropertyValue('--cth-level');
   k.setAttribute('value', '100');
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  const full = liquid.style.getPropertyValue('--cj-level');
+  const full = liquid.style.getPropertyValue('--cth-level');
   const shown = !liquid.hasAttribute('hidden');
   k.remove();
   return { shown, empty: parseFloat(empty), full: parseFloat(full),
@@ -468,7 +468,7 @@ check('the wave spans wider than the vessel', fluid.minX <= -34 && fluid.maxX >=
   `${fluid.minX}..${fluid.maxX}`);
 
 const hand = await page.evaluate(async () => {
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('needle', 'hand');
   k.setAttribute('value', '25');
   document.body.append(k);
@@ -497,14 +497,14 @@ const rmPage = await reduced.newPage();
 await rmPage.goto(BASE, { waitUntil: 'networkidle' });
 await rmPage.waitForTimeout(700);
 const parked = await rmPage.evaluate(async () => {
-  const el = document.querySelector('#playground cj-radar');
+  const el = document.querySelector('#playground cth-radar');
   const r = el.shadowRoot;
-  const first = el.style.getPropertyValue('--cjr-beam-angle');
+  const first = el.style.getPropertyValue('--cthr-beam-angle');
   await new Promise((res) => setTimeout(res, 400));
   return {
     beam: getComputedStyle(r.querySelector('.beam')).display,
     line: getComputedStyle(r.querySelector('.beam-line')).display,
-    first, second: el.style.getPropertyValue('--cjr-beam-angle'),
+    first, second: el.style.getPropertyValue('--cthr-beam-angle'),
     noteShown: !document.getElementById('motion-note').hidden,
   };
 });
@@ -517,7 +517,7 @@ check('the page explains why the sweep is still', parked.noteShown);
 
 // --- gradient arc ---
 const grad = await page.evaluate(async () => {
-  const k = document.querySelector('#examples cj-knob[gradient]');
+  const k = document.querySelector('#examples cth-knob[gradient]');
   const r = k.shadowRoot;
   const steps = [...r.querySelectorAll('.gradient circle')];
   const mask = r.querySelector('.value-mask');
@@ -545,20 +545,20 @@ check('the mask follows the value ring exactly', grad.maskOffset === grad.valueO
   `${grad.maskOffset} vs ${grad.valueOffset}`);
 check('the plain ring steps aside for the gradient', grad.plainRingHidden);
 
-// --- cj-level ---
+// --- cth-level ---
 const level = await page.evaluate(async () => {
-  const el = document.createElement('cj-level');
+  const el = document.createElement('cth-level');
   el.setAttribute('min', '0');
   el.setAttribute('max', '100');
   el.setAttribute('ticks', '10');
   el.setAttribute('tick-major', '5');
   el.setAttribute('zones', '0-20:#ef4444');
   el.setAttribute('value', '0');
-  el.style.setProperty('--cjl-duration', '0ms');
+  el.style.setProperty('--cthl-duration', '0ms');
   document.body.append(el);
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   const r = el.shadowRoot;
-  const lvl = () => parseFloat(r.querySelector('.body').style.getPropertyValue('--cjl-level'));
+  const lvl = () => parseFloat(r.querySelector('.body').style.getPropertyValue('--cthl-level'));
   const empty = lvl();
   el.value = 100;
   await new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res)));
@@ -570,7 +570,7 @@ const level = await page.evaluate(async () => {
   const d = r.querySelector('.tube').getAttribute('d');
 
   const out = {
-    defined: !!customElements.get('cj-level'),
+    defined: !!customElements.get('cth-level'),
     empty, full, risesUp: full < empty,
     ticks: r.querySelectorAll('.ticks line').length,
     labels: r.querySelectorAll('.ticks text').length,
@@ -581,7 +581,7 @@ const level = await page.evaluate(async () => {
   el.remove();
   return out;
 });
-check('cj-level is defined', level.defined);
+check('cth-level is defined', level.defined);
 check('an empty column sits at the bottom', level.empty > level.full, `${level.empty} -> ${level.full}`);
 check('filling raises the surface', level.risesUp);
 check('ticks=10 draws 11 marks', level.ticks === 11, String(level.ticks));
@@ -592,10 +592,10 @@ check('ratio reports the fill', level.ratio === 1, String(level.ratio));
 
 // --- the sweep winds up and coasts down instead of blinking on and off ---
 const spin = await page.evaluate(async () => {
-  const el = document.querySelector('#playground cj-radar');
+  const el = document.querySelector('#playground cth-radar');
   const read = () => ({
-    o: +el.style.getPropertyValue('--cjr-beam-opacity'),
-    a: parseFloat(el.style.getPropertyValue('--cjr-beam-angle')),
+    o: +el.style.getPropertyValue('--cthr-beam-opacity'),
+    a: parseFloat(el.style.getPropertyValue('--cthr-beam-angle')),
   });
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -630,7 +630,7 @@ const thrift = await page.evaluate(async () => {
 
   // A value change moves a surface. It must not rebuild the scale — a panel
   // driving this from requestAnimationFrame would do that sixty times a second.
-  const lv = document.createElement('cj-level');
+  const lv = document.createElement('cth-level');
   lv.setAttribute('ticks', '10');
   lv.setAttribute('tick-major', '5');
   lv.setAttribute('zones', '0-20:#ef4444');
@@ -643,7 +643,7 @@ const thrift = await page.evaluate(async () => {
   await wait();
   out.scaleKept = lv.shadowRoot.querySelector('.ticks line') === tick;
   out.zoneKept = lv.shadowRoot.querySelector('.zone') === zone;
-  out.levelMoved = parseFloat(lv.shadowRoot.querySelector('.body').style.getPropertyValue('--cjl-level')) < 180;
+  out.levelMoved = parseFloat(lv.shadowRoot.querySelector('.body').style.getPropertyValue('--cthl-level')) < 180;
   // but a change that *does* affect the scale still rebuilds it
   lv.setAttribute('ticks', '4');
   await wait();
@@ -652,7 +652,7 @@ const thrift = await page.evaluate(async () => {
 
   // Contacts put on the scope by script must survive an unrelated attribute
   // change; re-reading the blips attribute every time threw them away.
-  const rd = document.createElement('cj-radar');
+  const rd = document.createElement('cth-radar');
   rd.setAttribute('blips', '10:0.5');
   rd.setAttribute('period', '4');
   document.body.append(rd);
@@ -686,7 +686,7 @@ check('changing the blips attribute still replaces them',
 // accounted for most of the DOM churn on the busiest lab panel.
 const idle = await page.evaluate(async () => {
   const wait = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('ticks', '36');
   k.setAttribute('tick-major', '9');
   k.setAttribute('labels', 'N,E,S,W');
@@ -716,17 +716,17 @@ const idle = await page.evaluate(async () => {
 check('re-rendering the same value creates no nodes', idle.idleChurn === 0, `${idle.idleChurn} nodes`);
 check('a real value change still updates the readout', idle.realChurn > 0, `${idle.realChurn} nodes`);
 
-// --- cj-rings ---
+// --- cth-rings ---
 const rings = await page.evaluate(async () => {
   const wait = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   const box = 200, thickness = 0.04, gap = 0.06;
 
-  const el = document.createElement('cj-rings');
+  const el = document.createElement('cth-rings');
   el.setAttribute('thickness', String(thickness));
   el.setAttribute('gap', String(gap));
-  el.style.setProperty('--cjs-size', `${box}px`);
+  el.style.setProperty('--cths-size', `${box}px`);
   for (let i = 0; i < 3; i++) {
-    const k = document.createElement('cj-knob');
+    const k = document.createElement('cth-knob');
     k.setAttribute('readout', 'none');
     k.setAttribute('value', '50');
     el.append(k);
@@ -735,21 +735,21 @@ const rings = await page.evaluate(async () => {
   await wait();
 
   const read = () => el.rings.map((k) => ({
-    size: parseFloat(k.style.getPropertyValue('--cj-size')),
-    t: parseFloat(k.style.getPropertyValue('--cj-thickness')),
+    size: parseFloat(k.style.getPropertyValue('--cth-size')),
+    t: parseFloat(k.style.getPropertyValue('--cth-thickness')),
   }));
   const laid = read();
   // a knob's ring sits at 42% of its own box, so that is where each one lands
   const centres = laid.map((r) => r.size * 0.42);
-  // --cj-thickness is in viewBox units, so equal pixel weight means different numbers
+  // --cth-thickness is in viewBox units, so equal pixel weight means different numbers
   const strokes = laid.map((r) => r.size * r.t / 100);
 
   // one more ring than the box can hold must be dropped, not drawn inside out
-  const extra = document.createElement('cj-knob');
+  const extra = document.createElement('cth-knob');
   extra.setAttribute('readout', 'none');
   for (let i = 0; i < 6; i++) el.append(extra.cloneNode(true));
   await wait();
-  const clipped = [...el.querySelectorAll('cj-knob[data-cjs-clipped]')].length;
+  const clipped = [...el.querySelectorAll('cth-knob[data-cths-clipped]')].length;
 
   const out = {
     outerFillsBox: Math.abs(laid[0].size - box) < 0.5,
@@ -758,7 +758,7 @@ const rings = await page.evaluate(async () => {
     equalStrokes: Math.max(...strokes) - Math.min(...strokes) < 0.01,
     strokePx: strokes[0],
     clipped,
-    ringsAreKnobs: el.rings.every((k) => k.tagName === 'CJ-KNOB'),
+    ringsAreKnobs: el.rings.every((k) => k.tagName === 'CTH-KNOB'),
   };
   el.remove();
   return out;
@@ -773,7 +773,7 @@ check('the rings stay ordinary knobs', rings.ringsAreKnobs);
 // --- ballistics and peak hold ---
 const vu = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('ballistics', '.02 .5');
   k.setAttribute('peak-hold', '0.5');
   k.setAttribute('peak-fall', '40');
@@ -835,7 +835,7 @@ check('the peak decays once the hold expires', vu.peakDecayed < vu.peakHeld,
 check('a settled meter stops animating', vu.settledChurn === 0, `${vu.settledChurn} nodes`);
 
 const noBallistics = await page.evaluate(async () => {
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('value', '10');
   document.body.append(k);
   await new Promise((r) => requestAnimationFrame(r));
@@ -848,25 +848,25 @@ check('without ballistics the reading is the value', noBallistics === 90, String
 
 // --- range: two handles and a band between them ---
 const rangeSetup = await page.evaluate(async () => {
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('range', '20 70');
   k.setAttribute('sweep', '270');
   k.setAttribute('interactive', '');
   Object.assign(k.style, { position: 'fixed', left: '100px', top: '100px', zIndex: '99' });
-  k.style.setProperty('--cj-size', '300px');
+  k.style.setProperty('--cth-size', '300px');
   document.body.append(k);
   await new Promise((r) => requestAnimationFrame(r));
   k.id = 'test-range'; window.__r = k; window.__ev = [];
-  k.addEventListener('cj-input', (e) => window.__ev.push({ in: e.detail }));
-  k.addEventListener('cj-change', (e) => window.__ev.push({ ch: e.detail }));
+  k.addEventListener('cth-input', (e) => window.__ev.push({ in: e.detail }));
+  k.addEventListener('cth-change', (e) => window.__ev.push({ ch: e.detail }));
   const v = k.shadowRoot.querySelector('.value');
   return {
     // the dial's own start angle, so the drags below aim at the real handles
-    start: parseFloat(k.style.getPropertyValue('--cj-start')),
+    start: parseFloat(k.style.getPropertyValue('--cth-start')),
     dash: parseFloat(v.getAttribute('stroke-dasharray')),
     off: parseFloat(v.getAttribute('stroke-dashoffset')),
-    lo: k.style.getPropertyValue('--cj-lo-angle'),
-    hi: k.style.getPropertyValue('--cj-hi-angle'),
+    lo: k.style.getPropertyValue('--cth-lo-angle'),
+    hi: k.style.getPropertyValue('--cth-hi-angle'),
     text: k.shadowRoot.querySelector('.num').textContent,
     aria: k.getAttribute('aria-valuetext'),
     handles: !k.shadowRoot.querySelector('.handles').hasAttribute('hidden'),
@@ -904,7 +904,7 @@ const rDrag = async (from, to, steps = 10) => {
 const dragLow = await rDrag(0.20, 0.40);
 check('dragging the low handle moves only it',
   dragLow.r.low > 30 && dragLow.r.high === 70, JSON.stringify(dragLow.r));
-check('cj-change on a range carries low and high',
+check('cth-change on a range carries low and high',
   dragLow.ev.at(-1).ch && 'low' in dragLow.ev.at(-1).ch, JSON.stringify(dragLow.ev.at(-1)));
 
 await page.evaluate(() => { window.__r.range = [20, 70]; });
@@ -934,13 +934,13 @@ await page.evaluate(() => window.__r.remove());
 
 // --- endless: an encoder with no ends ---
 await page.evaluate(async () => {
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('endless', '');
   k.setAttribute('value', '0');
   k.setAttribute('readout', 'value');
   k.setAttribute('interactive', '');
   Object.assign(k.style, { position: 'fixed', left: '100px', top: '100px', zIndex: '99' });
-  k.style.setProperty('--cj-size', '300px');
+  k.style.setProperty('--cth-size', '300px');
   document.body.append(k);
   await new Promise((r) => requestAnimationFrame(r));
   k.id = 'test-endless'; window.__e = k;
@@ -996,7 +996,7 @@ const eKeys = await page.evaluate(() => {
   k.value = 99; k.focus();
   for (let i = 0; i < 5; i++) k.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
   const past = k.value;
-  const plain = document.createElement('cj-knob');
+  const plain = document.createElement('cth-knob');
   plain.setAttribute('interactive', ''); plain.setAttribute('value', '99');
   document.body.append(plain); plain.focus();
   for (let i = 0; i < 5; i++) plain.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
@@ -1007,11 +1007,11 @@ const eKeys = await page.evaluate(() => {
 check('arrow keys step past max on an encoder', eKeys.past === 104, String(eKeys.past));
 check('an ordinary dial still stops at max', eKeys.capped === 100, String(eKeys.capped));
 
-// --- cj-trace: a waveform that writes itself ---
+// --- cth-trace: a waveform that writes itself ---
 const trace = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const mk = (attrs) => {
-    const t = document.createElement('cj-trace');
+    const t = document.createElement('cth-trace');
     for (const [k, v] of Object.entries(attrs)) t.setAttribute(k, v);
     document.body.append(t);
     return t;
@@ -1111,11 +1111,11 @@ check('clear() empties the window', trace.cleared === '', trace.cleared);
 check('a detached trace stops its loop', trace.stopped);
 check('a re-attached trace starts again', trace.restarted);
 
-// --- cj-heat: a ring of cells coloured by their own values ---
+// --- cth-heat: a ring of cells coloured by their own values ---
 const heat = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const mk = (attrs) => {
-    const h = document.createElement('cj-heat');
+    const h = document.createElement('cth-heat');
     for (const [k, v] of Object.entries(attrs)) h.setAttribute(k, v);
     document.body.append(h);
     return h;
@@ -1163,11 +1163,11 @@ const heat = await page.evaluate(async () => {
   // hovering names a cell
   const hot = mk({ values: '0,10,20,30', interactive: '' });
   Object.assign(hot.style, { position: 'fixed', left: '80px', top: '80px', zIndex: '99' });
-  hot.style.setProperty('--cj-size', '240px');
+  hot.style.setProperty('--cth-size', '240px');
   hot.id = 'test-heat';
   await wait(50);
   window.__heat = hot; window.__hover = [];
-  hot.addEventListener('cj-hover', (e) => window.__hover.push(e.detail));
+  hot.addEventListener('cth-hover', (e) => window.__hover.push(e.detail));
   return out;
 });
 check('one cell per value', heat.cellCount === 5, String(heat.cellCount));
@@ -1194,7 +1194,7 @@ await page.mouse.move(hBox.x + hBox.width / 2 + 8, hBox.y + hBox.height / 2 - hB
 await page.waitForTimeout(60);
 const hovered = await page.evaluate(() => ({ hot: window.__heat.hot, ev: window.__hover.slice() }));
 check('hovering a cell names its value', hovered.hot === 0, JSON.stringify(hovered));
-check('cj-hover carries the index and the value',
+check('cth-hover carries the index and the value',
   hovered.ev.length > 0 && hovered.ev.at(-1).index === 0, JSON.stringify(hovered.ev.at(-1)));
 const hotText = await page.evaluate(() => window.__heat.shadowRoot.querySelector('.num').textContent);
 check('the middle switches to the hovered cell', hotText === '0', hotText);
@@ -1212,7 +1212,7 @@ const inset = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const out = {};
 
-  const bare = document.createElement('cj-knob');
+  const bare = document.createElement('cth-knob');
   bare.setAttribute('value', '50');
   document.body.append(bare);
   await wait(30);
@@ -1220,7 +1220,7 @@ const inset = await page.evaluate(async () => {
   out.emptyHidden = getComputedStyle(bare.shadowRoot.querySelector('.inset')).display;
 
   // filling the slot must be noticed: CSS cannot ask a slot whether it has anything
-  const t = document.createElement('cj-trace');
+  const t = document.createElement('cth-trace');
   t.setAttribute('slot', 'inset');
   t.setAttribute('beat', '72');
   bare.append(t);
@@ -1268,7 +1268,7 @@ check('inset="fill" is carried through', inset.fillMode === 'fill', String(inset
 // --- pulse: a ring that breathes at a rate ---
 const pulse = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('value', '60');
   document.body.append(k);
   await wait(30);
@@ -1278,7 +1278,7 @@ const pulse = await page.evaluate(async () => {
   k.setAttribute('pulse', '120');
   await wait(30);
   out.shown = !ring.hasAttribute('hidden');
-  out.period = k.style.getPropertyValue('--cj-pulse-period');
+  out.period = k.style.getPropertyValue('--cth-pulse-period');
   out.animation = getComputedStyle(ring).animationName;
   const seen = new Set();
   for (let i = 0; i < 8; i++) { seen.add(getComputedStyle(ring).opacity); await wait(60); }
@@ -1286,7 +1286,7 @@ const pulse = await page.evaluate(async () => {
 
   k.setAttribute('pulse', '');
   await wait(30);
-  out.bare = k.style.getPropertyValue('--cj-pulse-period');
+  out.bare = k.style.getPropertyValue('--cth-pulse-period');
   k.removeAttribute('pulse');
   await wait(30);
   out.offAgain = ring.hasAttribute('hidden');
@@ -1300,15 +1300,15 @@ check('bare pulse is 60 bpm', pulse.bare === '1.00s', pulse.bare);
 check('the ring is actually animating', pulse.opacities > 1, String(pulse.opacities));
 check('removing pulse hides the ring again', pulse.offAgain);
 
-// --- cj-heat shape="bars": a year as a skyline ---
+// --- cth-heat shape="bars": a year as a skyline ---
 const bars = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const h = document.createElement('cj-heat');
+  const h = document.createElement('cth-heat');
   h.setAttribute('shape', 'bars');
   h.setAttribute('values', '0,25,50,75,100');
   h.setAttribute('label', 'y');
   Object.assign(h.style, { position: 'fixed', left: '60px', top: '60px', zIndex: '99' });
-  h.style.setProperty('--cj-size', '300px');
+  h.style.setProperty('--cth-size', '300px');
   h.id = 'test-bars';
   document.body.append(h);
   await wait(50);
@@ -1340,7 +1340,7 @@ const bars = await page.evaluate(async () => {
   await wait(50);
   window.__bars = h; window.__barHover = [];
   h.setAttribute('interactive', '');
-  h.addEventListener('cj-hover', (e) => window.__barHover.push(e.detail));
+  h.addEventListener('cth-hover', (e) => window.__barHover.push(e.detail));
   return out;
 });
 check('bars draws a line per value', bars.lineCount === 5, String(bars.lineCount));
@@ -1367,10 +1367,10 @@ const barHot = await page.evaluate(() => ({ hot: window.__bars.hot, ev: window._
 check('the whole slot is hoverable, not just the hairline', barHot.hot === 0, JSON.stringify(barHot));
 await page.evaluate(() => window.__bars.remove());
 
-// --- cj-trace: the readout must not sit on the trace ---
+// --- cth-trace: the readout must not sit on the trace ---
 const corner = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const t = document.createElement('cj-trace');
+  const t = document.createElement('cth-trace');
   t.setAttribute('beat', '72');
   document.body.append(t);
   await wait(60);
@@ -1396,7 +1396,7 @@ check('readout-at moves it across', corner.movedRight);
 // modules blocked, which is exactly what a slow network looks like.
 {
   const cold = await browser.newPage({ viewport: { width: 1080, height: 900 } });
-  await cold.route('**/src/cj-*.js', (r) => r.abort());
+  await cold.route('**/src/cth-*.js', (r) => r.abort());
   await cold.goto(BASE, { waitUntil: 'domcontentloaded' });
   await cold.waitForTimeout(700);
   const undef = await cold.evaluate(() => {
@@ -1407,9 +1407,9 @@ check('readout-at moves it across', corner.movedRight);
       return { w: Math.round(b.width), h: Math.round(b.height), defined: e.matches(':defined') };
     };
     return {
-      knob: pick('#examples cj-knob'), heat: pick('cj-heat'), radar: pick('cj-radar'),
-      horizon: pick('cj-horizon'), rings: pick('cj-rings'), trace: pick('cj-trace:not([slot])'),
-      level: pick('cj-level'), docH: document.documentElement.scrollHeight,
+      knob: pick('#examples cth-knob'), heat: pick('cth-heat'), radar: pick('cth-radar'),
+      horizon: pick('cth-horizon'), rings: pick('cth-rings'), trace: pick('cth-trace:not([slot])'),
+      level: pick('cth-level'), docH: document.documentElement.scrollHeight,
     };
   });
   await cold.close();
@@ -1425,9 +1425,9 @@ check('readout-at moves it across', corner.movedRight);
       return { w: Math.round(b.width), h: Math.round(b.height) };
     };
     return {
-      knob: pick('#examples cj-knob'), heat: pick('cj-heat'), radar: pick('cj-radar'),
-      horizon: pick('cj-horizon'), rings: pick('cj-rings'), trace: pick('cj-trace:not([slot])'),
-      level: pick('cj-level'), docH: document.documentElement.scrollHeight,
+      knob: pick('#examples cth-knob'), heat: pick('cth-heat'), radar: pick('cth-radar'),
+      horizon: pick('cth-horizon'), rings: pick('cth-rings'), trace: pick('cth-trace:not([slot])'),
+      level: pick('cth-level'), docH: document.documentElement.scrollHeight,
     };
   });
   await warm.close();
@@ -1450,13 +1450,13 @@ check('readout-at moves it across', corner.movedRight);
 // --- voice: a waveform that goes genuinely flat ---
 const voice = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const t = document.createElement('cj-trace');
+  const t = document.createElement('cth-trace');
   t.setAttribute('voice', '');
   t.setAttribute('mirror', '');
   t.setAttribute('samples', '200');
   document.body.append(t);
   const out = { states: [], levels: [] };
-  t.addEventListener('cj-speech', (e) => out.states.push(e.detail.speaking));
+  t.addEventListener('cth-speech', (e) => out.states.push(e.detail.speaking));
   // Sample while it is actually talking. Silence is a flat line by design, so
   // measuring at a random moment is a coin toss on whether there is any
   // deflection to find at all.
@@ -1478,7 +1478,7 @@ const voice = await page.evaluate(async () => {
   t.remove();
 
   // unmirrored, the same samples rise from the floor instead
-  const flat = document.createElement('cj-trace');
+  const flat = document.createElement('cth-trace');
   flat.setAttribute('voice', '');
   document.body.append(flat);
   await wait(600);
@@ -1496,14 +1496,14 @@ check('a voice trace hides its readout by default', voice.readoutHidden);
 check('the talker actually talks', voice.sawSpeech);
 // the gate is the whole point: silence has to be genuinely zero, not merely quiet
 check('and actually stops', voice.sawSilence);
-check('cj-speech fires on both edges', voice.states.includes(true) && voice.states.includes(false),
+check('cth-speech fires on both edges', voice.states.includes(true) && voice.states.includes(false),
   JSON.stringify(voice.states.slice(0, 6)));
 check('speaking agrees with level', voice.speakingMatchesLevel);
 
 // --- button: the dial as a control ---
 const button = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('button', '');
   k.setAttribute('toggle', '');
   k.setAttribute('value', '30');
@@ -1526,7 +1526,7 @@ const button = await page.evaluate(async () => {
     onShown: getComputedStyle(k.shadowRoot.querySelector('.icon-on')).display,
     events: [],
   };
-  k.addEventListener('cj-press', (e) => out.events.push(e.detail.pressed));
+  k.addEventListener('cth-press', (e) => out.events.push(e.detail.pressed));
   k.click();
   await wait(30);
   out.afterClick = k.pressed;
@@ -1540,7 +1540,7 @@ const button = await page.evaluate(async () => {
   out.afterEnter = k.pressed;
 
   // a plain (non-toggle) button must not claim a pressed state it does not have
-  const plain = document.createElement('cj-knob');
+  const plain = document.createElement('cth-knob');
   plain.setAttribute('button', '');
   document.body.append(plain);
   await wait(30);
@@ -1551,7 +1551,7 @@ const button = await page.evaluate(async () => {
   plain.remove();
 
   // without button= it is still a meter, not a control
-  const meter = document.createElement('cj-knob');
+  const meter = document.createElement('cth-knob');
   document.body.append(meter);
   await wait(20);
   out.meterRole = meter.getAttribute('role');
@@ -1566,7 +1566,7 @@ check('the label becomes the accessible name', button.label === 'play', String(b
 check('only the off glyph shows at rest',
   button.offShown !== 'none' && button.onShown === 'none',
   button.offShown + ' / ' + button.onShown);
-check('clicking fires cj-press', button.events.length >= 1, JSON.stringify(button.events));
+check('clicking fires cth-press', button.events.length >= 1, JSON.stringify(button.events));
 check('toggle latches on click', button.afterClick === true);
 check('aria-pressed follows it', button.ariaAfter === 'true', String(button.ariaAfter));
 check('the pressed glyph takes over', button.onShownAfter !== 'none', button.onShownAfter);
@@ -1580,7 +1580,7 @@ check('a dial without button= is still a meter', button.meterRole === 'meter', b
 const gas = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const mk = (v) => {
-    const k = document.createElement('cj-knob');
+    const k = document.createElement('cth-knob');
     if (v !== null) k.setAttribute('gas', '');
     k.setAttribute('value', String(v ?? 50));
     document.body.append(k);
@@ -1620,10 +1620,10 @@ check('changing the value thins the cloud rather than moving it',
 const icon = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const mk = (readout) => {
-    const k = document.createElement('cj-knob');
+    const k = document.createElement('cth-knob');
     k.setAttribute('value', '60');
     k.setAttribute('readout', readout);
-    k.style.setProperty('--cj-size', '200px');
+    k.style.setProperty('--cth-size', '200px');
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('slot', 'icon');
     svg.setAttribute('viewBox', '0 0 24 24');
@@ -1644,7 +1644,7 @@ check('an icon that IS the middle is large', icon.alone === 68, String(icon.alon
 
 // --- the graphics are not prose ---
 const selectable = await page.evaluate(() => {
-  const tags = ['cj-knob', 'cj-heat', 'cj-trace', 'cj-level', 'cj-radar', 'cj-horizon', 'cj-rings'];
+  const tags = ['cth-knob', 'cth-heat', 'cth-trace', 'cth-level', 'cth-radar', 'cth-horizon', 'cth-rings'];
   const out = {};
   for (const tag of tags) {
     const el = document.createElement(tag);
@@ -1660,12 +1660,12 @@ for (const [tag, mode] of Object.entries(selectable)) {
 // blocking selection must not block using it: a slider still drags, a button still fires
 const stillWorks = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('button', '');
   document.body.append(k);
   await wait(30);
   let fired = false;
-  k.addEventListener('cj-press', () => { fired = true; });
+  k.addEventListener('cth-press', () => { fired = true; });
   k.click();
   await wait(20);
   const pe = getComputedStyle(k).pointerEvents;
@@ -1678,7 +1678,7 @@ check('and are still clickable', stillWorks.fired && stillWorks.pe !== 'none',
 // --- the trace's readout has to sit above the trace, not under it ---
 const scrim = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const t = document.createElement('cj-trace');
+  const t = document.createElement('cth-trace');
   t.setAttribute('beat', '72');
   t.setAttribute('label', 'heart');
   document.body.append(t);
@@ -1697,7 +1697,7 @@ const scrim = await page.evaluate(async () => {
   await wait(40);
   out.bareWash = getComputedStyle(t.shadowRoot.querySelector('.center')).backgroundImage;
 
-  const ring = document.createElement('cj-trace');
+  const ring = document.createElement('cth-trace');
   ring.setAttribute('shape', 'ring');
   ring.setAttribute('beat', '72');
   document.body.append(ring);
@@ -1717,11 +1717,11 @@ check('a ring puts its readout where the trace is not, so it needs none',
 const fits = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const measure = async (attrs, size) => {
-    const k = document.createElement('cj-knob');
+    const k = document.createElement('cth-knob');
     for (const [a, v] of Object.entries(attrs)) k.setAttribute(a, v);
     k.setAttribute('label', 'Midnight City');
     k.setAttribute('readout', 'none');
-    k.style.setProperty('--cj-size', size + 'px');
+    k.style.setProperty('--cth-size', size + 'px');
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     g.setAttribute('slot', 'icon');
     g.setAttribute('viewBox', '0 0 24 24');
@@ -1730,7 +1730,7 @@ const fits = await page.evaluate(async () => {
     await wait(70);
     const h = k.getBoundingClientRect();
     const cx = h.left + h.width / 2, cy = h.top + h.height / 2;
-    const th = parseFloat(getComputedStyle(k).getPropertyValue('--cj-thickness')) || 8;
+    const th = parseFloat(getComputedStyle(k).getPropertyValue('--cth-thickness')) || 8;
     const R = h.width * 0.42 - h.width * th / 200;
     const worst = (sel) => {
       const b = k.shadowRoot.querySelector(sel).getBoundingClientRect();
@@ -1762,8 +1762,8 @@ check('a turntable caption clears the disc', fits.vinyl.gap > 2, fits.vinyl.gap.
 // --- spin: winds up like a motor, coasts down like friction ---
 const platter = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const angle = (k) => parseFloat(k.style.getPropertyValue('--cj-spin-angle')) || 0;
-  const k = document.createElement('cj-knob');
+  const angle = (k) => parseFloat(k.style.getPropertyValue('--cth-spin-angle')) || 0;
+  const k = document.createElement('cth-knob');
   k.setAttribute('button', '');
   k.setAttribute('toggle', '');
   k.setAttribute('spin', '33');
@@ -1793,7 +1793,7 @@ const platter = await page.evaluate(async () => {
   k.remove();
 
   // without toggle, platter runs on its own
-  const plain = document.createElement('cj-knob');
+  const plain = document.createElement('cth-knob');
   plain.setAttribute('spin', '78');
   document.body.append(plain);
   await wait(500);
@@ -1819,7 +1819,7 @@ check('a detached turntable stops its loop', platter.stopsWhenDetached);
 const trend = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const mk = (v, unit) => {
-    const k = document.createElement('cj-knob');
+    const k = document.createElement('cth-knob');
     k.setAttribute('value', '50');
     k.setAttribute('readout', 'value');
     k.setAttribute('decimals', '2');
@@ -1858,7 +1858,7 @@ check('a flat trend is neither', trend.flat.cls.includes('flat'), trend.flat.cls
 // --- states: a dial showing which, not how much ---
 const states = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('button', '');
   k.setAttribute('readout', 'none');
   k.setAttribute('states', 'stop:#ef4444, go:#22c55e, wait:#f59e0b');
@@ -1866,7 +1866,7 @@ const states = await page.evaluate(async () => {
   await wait(60);
   const seen = [];
   const events = [];
-  k.addEventListener('cj-press', (e) => events.push(e.detail.name));
+  k.addEventListener('cth-press', (e) => events.push(e.detail.name));
   for (let i = 0; i < 4; i++) {
     seen.push({
       i: k.state,
@@ -1883,7 +1883,7 @@ const states = await page.evaluate(async () => {
   out.overridden = k.shadowRoot.querySelector('.label').textContent;
   k.remove();
 
-  const plain = document.createElement('cj-knob');
+  const plain = document.createElement('cth-knob');
   document.body.append(plain);
   await wait(30);
   out.plainState = plain.state;
@@ -1899,7 +1899,7 @@ check('and it wraps round', states.seen[3].i === 0, String(states.seen[3].i));
 check('every state has its own lamp colour',
   new Set(states.seen.slice(0, 3).map((x) => x.lamp)).size === 3,
   states.seen.slice(0, 3).map((x) => x.lamp).join(' '));
-check('cj-press carries the state name', states.events[0] === 'go', JSON.stringify(states.events));
+check('cth-press carries the state name', states.events[0] === 'go', JSON.stringify(states.events));
 check('an explicit label beats the state name', states.overridden === 'signal', states.overridden);
 check('an ordinary dial has no state', states.plainState === -1, String(states.plainState));
 check('and no lamp', states.noLamp);
@@ -1907,14 +1907,14 @@ check('and no lamp', states.noLamp);
 // --- turn: a discrete swing, not a continuous spin ---
 const turn = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('button', '');
   k.setAttribute('toggle', '');
   k.setAttribute('turn', '180');
   k.setAttribute('readout', 'none');
   document.body.append(k);
   await wait(60);
-  const at = () => k.style.getPropertyValue('--cj-turn-angle');
+  const at = () => k.style.getPropertyValue('--cth-turn-angle');
   const out = { rest: at() };
   k.click(); await wait(60);
   out.down = at();
@@ -1923,14 +1923,14 @@ const turn = await page.evaluate(async () => {
   k.remove();
 
   // without toggle it simply holds the angle it was given
-  const held = document.createElement('cj-knob');
+  const held = document.createElement('cth-knob');
   held.setAttribute('turn', '90');
   document.body.append(held);
   await wait(40);
-  out.held = held.style.getPropertyValue('--cj-turn-angle');
+  out.held = held.style.getPropertyValue('--cth-turn-angle');
   held.removeAttribute('turn');
   await wait(40);
-  out.cleared = held.style.getPropertyValue('--cj-turn-angle');
+  out.cleared = held.style.getPropertyValue('--cth-turn-angle');
   held.remove();
   return out;
 });
@@ -1946,7 +1946,7 @@ const glyphs = await page.evaluate(async () => {
   const shown = (k) => ['.icon-off', '.icon-on']
     .map((sel) => getComputedStyle(k.shadowRoot.querySelector(sel)).display !== 'none');
   const mk = (both) => {
-    const k = document.createElement('cj-knob');
+    const k = document.createElement('cth-knob');
     k.setAttribute('button', ''); k.setAttribute('toggle', ''); k.setAttribute('readout', 'none');
     const a = document.createElement('span');
     a.setAttribute('slot', 'icon'); a.textContent = 'A';
@@ -1980,10 +1980,10 @@ check('with one glyph it stays put when pressed', glyphs.oneRest[0] && glyphs.on
 // --- a spinning middle turns about its own centre ---
 const centred = await page.evaluate(async () => {
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const k = document.createElement('cj-knob');
+  const k = document.createElement('cth-knob');
   k.setAttribute('spin', '200');
   k.setAttribute('readout', 'none');
-  k.style.setProperty('--cj-size', '200px');
+  k.style.setProperty('--cth-size', '200px');
   const sp = document.createElement('span');
   sp.setAttribute('slot', 'icon'); sp.textContent = '💿';
   k.append(sp);

@@ -6,8 +6,8 @@
 // by hand twenty times would bury the interesting part — the actual
 // simulation — under identical markup, so it lives here instead.
 // ---------------------------------------------------------------
-import '../src/cj-knob.js';
-import '../src/cj-level.js';
+import '../src/cth-knob.js';
+import '../src/cth-level.js';
 
 const SVG_ATTRS = [
   'min', 'max', 'value', 'sweep', 'start', 'benchmark', 'readout', 'unit',
@@ -38,7 +38,7 @@ export const mix = (parts, total = 100) => {
 };
 
 export function buildPanel(spec) {
-  document.title = `${spec.title} — cj-knob lab`;
+  document.title = `${spec.title} — cth-instrument lab`;
 
   const h1 = make('h1');
   h1.textContent = spec.title;
@@ -78,7 +78,7 @@ export function buildPanel(spec) {
       if (item.cellStyle) cell.style.cssText = item.cellStyle;
 
       // a panel item can be any of the dial elements; the attribute list is shared
-      const knob = document.createElement(item.tag ?? 'cj-knob');
+      const knob = document.createElement(item.tag ?? 'cth-knob');
       for (const a of SVG_ATTRS) {
         const key = a.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
         if (item[key] !== undefined && item[key] !== null) knob.setAttribute(a, item[key]);

@@ -3,7 +3,7 @@
 Where the project stands, what was decided and why, and what is next. The README
 is the reference; this is the log.
 
-_Last updated: 2026-09-01._
+_Last updated: 2026-09-06._
 
 ---
 
@@ -13,14 +13,14 @@ Seven custom elements plus one stylesheet, no dependencies, no build step.
 
 | File | Gzipped | What it is |
 | --- | --- | --- |
-| `src/cj-knob.js` | 23.6 KB | The dial. 42 attributes; everything else orbits it. |
-| `src/cj-trace.js` | 8.9 KB | A waveform — a strip or a ring. ECG and voice generators built in. |
-| `src/cj-heat.js` | 7.2 KB | Many values on one ring, as coloured cells or as towers. |
-| `src/cj-radar.js` | 5.9 KB | A sweeping scope with contacts. |
-| `src/cj-level.js` | 4.9 KB | A column: thermometer, tank, tube. |
-| `src/cj-horizon.js` | 4.1 KB | An attitude indicator — pitch and roll. |
-| `src/cj-rings.js` | 2.0 KB | Layout only: concentric knobs without the arithmetic. |
-| `src/cj-skeleton.css` | 1.4 KB | Holds each element's box before its module lands. |
+| `src/cth-knob.js` | 23.6 KB | The dial. 42 attributes; everything else orbits it. |
+| `src/cth-trace.js` | 8.9 KB | A waveform — a strip or a ring. ECG and voice generators built in. |
+| `src/cth-heat.js` | 7.2 KB | Many values on one ring, as coloured cells or as towers. |
+| `src/cth-radar.js` | 5.9 KB | A sweeping scope with contacts. |
+| `src/cth-level.js` | 4.9 KB | A column: thermometer, tank, tube. |
+| `src/cth-horizon.js` | 4.1 KB | An attitude indicator — pitch and roll. |
+| `src/cth-rings.js` | 2.0 KB | Layout only: concentric knobs without the arithmetic. |
+| `src/cth-skeleton.css` | 1.4 KB | Holds each element's box before its module lands. |
 
 **Verified as of this commit:** 304 Playwright checks pass (`npm test`), plus three
 further suites — the playground, the landing page, and all 30 lab dashboards
@@ -36,7 +36,7 @@ the way it does.
 **The loading jump cannot be fixed from JavaScript.** Each element sizes itself
 from inside its own shadow root, which does not exist until the module runs, so
 any CSS a module injects arrives exactly too late to have held the space. Hence
-`cj-skeleton.css`, a plain stylesheet for the `<head>`. Measured: the landing
+`cth-skeleton.css`, a plain stylesheet for the `<head>`. Measured: the landing
 page jumped 3110px before, 5px after.
 
 **Spinning up and coasting down are different curves.** Easing toward zero
@@ -77,13 +77,15 @@ and dimmed the background while the line still crossed the digits.
 2. **The lab** — 30 themed full-screen dashboards, shared panel framework.
 3. **Landing page** — rewritten as a product page.
 4. **VU** — meter ballistics and peak hold.
-5. **`range`, `endless`, `<cj-trace>`, `<cj-heat>`** — two input modes, two elements.
+5. **`range`, `endless`, `<cth-trace>`, `<cth-heat>`** — two input modes, two elements.
 6. **Composition** — `slot="inset"`, `pulse`, `shape="bars"`.
 7. **Skeleton, voice, `button`, `gas`** — the loading fix and four features.
 8. **Review round** — year ring rebuilt to a reference, scrim, gas, thermometer.
 9. **`spin`, caption fitting, `user-select`** — the turntable and the text rules.
 10. **The world view** — `trend`, `states`, `turn`, and nine everyday dials.
 11. **Hero slider** — four scenes, auto-advancing, pausing on hover.
+12. **Renamed `cth-instrument`** — the project outgrew "knob": every element,
+    custom property, class and file moved from `cj-` to `cth-`.
 
 ---
 
@@ -93,10 +95,10 @@ Nothing here is started.
 
 **Asked for and not yet done**
 
-- **Curved captions.** A caption bent along the ring, the way `<cj-heat labels>`
+- **Curved captions.** A caption bent along the ring, the way `<cth-heat labels>`
   already sets month names round a year. Raised for the turntable, where a
   straight caption under a record is the weakest part of the layout. Needs a
-  decision on whether it belongs on `cj-knob` or stays a heat-ring feature.
+  decision on whether it belongs on `cth-knob` or stays a heat-ring feature.
 
 **Proposed, not confirmed**
 
@@ -104,15 +106,15 @@ Nothing here is started.
   gradient behind. `turn` covers the two-state version; this is the continuous one.
 - **Lab dashboards for the world view** — money, home, energy. The elements are
   all there; these would be compositions, not new code.
-- **A `<cj-knob>` docs page** separate from the landing page, once the attribute
+- **A `<cth-knob>` docs page** separate from the landing page, once the attribute
   table outgrows a section.
 
 **Known limits**
 
-- `cj-radar`'s phosphor tail needs `color-mix` (Chrome 111+). Everything else
+- `cth-radar`'s phosphor tail needs `color-mix` (Chrome 111+). Everything else
   works on the older floor stated in the README, and the scope still draws
   without it — only the fading trail behind the beam does not.
-- `cj-skeleton.css` reserves `cj-level`'s height approximately: a column's height
+- `cth-skeleton.css` reserves `cth-level`'s height approximately: a column's height
   depends on whether it is showing a readout and a label, and three CSS rules
   cover the common cases rather than all four.
 - A caption is refitted on resize, not on a font swap. A late-loading webfont

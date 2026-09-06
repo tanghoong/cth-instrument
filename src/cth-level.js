@@ -1,11 +1,11 @@
 // -------------------------------------------------
-// cj-level — a zero-dependency SVG column gauge
-// https://github.com/tanghoong/cj-knob
+// cth-level — a zero-dependency SVG column gauge
+// https://github.com/tanghoong/cth-instrument
 //
-// <cj-level value="62" unit="L" label="fryer oil" liquid></cj-level>
+// <cth-level value="62" unit="L" label="fryer oil" liquid></cth-level>
 //
 // The straight-tube reading a ring cannot give you: a tank, a cylinder, a
-// thermometer. Same liquid engine as <cj-knob liquid>, in the container the
+// thermometer. Same liquid engine as <cth-knob liquid>, in the container the
 // quantity actually lives in, with a scale you read off the side.
 // -------------------------------------------------
 
@@ -35,22 +35,22 @@ template.innerHTML = `
 <style>
   :host {
     /* ---- public theming API ---- */
-    --cjl-height: 220px;
-    --cjl-fill: #35a7ff;
-    --cjl-fill-back: rgba(53, 167, 255, .45);
-    --cjl-tube: #e6e9ee;
-    --cjl-wall: #c3cad4;
-    --cjl-tick: #9aa3ae;
-    --cjl-text: #14161a;
-    --cjl-muted: #6b7280;
-    --cjl-mark-size: 8px;
-    --cjl-duration: 600ms;
-    --cjl-easing: cubic-bezier(.22,.61,.36,1);
+    --cthl-height: 220px;
+    --cthl-fill: #35a7ff;
+    --cthl-fill-back: rgba(53, 167, 255, .45);
+    --cthl-tube: #e6e9ee;
+    --cthl-wall: #c3cad4;
+    --cthl-tick: #9aa3ae;
+    --cthl-text: #14161a;
+    --cthl-muted: #6b7280;
+    --cthl-mark-size: 8px;
+    --cthl-duration: 600ms;
+    --cthl-easing: cubic-bezier(.22,.61,.36,1);
 
     display: inline-grid;
     justify-items: center;
     gap: .35rem;
-    color: var(--cjl-text);
+    color: var(--cthl-text);
     /* A dial is an instrument, not text. Its numbers are drawn readings, and
        select-all dragging a blue box across every gauge on a dashboard helps
        nobody. This blocks selection only — pointer and keyboard input, and
@@ -62,29 +62,29 @@ template.innerHTML = `
   }
   @media (prefers-color-scheme: dark) {
     :host {
-      --cjl-tube: #21262e; --cjl-wall: #39414c;
-      --cjl-text: #f2f4f7; --cjl-muted: #98a2b3; --cjl-tick: #6b7683;
+      --cthl-tube: #21262e; --cthl-wall: #39414c;
+      --cthl-text: #f2f4f7; --cthl-muted: #98a2b3; --cthl-tick: #6b7683;
     }
   }
   :host([hidden]) { display: none; }
 
-  svg { block-size: var(--cjl-height); inline-size: auto; display: block; }
+  svg { block-size: var(--cthl-height); inline-size: auto; display: block; }
 
-  .tube { fill: var(--cjl-tube); stroke: var(--cjl-wall); stroke-width: 1.4; }
+  .tube { fill: var(--cthl-tube); stroke: var(--cthl-wall); stroke-width: 1.4; }
   .zone { opacity: .42; }
 
   /* The fill and the fluid are the same idea: a shape whose top edge sits at the
      value. A flat rect reads as a bar; the wave reads as something poured in. */
   .body {
-    transform: translateY(var(--cjl-level, 200px));
-    transition: transform var(--cjl-duration) var(--cjl-easing);
+    transform: translateY(var(--cthl-level, 200px));
+    transition: transform var(--cthl-duration) var(--cthl-easing);
   }
-  .flat { fill: var(--cjl-fill); }
-  .wave { fill: var(--cjl-fill); }
-  .wave-b { fill: var(--cjl-fill-back); animation: cjl-drift 4.9s linear infinite reverse; }
-  .wave-a { animation: cjl-drift 3.3s linear infinite; }
+  .flat { fill: var(--cthl-fill); }
+  .wave { fill: var(--cthl-fill); }
+  .wave-b { fill: var(--cthl-fill-back); animation: cthl-drift 4.9s linear infinite reverse; }
+  .wave-a { animation: cthl-drift 3.3s linear infinite; }
   /* one wavelength of travel lands the shape back on itself */
-  @keyframes cjl-drift {
+  @keyframes cthl-drift {
     from { transform: translateX(0); }
     to   { transform: translateX(-26px); }
   }
@@ -92,11 +92,11 @@ template.innerHTML = `
   :host([liquid]) .flat { display: none; }
   @media (prefers-reduced-motion: reduce) { .wave { animation: none; } }
 
-  .ticks line { stroke: var(--cjl-tick); stroke-width: 1; stroke-linecap: round; }
+  .ticks line { stroke: var(--cthl-tick); stroke-width: 1; stroke-linecap: round; }
   .ticks line.major { stroke-width: 1.8; }
   .ticks text {
-    fill: var(--cjl-muted);
-    font-size: var(--cjl-mark-size);
+    fill: var(--cthl-muted);
+    font-size: var(--cthl-mark-size);
     font-family: inherit;
     font-weight: 600;
     text-anchor: start;
@@ -104,7 +104,7 @@ template.innerHTML = `
   }
 
   .readout {
-    font-size: max(13px, calc(var(--cjl-height) * .105));
+    font-size: max(13px, calc(var(--cthl-height) * .105));
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     letter-spacing: -.02em;
@@ -112,11 +112,11 @@ template.innerHTML = `
     white-space: nowrap;
   }
   .readout[hidden] { display: none; }
-  .unit { font-size: .55em; font-weight: 500; color: var(--cjl-muted); margin-inline-start: .12em; }
+  .unit { font-size: .55em; font-weight: 500; color: var(--cthl-muted); margin-inline-start: .12em; }
 
   .label {
-    font-size: max(9px, calc(var(--cjl-height) * .05));
-    color: var(--cjl-muted);
+    font-size: max(9px, calc(var(--cthl-height) * .05));
+    color: var(--cthl-muted);
     text-align: center;
     line-height: 1.2;
   }
@@ -125,11 +125,11 @@ template.innerHTML = `
 
 <svg viewBox="0 0 ${VB_W} ${VB_H}" part="svg" aria-hidden="true" focusable="false">
   <defs>
-    <clipPath id="cjl-bore"><path class="bore"/></clipPath>
+    <clipPath id="cthl-bore"><path class="bore"/></clipPath>
   </defs>
 
   <path class="tube" part="tube"/>
-  <g clip-path="url(#cjl-bore)">
+  <g clip-path="url(#cthl-bore)">
     <g class="body" part="body">
       <rect class="flat" x="-40" y="0" width="200" height="${VB_H * 2}"/>
       <g class="waves">
@@ -146,7 +146,7 @@ template.innerHTML = `
 <div class="label" part="label" hidden></div>
 `;
 
-export class CJLevel extends HTMLElement {
+export class CTHLevel extends HTMLElement {
   static observedAttributes = [
     'value', 'min', 'max', 'unit', 'decimals', 'label', 'readout',
     'ticks', 'tick-major', 'zones', 'liquid', 'bulb', 'color',
@@ -242,7 +242,7 @@ export class CJLevel extends HTMLElement {
       this.#els.bore.setAttribute('d', this.#shape(g, WALL));
     }
 
-    if (this.hasAttribute('color')) this.style.setProperty('--cjl-fill', this.getAttribute('color'));
+    if (this.hasAttribute('color')) this.style.setProperty('--cthl-fill', this.getAttribute('color'));
 
     this.#buildWaves();
     this.#renderZones(g);
@@ -261,7 +261,7 @@ export class CJLevel extends HTMLElement {
     // The bulb always reads full: a thermometer's reservoir is not part of the
     // scale, so the column alone carries the value.
     const surface = g.bottom - this.ratio * g.colH;
-    this.#els.body.style.setProperty('--cjl-level', `${surface.toFixed(2)}px`);
+    this.#els.body.style.setProperty('--cthl-level', `${surface.toFixed(2)}px`);
     this.#renderText();
 
     this.setAttribute('role', 'meter');
@@ -359,6 +359,6 @@ export class CJLevel extends HTMLElement {
   }
 }
 
-if (!customElements.get('cj-level')) customElements.define('cj-level', CJLevel);
+if (!customElements.get('cth-level')) customElements.define('cth-level', CTHLevel);
 
-export default CJLevel;
+export default CTHLevel;

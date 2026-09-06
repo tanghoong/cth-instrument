@@ -1,4 +1,4 @@
-export declare class CJLevel extends HTMLElement {
+export declare class CTHLevel extends HTMLElement {
   /** Lower bound of the scale. Attribute: `min`. Default `0`. */
   min: number;
   /** Upper bound of the scale. Attribute: `max`. Default `100`. */
@@ -11,8 +11,8 @@ export declare class CJLevel extends HTMLElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'cj-level': CJLevel;
+    'cth-level': CTHLevel;
   }
 }
 
-export default CJLevel;
+export default CTHLevel;

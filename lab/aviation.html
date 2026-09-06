@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aviation — cj-knob lab</title>
+<title>Aviation — cth-instrument lab</title>
 <style>
   :root {
     color-scheme: dark;
@@ -33,8 +33,8 @@
     .row { min-height: 0; }
     .primary { flex: 1.45; }
     .secondary, .tertiary { flex: 1; }
-    .primary cj-knob { --cj-size: min(224px, 29vh); }
-    .secondary cj-knob, .tertiary cj-knob { --cj-size: min(112px, 14vh); }
+    .primary cth-knob { --cth-size: min(224px, 29vh); }
+    .secondary cth-knob, .tertiary cth-knob { --cth-size: min(112px, 14vh); }
   }
 
   .strip {
@@ -65,16 +65,16 @@
     font-size: 10px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase;
   }
 
-  cj-knob {
-    --cj-track: var(--track);
-    --cj-text: var(--ink);
-    --cj-muted: var(--dim);
-    --cj-tick: #3f5568;
-    --cj-duration: 220ms;
-    --cj-easing: linear;
+  cth-knob {
+    --cth-track: var(--track);
+    --cth-text: var(--ink);
+    --cth-muted: var(--dim);
+    --cth-tick: #3f5568;
+    --cth-duration: 220ms;
+    --cth-easing: linear;
   }
-  .primary cj-knob { --cj-size: 168px; --cj-thickness: 6; }
-  .secondary cj-knob { --cj-size: 104px; --cj-thickness: 7; }
+  .primary cth-knob { --cth-size: 168px; --cth-thickness: 6; }
+  .secondary cth-knob { --cth-size: 104px; --cth-thickness: 7; }
 
   h1 { font-size: 12px; letter-spacing: .2em; color: var(--dim); margin: 0; font-weight: 500; }
 </style>
@@ -84,7 +84,7 @@
 <h1>PRIMARY FLIGHT &amp; ENGINE — A320 SIM</h1>
 
 <div class="strip">
-  <span><span class="t">FLT</span> <b>CJ1013</b></span>
+  <span><span class="t">FLT</span> <b>CTH1013</b></span>
   <span><span class="t">PHASE</span> <b id="phase">CRUISE</b></span>
   <span><span class="t">ALT</span> <b id="s-alt">—</b></span>
   <span><span class="t">IAS</span> <b id="s-ias">—</b></span>
@@ -95,123 +95,123 @@
 
 <div class="row primary">
   <div class="inst">
-    <cj-knob id="ias" min="0" max="400" value="280" sweep="270" readout="value" decimals="0"
+    <cth-knob id="ias" min="0" max="400" value="280" sweep="270" readout="value" decimals="0"
              ticks="16" tick-major="4" color="var(--cyn)"
              zones="0-120:#ff4d5e, 120-160:#ffb020, 320-360:#ffb020, 360-400:#ff4d5e"
-             label="knots"></cj-knob>
+             label="knots"></cth-knob>
     <div class="cap">Airspeed</div>
   </div>
   <div class="inst">
-    <cj-knob id="alt" min="0" max="42000" value="35000" sweep="270" readout="value" decimals="0"
-             ticks="14" tick-major="7" color="var(--grn)" label="feet"></cj-knob>
+    <cth-knob id="alt" min="0" max="42000" value="35000" sweep="270" readout="value" decimals="0"
+             ticks="14" tick-major="7" color="var(--grn)" label="feet"></cth-knob>
     <div class="cap">Altitude</div>
   </div>
   <div class="inst">
-    <cj-knob id="vsi" min="-2000" max="2000" value="0" sweep="240" start="150" readout="value"
-             ticks="8" tick-major="4" color="var(--cyn)" benchmark="0" label="ft/min"></cj-knob>
+    <cth-knob id="vsi" min="-2000" max="2000" value="0" sweep="240" start="150" readout="value"
+             ticks="8" tick-major="4" color="var(--cyn)" benchmark="0" label="ft/min"></cth-knob>
     <div class="cap">Vertical speed</div>
   </div>
   <div class="inst">
-    <cj-knob id="hdg" min="0" max="360" value="94" sweep="360" readout="value" unit="°"
-             ticks="36" tick-major="9" color="var(--amb)" label="magnetic"></cj-knob>
+    <cth-knob id="hdg" min="0" max="360" value="94" sweep="360" readout="value" unit="°"
+             ticks="36" tick-major="9" color="var(--amb)" label="magnetic"></cth-knob>
     <div class="cap">Heading</div>
   </div>
 </div>
 
 <div class="row secondary">
   <div class="inst">
-    <cj-knob id="n1" min="0" max="110" value="88" sweep="270" readout="value" decimals="1"
+    <cth-knob id="n1" min="0" max="110" value="88" sweep="270" readout="value" decimals="1"
              ticks="11" tick-major="5" color="var(--grn)"
-             zones="100-110:#ff4d5e" label="%"></cj-knob>
+             zones="100-110:#ff4d5e" label="%"></cth-knob>
     <div class="cap">N1 · Eng 1</div>
   </div>
   <div class="inst">
-    <cj-knob id="n2" min="0" max="110" value="91" sweep="270" readout="value" decimals="1"
+    <cth-knob id="n2" min="0" max="110" value="91" sweep="270" readout="value" decimals="1"
              ticks="11" tick-major="5" color="var(--grn)"
-             zones="100-110:#ff4d5e" label="%"></cj-knob>
+             zones="100-110:#ff4d5e" label="%"></cth-knob>
     <div class="cap">N2 · Eng 1</div>
   </div>
   <div class="inst">
-    <cj-knob id="egt" min="0" max="900" value="612" sweep="270" readout="value"
+    <cth-knob id="egt" min="0" max="900" value="612" sweep="270" readout="value"
              ticks="9" tick-major="3" color="var(--amb)"
-             zones="700-800:#ffb020, 800-900:#ff4d5e" label="°C"></cj-knob>
+             zones="700-800:#ffb020, 800-900:#ff4d5e" label="°C"></cth-knob>
     <div class="cap">EGT</div>
   </div>
   <div class="inst">
-    <cj-knob id="ff" min="0" max="3000" value="1840" sweep="270" readout="value"
-             ticks="6" tick-major="3" color="var(--cyn)" label="kg/h"></cj-knob>
+    <cth-knob id="ff" min="0" max="3000" value="1840" sweep="270" readout="value"
+             ticks="6" tick-major="3" color="var(--cyn)" label="kg/h"></cth-knob>
     <div class="cap">Fuel flow</div>
   </div>
   <div class="inst">
-    <cj-knob id="oilp" min="0" max="100" value="64" sweep="270" readout="value"
+    <cth-knob id="oilp" min="0" max="100" value="64" sweep="270" readout="value"
              ticks="10" tick-major="5" color="var(--grn)"
-             zones="0-25:#ff4d5e, 25-40:#ffb020" label="psi"></cj-knob>
+             zones="0-25:#ff4d5e, 25-40:#ffb020" label="psi"></cth-knob>
     <div class="cap">Oil press</div>
   </div>
   <div class="inst">
-    <cj-knob id="oilt" min="0" max="180" value="96" sweep="270" readout="value"
+    <cth-knob id="oilt" min="0" max="180" value="96" sweep="270" readout="value"
              ticks="9" tick-major="3" color="var(--grn)"
-             zones="150-180:#ff4d5e" label="°C"></cj-knob>
+             zones="150-180:#ff4d5e" label="°C"></cth-knob>
     <div class="cap">Oil temp</div>
   </div>
   <div class="inst">
-    <cj-knob id="fuel" readout="none" label="L·C·R"
-             segments="34:#2ee6a0, 41:#4cc4ff, 25:#8b7bff"></cj-knob>
+    <cth-knob id="fuel" readout="none" label="L·C·R"
+             segments="34:#2ee6a0, 41:#4cc4ff, 25:#8b7bff"></cth-knob>
     <div class="cap">Tank split</div>
   </div>
   <div class="inst">
-    <cj-knob id="flap" min="0" max="40" value="0" sweep="180" readout="value"
-             ticks="4" tick-major="1" color="var(--amb)" label="deg"></cj-knob>
+    <cth-knob id="flap" min="0" max="40" value="0" sweep="180" readout="value"
+             ticks="4" tick-major="1" color="var(--amb)" label="deg"></cth-knob>
     <div class="cap">Flaps</div>
   </div>
 </div>
 
 <div class="row tertiary">
   <div class="inst">
-    <cj-knob id="hydg" min="0" max="3500" value="3010" sweep="270" readout="value"
-             ticks="7" tick-major="7" color="var(--grn)" zones="0-1500:#ff4d5e" label="psi"></cj-knob>
+    <cth-knob id="hydg" min="0" max="3500" value="3010" sweep="270" readout="value"
+             ticks="7" tick-major="7" color="var(--grn)" zones="0-1500:#ff4d5e" label="psi"></cth-knob>
     <div class="cap">Hyd · Green</div>
   </div>
   <div class="inst">
-    <cj-knob id="hydy" min="0" max="3500" value="2985" sweep="270" readout="value"
-             ticks="7" tick-major="7" color="var(--amb)" zones="0-1500:#ff4d5e" label="psi"></cj-knob>
+    <cth-knob id="hydy" min="0" max="3500" value="2985" sweep="270" readout="value"
+             ticks="7" tick-major="7" color="var(--amb)" zones="0-1500:#ff4d5e" label="psi"></cth-knob>
     <div class="cap">Hyd · Yellow</div>
   </div>
   <div class="inst">
-    <cj-knob id="cab" min="0" max="10000" value="6800" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--cyn)" zones="8500-10000:#ff4d5e" label="ft"></cj-knob>
+    <cth-knob id="cab" min="0" max="10000" value="6800" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--cyn)" zones="8500-10000:#ff4d5e" label="ft"></cth-knob>
     <div class="cap">Cabin alt</div>
   </div>
   <div class="inst">
-    <cj-knob id="dp" min="-1" max="9" value="7.4" sweep="270" readout="value" decimals="1"
-             ticks="10" tick-major="5" color="var(--grn)" zones="8-9:#ffb020" label="psi"></cj-knob>
+    <cth-knob id="dp" min="-1" max="9" value="7.4" sweep="270" readout="value" decimals="1"
+             ticks="10" tick-major="5" color="var(--grn)" zones="8-9:#ffb020" label="psi"></cth-knob>
     <div class="cap">Cabin Δp</div>
   </div>
   <div class="inst">
-    <cj-knob id="apu" min="0" max="110" value="0" sweep="270" readout="value"
-             ticks="11" tick-major="5" color="var(--dim)" label="%"></cj-knob>
+    <cth-knob id="apu" min="0" max="110" value="0" sweep="270" readout="value"
+             ticks="11" tick-major="5" color="var(--dim)" label="%"></cth-knob>
     <div class="cap">APU N1</div>
   </div>
   <div class="inst">
-    <cj-knob id="brk" min="0" max="500" value="118" sweep="270" readout="value"
+    <cth-knob id="brk" min="0" max="500" value="118" sweep="270" readout="value"
              ticks="10" tick-major="5" color="var(--grn)"
-             zones="300-400:#ffb020, 400-500:#ff4d5e" label="°C"></cj-knob>
+             zones="300-400:#ffb020, 400-500:#ff4d5e" label="°C"></cth-knob>
     <div class="cap">Brake temp</div>
   </div>
   <div class="inst">
-    <cj-knob id="elec" readout="none" label="gen · apu"
-             segments="46:#2ee6a0, 44:#4cc4ff, 10:#3f5568"></cj-knob>
+    <cth-knob id="elec" readout="none" label="gen · apu"
+             segments="46:#2ee6a0, 44:#4cc4ff, 10:#3f5568"></cth-knob>
     <div class="cap">Elec load</div>
   </div>
   <div class="inst">
-    <cj-knob id="aoa" min="-5" max="20" value="2.4" sweep="240" start="150" readout="value" decimals="1"
-             ticks="5" tick-major="1" color="var(--cyn)" zones="14-20:#ff4d5e" label="deg"></cj-knob>
+    <cth-knob id="aoa" min="-5" max="20" value="2.4" sweep="240" start="150" readout="value" decimals="1"
+             ticks="5" tick-major="1" color="var(--cyn)" zones="14-20:#ff4d5e" label="deg"></cth-knob>
     <div class="cap">Angle of attack</div>
   </div>
 </div>
 
 <script type="module">
-  import '../src/cj-knob.js';
+  import '../src/cth-knob.js';
 
   const $ = (id) => document.getElementById(id);
   const inst = {

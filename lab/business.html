@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Enterprise — cj-knob lab</title>
+<title>Enterprise — cth-instrument lab</title>
 <style>
   :root {
     color-scheme: light;
@@ -30,8 +30,8 @@
     .row { min-height: 0; }
     .primary { flex: 1.3; }
     .secondary, .tertiary { flex: 1; }
-    .primary cj-knob { --cj-size: min(190px, 24vh); }
-    .secondary cj-knob, .tertiary cj-knob { --cj-size: min(112px, 14vh); }
+    .primary cth-knob { --cth-size: min(190px, 24vh); }
+    .secondary cth-knob, .tertiary cth-knob { --cth-size: min(112px, 14vh); }
   }
 
   header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1rem; }
@@ -59,16 +59,16 @@
   .legend { display: flex; flex-wrap: wrap; gap: .45rem; font-size: 9px; color: var(--dim); }
   .legend i { display: inline-block; width: 6px; height: 6px; border-radius: 2px; margin-right: .2rem; }
 
-  cj-knob {
-    --cj-track: var(--track);
-    --cj-text: var(--ink);
-    --cj-muted: var(--dim);
-    --cj-tick: #cfd6e0;
-    --cj-duration: 900ms;
-    --cj-size: 122px;
-    --cj-thickness: 8;
+  cth-knob {
+    --cth-track: var(--track);
+    --cth-text: var(--ink);
+    --cth-muted: var(--dim);
+    --cth-tick: #cfd6e0;
+    --cth-duration: 900ms;
+    --cth-size: 122px;
+    --cth-thickness: 8;
   }
-  .primary cj-knob { --cj-size: 170px; --cj-thickness: 7; }
+  .primary cth-knob { --cth-size: 170px; --cth-thickness: 7; }
 </style>
 </head>
 <body>
@@ -81,28 +81,28 @@
 
 <div class="row primary">
   <div class="card">
-    <cj-knob id="quota" min="0" max="140" value="0" sweep="270" readout="value"
+    <cth-knob id="quota" min="0" max="140" value="0" sweep="270" readout="value"
              ticks="14" tick-major="7" color="var(--blue)" benchmark="100"
-             zones="100-140:#dcfce7" label="% of quota"></cj-knob>
+             zones="100-140:#dcfce7" label="% of quota"></cth-knob>
     <div class="cap">Quota attainment</div>
     <div class="delta up" id="d-quota">—</div>
   </div>
   <div class="card">
-    <cj-knob id="arr" min="0" max="50" value="0" sweep="270" readout="value" decimals="1"
-             ticks="10" tick-major="5" color="var(--green)" label="$M ARR"></cj-knob>
+    <cth-knob id="arr" min="0" max="50" value="0" sweep="270" readout="value" decimals="1"
+             ticks="10" tick-major="5" color="var(--green)" label="$M ARR"></cth-knob>
     <div class="cap">Annual recurring revenue</div>
     <div class="delta up" id="d-arr">—</div>
   </div>
   <div class="card">
-    <cj-knob id="nrr" min="80" max="140" value="80" sweep="270" readout="value"
+    <cth-knob id="nrr" min="80" max="140" value="80" sweep="270" readout="value"
              ticks="12" tick-major="6" color="var(--violet)" benchmark="100"
-             zones="80-100:#fee2e2" label="% NRR"></cj-knob>
+             zones="80-100:#fee2e2" label="% NRR"></cth-knob>
     <div class="cap">Net revenue retention</div>
     <div class="delta up" id="d-nrr">—</div>
   </div>
   <div class="card">
-    <cj-knob id="pipe" readout="none"
-             segments="34:#2563eb, 26:#7c3aed, 22:#12A150, 18:#eaecf0"><span slot="icon">📊</span></cj-knob>
+    <cth-knob id="pipe" readout="none"
+             segments="34:#2563eb, 26:#7c3aed, 22:#12A150, 18:#eaecf0"><span slot="icon">📊</span></cth-knob>
     <div class="cap">Pipeline by stage</div>
     <div class="legend">
       <span><i style="background:#2563eb"></i>Qual</span>
@@ -115,66 +115,66 @@
 
 <div class="row secondary">
   <div class="card">
-    <cj-knob id="churn" min="0" max="15" value="0" sweep="270" readout="value" decimals="1"
+    <cth-knob id="churn" min="0" max="15" value="0" sweep="270" readout="value" decimals="1"
              ticks="5" tick-major="5" color="var(--green)"
-             zones="6-10:#fef3c7, 10-15:#fee2e2" label="% churn"></cj-knob>
+             zones="6-10:#fef3c7, 10-15:#fee2e2" label="% churn"></cth-knob>
     <div class="cap">Gross churn</div>
   </div>
   <div class="card">
-    <cj-knob id="nps" min="-100" max="100" value="0" sweep="270" readout="value"
-             ticks="8" tick-major="4" color="var(--green)" benchmark="0" label="NPS"></cj-knob>
+    <cth-knob id="nps" min="-100" max="100" value="0" sweep="270" readout="value"
+             ticks="8" tick-major="4" color="var(--green)" benchmark="0" label="NPS"></cth-knob>
     <div class="cap">Net promoter</div>
   </div>
   <div class="card">
-    <cj-knob id="cac" min="0" max="36" value="0" sweep="270" readout="value"
+    <cth-knob id="cac" min="0" max="36" value="0" sweep="270" readout="value"
              ticks="6" tick-major="3" color="var(--amber)"
-             zones="18-27:#fef3c7, 27-36:#fee2e2" label="months"></cj-knob>
+             zones="18-27:#fef3c7, 27-36:#fee2e2" label="months"></cth-knob>
     <div class="cap">CAC payback</div>
   </div>
   <div class="card">
-    <cj-knob id="burn" min="0" max="3" value="0" sweep="270" readout="value" decimals="2"
+    <cth-knob id="burn" min="0" max="3" value="0" sweep="270" readout="value" decimals="2"
              ticks="6" tick-major="3" color="var(--blue)"
-             zones="1.5-2.2:#fef3c7, 2.2-3:#fee2e2" label="×"></cj-knob>
+             zones="1.5-2.2:#fef3c7, 2.2-3:#fee2e2" label="×"></cth-knob>
     <div class="cap">Burn multiple</div>
   </div>
   <div class="card">
-    <cj-knob id="runway" min="0" max="48" value="0" sweep="270" readout="value"
+    <cth-knob id="runway" min="0" max="48" value="0" sweep="270" readout="value"
              ticks="8" tick-major="4" color="var(--green)"
-             zones="0-9:#fee2e2, 9-18:#fef3c7" label="months"></cj-knob>
+             zones="0-9:#fee2e2, 9-18:#fef3c7" label="months"></cth-knob>
     <div class="cap">Cash runway</div>
   </div>
   <div class="card">
-    <cj-knob id="margin" min="0" max="100" value="0" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--violet)" benchmark="75" label="% GM"></cj-knob>
+    <cth-knob id="margin" min="0" max="100" value="0" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--violet)" benchmark="75" label="% GM"></cth-knob>
     <div class="cap">Gross margin</div>
   </div>
   <div class="card">
-    <cj-knob id="winrate" min="0" max="60" value="0" sweep="270" readout="value"
-             ticks="6" tick-major="3" color="var(--blue)" label="% won"></cj-knob>
+    <cth-knob id="winrate" min="0" max="60" value="0" sweep="270" readout="value"
+             ticks="6" tick-major="3" color="var(--blue)" label="% won"></cth-knob>
     <div class="cap">Win rate</div>
   </div>
   <div class="card">
-    <cj-knob id="cycle" min="0" max="180" value="0" sweep="270" readout="value"
-             ticks="6" tick-major="3" color="var(--amber)" label="days"></cj-knob>
+    <cth-knob id="cycle" min="0" max="180" value="0" sweep="270" readout="value"
+             ticks="6" tick-major="3" color="var(--amber)" label="days"></cth-knob>
     <div class="cap">Sales cycle</div>
   </div>
 </div>
 
 <div class="row tertiary">
   <div class="card">
-    <cj-knob id="head" min="0" max="600" value="0" sweep="270" readout="value"
-             ticks="6" tick-major="3" color="var(--blue)" label="FTE"></cj-knob>
+    <cth-knob id="head" min="0" max="600" value="0" sweep="270" readout="value"
+             ticks="6" tick-major="3" color="var(--blue)" label="FTE"></cth-knob>
     <div class="cap">Headcount</div>
   </div>
   <div class="card">
-    <cj-knob id="attr" min="0" max="30" value="0" sweep="270" readout="value" decimals="1"
+    <cth-knob id="attr" min="0" max="30" value="0" sweep="270" readout="value" decimals="1"
              ticks="6" tick-major="3" color="var(--green)"
-             zones="15-22:#fef3c7, 22-30:#fee2e2" label="% attrition"></cj-knob>
+             zones="15-22:#fef3c7, 22-30:#fee2e2" label="% attrition"></cth-knob>
     <div class="cap">Regretted attrition</div>
   </div>
   <div class="card">
-    <cj-knob id="region" readout="none"
-             segments="38:#2563eb, 28:#7c3aed, 21:#12A150, 13:#d97706"><span slot="icon">🌍</span></cj-knob>
+    <cth-knob id="region" readout="none"
+             segments="38:#2563eb, 28:#7c3aed, 21:#12A150, 13:#d97706"><span slot="icon">🌍</span></cth-knob>
     <div class="cap">Revenue by region</div>
     <div class="legend">
       <span><i style="background:#2563eb"></i>AMER</span>
@@ -184,35 +184,35 @@
     </div>
   </div>
   <div class="card">
-    <cj-knob id="ticket" min="0" max="100" value="0" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--green)" benchmark="90" label="% SLA"></cj-knob>
+    <cth-knob id="ticket" min="0" max="100" value="0" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--green)" benchmark="90" label="% SLA"></cth-knob>
     <div class="cap">Support SLA</div>
   </div>
   <div class="card">
-    <cj-knob id="adopt" min="0" max="100" value="0" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--violet)" label="% DAU"></cj-knob>
+    <cth-knob id="adopt" min="0" max="100" value="0" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--violet)" label="% DAU"></cth-knob>
     <div class="cap">Product adoption</div>
   </div>
   <div class="card">
-    <cj-knob id="expand" min="0" max="100" value="0" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--blue)" label="% ARR"></cj-knob>
+    <cth-knob id="expand" min="0" max="100" value="0" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--blue)" label="% ARR"></cth-knob>
     <div class="cap">Expansion mix</div>
   </div>
   <div class="card">
-    <cj-knob id="forecast" min="0" max="120" value="0" sweep="270" readout="value"
-             ticks="12" tick-major="6" color="var(--green)" benchmark="100" label="% called"></cj-knob>
+    <cth-knob id="forecast" min="0" max="120" value="0" sweep="270" readout="value"
+             ticks="12" tick-major="6" color="var(--green)" benchmark="100" label="% called"></cth-knob>
     <div class="cap">Forecast accuracy</div>
   </div>
   <div class="card">
-    <cj-knob id="ltv" min="0" max="12" value="0" sweep="270" readout="value" decimals="1"
+    <cth-knob id="ltv" min="0" max="12" value="0" sweep="270" readout="value" decimals="1"
              ticks="6" tick-major="3" color="var(--violet)"
-             zones="0-3:#fee2e2" label="× CAC"></cj-knob>
+             zones="0-3:#fee2e2" label="× CAC"></cth-knob>
     <div class="cap">LTV : CAC</div>
   </div>
 </div>
 
 <script type="module">
-  import '../src/cj-knob.js';
+  import '../src/cth-knob.js';
 
   const $ = (id) => document.getElementById(id);
   const wave = (t, period, amp, phase = 0) => Math.sin(t / period + phase) * amp;

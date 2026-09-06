@@ -1,23 +1,23 @@
 // -------------------------------------------------
-// cj-rings — concentric layout for <cj-knob>
-// https://github.com/tanghoong/cj-knob
+// cth-rings — concentric layout for <cth-knob>
+// https://github.com/tanghoong/cth-instrument
 //
-// <cj-rings>
-//   <cj-knob readout="none" max="12" value="3"  color="#e8b64c"></cj-knob>
-//   <cj-knob readout="none" max="60" value="42" color="#64b5f6"></cj-knob>
-//   <cj-knob readout="none" max="60" value="17" color="#ef6c6c"></cj-knob>
+// <cth-rings>
+//   <cth-knob readout="none" max="12" value="3"  color="#e8b64c"></cth-knob>
+//   <cth-knob readout="none" max="60" value="42" color="#64b5f6"></cth-knob>
+//   <cth-knob readout="none" max="60" value="17" color="#ef6c6c"></cth-knob>
 //   <div slot="center">12:42:17</div>
-// </cj-rings>
+// </cth-rings>
 //
 // It lays out; it does not draw. The children stay ordinary knobs, so ticks,
 // gradients, needles and zones all still work on them, and script still talks to
 // them directly. All this solves is the arithmetic — nesting rings by hand means
-// picking a --cj-size and a --cj-thickness per ring so the gaps and the stroke
+// picking a --cth-size and a --cth-thickness per ring so the gaps and the stroke
 // weights come out even, and getting that subtly wrong every time.
 // -------------------------------------------------
 
 // A knob's ring sits at 42% of its own box, which is what ties a ring's centre
-// radius to the --cj-size it needs.
+// radius to the --cth-size it needs.
 const RING_AT = 0.42;
 
 const num = (v, fallback) => {
@@ -29,11 +29,11 @@ const template = document.createElement('template');
 template.innerHTML = `
 <style>
   :host {
-    --cjs-size: 220px;
+    --cths-size: 220px;
     display: inline-grid;
     place-items: center;
-    inline-size: var(--cjs-size);
-    block-size: var(--cjs-size);
+    inline-size: var(--cths-size);
+    block-size: var(--cths-size);
     font: inherit;
     /* A dial is an instrument, not text. Its numbers are drawn readings, and
        select-all dragging a blue box across every gauge on a dashboard helps
@@ -47,7 +47,7 @@ template.innerHTML = `
   /* every ring and the centre share one cell, so they stack on one axis */
   ::slotted(*) { grid-area: 1 / 1; }
   /* a ring the box has no room left for is dropped rather than drawn inside out */
-  ::slotted([data-cjs-clipped]) { display: none; }
+  ::slotted([data-cths-clipped]) { display: none; }
 
   .center { grid-area: 1 / 1; display: grid; place-items: center; pointer-events: none; }
 </style>
@@ -56,7 +56,7 @@ template.innerHTML = `
 <div class="center"><slot name="center"></slot></div>
 `;
 
-export class CJRings extends HTMLElement {
+export class CTHRings extends HTMLElement {
   static observedAttributes = ['thickness', 'gap'];
 
   #root;
@@ -91,7 +91,7 @@ export class CJRings extends HTMLElement {
 
   /** The rings, outermost first — the order they appear in. */
   get rings() {
-    return this.#slot.assignedElements().filter((el) => el.matches?.('cj-knob'));
+    return this.#slot.assignedElements().filter((el) => el.matches?.('cth-knob'));
   }
 
   #layout() {
@@ -110,20 +110,20 @@ export class CJRings extends HTMLElement {
       // the outermost ring fills the box; each one inside steps in by a stroke and a gap
       const centre = RING_AT * size - i * step;
       if (centre <= stroke) {
-        el.setAttribute('data-cjs-clipped', '');
+        el.setAttribute('data-cths-clipped', '');
         return;
       }
-      el.removeAttribute('data-cjs-clipped');
+      el.removeAttribute('data-cths-clipped');
       // work back from where the ring must sit to the box the knob needs
       const box = centre / RING_AT;
-      el.style.setProperty('--cj-size', `${box.toFixed(2)}px`);
-      // --cj-thickness is in viewBox units, so the same pixel weight is a
+      el.style.setProperty('--cth-size', `${box.toFixed(2)}px`);
+      // --cth-thickness is in viewBox units, so the same pixel weight is a
       // different number on every ring
-      el.style.setProperty('--cj-thickness', (100 * stroke / box).toFixed(3));
+      el.style.setProperty('--cth-thickness', (100 * stroke / box).toFixed(3));
     });
   }
 }
 
-if (!customElements.get('cj-rings')) customElements.define('cj-rings', CJRings);
+if (!customElements.get('cth-rings')) customElements.define('cth-rings', CTHRings);
 
-export default CJRings;
+export default CTHRings;

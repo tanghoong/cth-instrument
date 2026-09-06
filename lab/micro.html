@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Micro — cj-knob lab</title>
+<title>Micro — cth-instrument lab</title>
 <style>
   :root {
     color-scheme: dark;
@@ -53,14 +53,14 @@
   .node[data-state="bad"]  { border-color: #4d2028; background: #17121a; }
   .id { font-size: 8.5px; letter-spacing: .1em; color: var(--dim); }
 
-  cj-knob {
-    --cj-size: 54px;
-    --cj-thickness: 9;
-    --cj-track: var(--track);
-    --cj-text: var(--ink);
-    --cj-muted: var(--dim);
-    --cj-duration: 700ms;
-    --cj-num-size: 13px;
+  cth-knob {
+    --cth-size: 54px;
+    --cth-thickness: 9;
+    --cth-track: var(--track);
+    --cth-text: var(--ink);
+    --cth-muted: var(--dim);
+    --cth-duration: 700ms;
+    --cth-num-size: 13px;
   }
 
   .strip {
@@ -70,7 +70,7 @@
     background: var(--cell); border: 1px solid var(--edge); border-radius: 8px;
     padding: .5rem .35rem .45rem; display: grid; justify-items: center; gap: .35rem;
   }
-  .sum cj-knob { --cj-size: 84px; --cj-thickness: 7; --cj-num-size: 19px; }
+  .sum cth-knob { --cth-size: 84px; --cth-thickness: 7; --cth-num-size: 19px; }
   .cap { font-size: 9px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
   .mix { display: flex; gap: .5rem; font-size: 8.5px; color: var(--dim); }
   .mix i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: .2rem; }
@@ -98,20 +98,20 @@
 
 <div class="strip">
   <div class="sum">
-    <cj-knob id="s-cpu" sweep="270" ticks="10" tick-major="5" color="var(--info)" label="cpu"></cj-knob>
+    <cth-knob id="s-cpu" sweep="270" ticks="10" tick-major="5" color="var(--info)" label="cpu"></cth-knob>
     <div class="cap">Fleet CPU</div>
   </div>
   <div class="sum">
-    <cj-knob id="s-mem" sweep="270" ticks="10" tick-major="5" color="var(--ok)" label="mem"></cj-knob>
+    <cth-knob id="s-mem" sweep="270" ticks="10" tick-major="5" color="var(--ok)" label="mem"></cth-knob>
     <div class="cap">Fleet memory</div>
   </div>
   <div class="sum">
-    <cj-knob id="s-net" sweep="270" ticks="10" tick-major="5" color="var(--warn)" label="net"></cj-knob>
+    <cth-knob id="s-net" sweep="270" ticks="10" tick-major="5" color="var(--warn)" label="net"></cth-knob>
     <div class="cap">Egress</div>
   </div>
   <div class="sum">
-    <cj-knob id="s-mix" readout="none"
-             segments="46:#56b8ff, 33:#3ddc97, 21:#ffc44d"><span slot="icon">🗄️</span></cj-knob>
+    <cth-knob id="s-mix" readout="none"
+             segments="46:#56b8ff, 33:#3ddc97, 21:#ffc44d"><span slot="icon">🗄️</span></cth-knob>
     <div class="cap">Workload mix</div>
     <div class="mix">
       <span><i style="background:#56b8ff"></i>web</span>
@@ -120,12 +120,12 @@
     </div>
   </div>
   <div class="sum">
-    <cj-knob id="s-disk" sweep="270" ticks="10" tick-major="5" color="var(--info)" label="disk"></cj-knob>
+    <cth-knob id="s-disk" sweep="270" ticks="10" tick-major="5" color="var(--info)" label="disk"></cth-knob>
     <div class="cap">Storage</div>
   </div>
   <div class="sum">
-    <cj-knob id="s-p99" min="0" max="500" sweep="270" readout="value" ticks="10" tick-major="5"
-             color="var(--ok)" zones="250-400:#ffc44d, 400-500:#ff5f6d" label="ms"></cj-knob>
+    <cth-knob id="s-p99" min="0" max="500" sweep="270" readout="value" ticks="10" tick-major="5"
+             color="var(--ok)" zones="250-400:#ffc44d, 400-500:#ff5f6d" label="ms"></cth-knob>
     <div class="cap">p99 latency</div>
   </div>
 </div>
@@ -133,7 +133,7 @@
 <div class="wall" id="wall"></div>
 
 <script type="module">
-  import '../src/cj-knob.js';
+  import '../src/cth-knob.js';
 
   const N = 96;
   const wall = document.getElementById('wall');
@@ -143,12 +143,12 @@
     const el = document.createElement('div');
     el.className = 'node';
     el.innerHTML = `
-      <cj-knob readout="percent" value="0"></cj-knob>
+      <cth-knob readout="percent" value="0"></cth-knob>
       <div class="id">${String(Math.floor(i / 12) + 1)}-${String(i % 12 + 1).padStart(2, '0')}</div>`;
     wall.append(el);
     return {
       el,
-      knob: el.querySelector('cj-knob'),
+      knob: el.querySelector('cth-knob'),
       base: 25 + Math.random() * 55,
       period: 5 + Math.random() * 22,
       phase: Math.random() * 7,

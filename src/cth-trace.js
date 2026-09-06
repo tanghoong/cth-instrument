@@ -1,10 +1,10 @@
 // -------------------------------------------------
-// cj-trace — a waveform that writes itself across the dial
-// https://github.com/tanghoong/cj-knob
+// cth-trace — a waveform that writes itself across the dial
+// https://github.com/tanghoong/cth-instrument
 //
-// <cj-trace beat="72" label="HR" grid></cj-trace>
-// <cj-trace shape="ring" beat="88" sweep="360"></cj-trace>
-// <cj-trace points="12,40,38,90,20,55" mode="scroll"></cj-trace>
+// <cth-trace beat="72" label="HR" grid></cth-trace>
+// <cth-trace shape="ring" beat="88" sweep="360"></cth-trace>
+// <cth-trace points="12,40,38,90,20,55" mode="scroll"></cth-trace>
 //
 // Everything else in this project answers "what is the value now". A trace
 // answers "what has it been doing", which is the one question a dial cannot.
@@ -75,27 +75,27 @@ template.innerHTML = `
 <style>
   :host {
     /* ---- public theming API ---- */
-    --cj-size: 220px;             /* ring shape only; a strip sizes itself */
-    --cj-height: 130px;
-    --cj-trace: #35d07f;
-    --cj-trace-stale: var(--cj-trace);
-    --cj-stale-opacity: .22;
-    --cj-pen: var(--cj-trace);
-    --cj-grid: rgba(127, 127, 127, .22);
-    --cj-grid-step: 10;
-    --cj-face: transparent;
-    --cj-width: 2;
-    --cj-text: #14161a;
-    --cj-muted: #6b7280;
-    --cj-scrim: rgba(255, 255, 255, .82);
-    --cj-num-size: max(13px, calc(var(--cj-height) * .26));
-    --cj-label-size: max(9px, calc(var(--cj-height) * .11));
+    --cth-size: 220px;             /* ring shape only; a strip sizes itself */
+    --cth-height: 130px;
+    --cth-trace: #35d07f;
+    --cth-trace-stale: var(--cth-trace);
+    --cth-stale-opacity: .22;
+    --cth-pen: var(--cth-trace);
+    --cth-grid: rgba(127, 127, 127, .22);
+    --cth-grid-step: 10;
+    --cth-face: transparent;
+    --cth-width: 2;
+    --cth-text: #14161a;
+    --cth-muted: #6b7280;
+    --cth-scrim: rgba(255, 255, 255, .82);
+    --cth-num-size: max(13px, calc(var(--cth-height) * .26));
+    --cth-label-size: max(9px, calc(var(--cth-height) * .11));
 
     position: relative;
     display: block;
     inline-size: 100%;
-    block-size: var(--cj-height);
-    color: var(--cj-text);
+    block-size: var(--cth-height);
+    color: var(--cth-text);
     font: inherit;
     /* A dial is an instrument, not text. Its numbers are drawn readings, and
        select-all dragging a blue box across every gauge on a dashboard helps
@@ -108,19 +108,19 @@ template.innerHTML = `
 
   /* a ring is square and sizes like every other dial here */
   :host([shape="ring"]) {
-    inline-size: var(--cj-size);
-    block-size: var(--cj-size);
-    --cj-num-size: max(13px, calc(var(--cj-size) * .17));
-    --cj-label-size: max(9px, calc(var(--cj-size) * .072));
+    inline-size: var(--cth-size);
+    block-size: var(--cth-size);
+    --cth-num-size: max(13px, calc(var(--cth-size) * .17));
+    --cth-label-size: max(9px, calc(var(--cth-size) * .072));
   }
 
   @media (prefers-color-scheme: dark) {
-    :host { --cj-text: #f2f4f7; --cj-muted: #98a2b3; --cj-scrim: rgba(8, 11, 15, .82); }
+    :host { --cth-text: #f2f4f7; --cth-muted: #98a2b3; --cth-scrim: rgba(8, 11, 15, .82); }
   }
 
   svg { display: block; inline-size: 100%; block-size: 100%; overflow: visible; }
-  .face { fill: var(--cj-face); }
-  .grid { stroke: var(--cj-grid); stroke-width: .5; fill: none; }
+  .face { fill: var(--cth-face); }
+  .grid { stroke: var(--cth-grid); stroke-width: .5; fill: none; }
   .grid[hidden] { display: none; }
 
   /* A wash that travels with the text rather than a band across the strip.
@@ -132,18 +132,18 @@ template.innerHTML = `
     padding: .3em .7em;
     margin: -.3em -.7em;
     background: radial-gradient(closest-side ellipse at 50% 50%,
-      var(--cj-scrim) 0%, var(--cj-scrim) 46%, transparent 100%);
+      var(--cth-scrim) 0%, var(--cth-scrim) 46%, transparent 100%);
   }
   /* a ring puts its readout in the middle, where the trace is not */
   :host([shape="ring"]) .center { background: none; padding: 0; margin: 0; }
 
-  path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: var(--cj-width); }
-  .fresh { stroke: var(--cj-trace); }
+  path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: var(--cth-width); }
+  .fresh { stroke: var(--cth-trace); }
   /* What the pen has not reached yet is last time round, still fading. Opacity
      rather than a mixed colour: color-mix would put a 2023 browser floor under an
      element that otherwise needs nothing newer than shadow DOM. */
-  .stale { stroke: var(--cj-trace-stale); opacity: var(--cj-stale-opacity); }
-  .pen { fill: var(--cj-pen); }
+  .stale { stroke: var(--cth-trace-stale); opacity: var(--cth-stale-opacity); }
+  .pen { fill: var(--cth-pen); }
   .pen[hidden] { display: none; }
 
   /* The readout rides in a corner of a strip, and in the middle of a ring.
@@ -172,19 +172,19 @@ template.innerHTML = `
     text-align: center;
   }
   .readout {
-    font-size: var(--cj-num-size);
+    font-size: var(--cth-num-size);
     font-weight: 650;
     font-variant-numeric: tabular-nums;
     letter-spacing: -.02em;
   }
   .readout[hidden] { display: none; }
-  .unit { font-size: .5em; font-weight: 600; margin-inline-start: .12em; color: var(--cj-muted); }
+  .unit { font-size: .5em; font-weight: 600; margin-inline-start: .12em; color: var(--cth-muted); }
   .label {
-    font-size: var(--cj-label-size);
+    font-size: var(--cth-label-size);
     font-weight: 600;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--cj-muted);
+    color: var(--cth-muted);
   }
   .label[hidden] { display: none; }
   .center.bare { background: none; }
@@ -204,7 +204,7 @@ template.innerHTML = `
 </div>
 `;
 
-export class CJTrace extends HTMLElement {
+export class CTHTrace extends HTMLElement {
   static observedAttributes = [
     'shape', 'mode', 'samples', 'points', 'min', 'max',
     'beat', 'voice', 'mirror', 'rate', 'sweep', 'start', 'amplitude',
@@ -297,7 +297,7 @@ export class CJTrace extends HTMLElement {
    */
   get level() { return this.#level; }
 
-  /** Whether anyone is talking. Flips fire a cj-speech event. */
+  /** Whether anyone is talking. Flips fire a cth-speech event. */
   get speaking() { return this.#speaking; }
 
   /** the most recent sample, or null before anything has been written */
@@ -385,7 +385,7 @@ export class CJTrace extends HTMLElement {
       // a closed ring must not put its last sample on top of its first
       g.wrap = g.sweep >= 360;
     } else {
-      g.pad = num(getComputedStyle(this).getPropertyValue('--cj-width'), 2) * 1.5;
+      g.pad = num(getComputedStyle(this).getPropertyValue('--cth-width'), 2) * 1.5;
     }
     return g;
   }
@@ -488,10 +488,10 @@ export class CJTrace extends HTMLElement {
     this.#renderText();
 
     if (this.hasAttribute('color')) {
-      this.style.setProperty('--cj-trace', this.getAttribute('color'));
+      this.style.setProperty('--cth-trace', this.getAttribute('color'));
       this.#ownsColor = true;
     } else if (this.#ownsColor) {
-      this.style.removeProperty('--cj-trace');
+      this.style.removeProperty('--cth-trace');
       this.#ownsColor = false;
     }
   }
@@ -514,7 +514,7 @@ export class CJTrace extends HTMLElement {
     this.#els.grid.toggleAttribute('hidden', !on);
     if (!on) return;
     const { w, h } = this.#box;
-    const step = Math.max(4, num(getComputedStyle(this).getPropertyValue('--cj-grid-step'), 10));
+    const step = Math.max(4, num(getComputedStyle(this).getPropertyValue('--cth-grid-step'), 10));
     const sig = `${w}|${h}|${step}|${this.#ring}`;
     if (sig === this.#gridSig) return;
     this.#gridSig = sig;
@@ -626,7 +626,7 @@ export class CJTrace extends HTMLElement {
     this.#level = env;
     this.#speaking = env > 0.02;
     if (this.#speaking !== was) {
-      this.dispatchEvent(new CustomEvent('cj-speech', {
+      this.dispatchEvent(new CustomEvent('cth-speech', {
         detail: { speaking: this.#speaking, level: env },
         bubbles: true,
       }));
@@ -654,6 +654,6 @@ export class CJTrace extends HTMLElement {
   }
 }
 
-if (!customElements.get('cj-trace')) customElements.define('cj-trace', CJTrace);
+if (!customElements.get('cth-trace')) customElements.define('cth-trace', CTHTrace);
 
-export default CJTrace;
+export default CTHTrace;

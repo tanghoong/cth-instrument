@@ -1,10 +1,10 @@
 // -------------------------------------------------
-// cj-radar — a zero-dependency SVG radar scope
-// https://github.com/tanghoong/cj-knob
+// cth-radar — a zero-dependency SVG radar scope
+// https://github.com/tanghoong/cth-instrument
 //
-// <cj-radar period="4" blips="45:0.6, 210:0.35"></cj-radar>
+// <cth-radar period="4" blips="45:0.6, 210:0.35"></cth-radar>
 //
-// A sibling of <cj-knob> rather than a mode of it: a knob describes one value
+// A sibling of <cth-knob> rather than a mode of it: a knob describes one value
 // on a rim, a radar describes many contacts across a whole field. Different
 // geometry, different API, so it gets its own element and its own file.
 // -------------------------------------------------
@@ -24,24 +24,24 @@ template.innerHTML = `
 <style>
   :host {
     /* ---- public theming API ---- */
-    --cjr-size: 260px;
-    --cjr-field: #04140d;
-    --cjr-grid: #1f7a52;
-    --cjr-beam: #35e08a;
-    --cjr-blip: #35e08a;
-    --cjr-blip-hot: #eaffef;
-    --cjr-mark: #4f9e78;
-    --cjr-mark-size: 6px;
-    --cjr-grid-width: .6;
-    --cjr-glow: 6px;
-    --cjr-beam-opacity: 0;  /* eased by script as the sweep spins up and down */
-    --cjr-tail: 130deg;   /* how far the luminous trail reaches behind the line */
-    --cjr-fade: 2.2s;     /* how long a contact stays lit after the beam passes */
+    --cthr-size: 260px;
+    --cthr-field: #04140d;
+    --cthr-grid: #1f7a52;
+    --cthr-beam: #35e08a;
+    --cthr-blip: #35e08a;
+    --cthr-blip-hot: #eaffef;
+    --cthr-mark: #4f9e78;
+    --cthr-mark-size: 6px;
+    --cthr-grid-width: .6;
+    --cthr-glow: 6px;
+    --cthr-beam-opacity: 0;  /* eased by script as the sweep spins up and down */
+    --cthr-tail: 130deg;   /* how far the luminous trail reaches behind the line */
+    --cthr-fade: 2.2s;     /* how long a contact stays lit after the beam passes */
 
     display: inline-grid;
     place-items: center;
-    inline-size: var(--cjr-size);
-    block-size: var(--cjr-size);
+    inline-size: var(--cthr-size);
+    block-size: var(--cthr-size);
     font: inherit;
     -webkit-tap-highlight-color: transparent;
     /* A dial is an instrument, not text. Its numbers are drawn readings, and
@@ -53,13 +53,13 @@ template.innerHTML = `
   }
   :host([hidden]) { display: none; }
   :host([interactive]) { cursor: crosshair; }
-  :host(:focus-visible) { outline: 2px solid var(--cjr-beam); outline-offset: 2px; }
+  :host(:focus-visible) { outline: 2px solid var(--cthr-beam); outline-offset: 2px; }
 
   svg, .beam { grid-area: 1 / 1; inline-size: 100%; block-size: 100%; }
 
-  .field { fill: var(--cjr-field); }
-  .grid { fill: none; stroke: var(--cjr-grid); stroke-width: var(--cjr-grid-width); }
-  .grid line { stroke: var(--cjr-grid); stroke-width: var(--cjr-grid-width); }
+  .field { fill: var(--cthr-field); }
+  .grid { fill: none; stroke: var(--cthr-grid); stroke-width: var(--cthr-grid-width); }
+  .grid line { stroke: var(--cthr-grid); stroke-width: var(--cthr-grid-width); }
 
   /* The classic scope sweep: a bright radius line with a long luminous tail
      trailing behind it. The tail is one conic gradient — CSS paints that far more
@@ -73,12 +73,12 @@ template.innerHTML = `
     background: conic-gradient(
       from 0deg,
       transparent 0deg,
-      transparent calc(360deg - var(--cjr-tail)),
-      color-mix(in srgb, var(--cjr-beam) 0%,  transparent) calc(360deg - var(--cjr-tail)),
-      color-mix(in srgb, var(--cjr-beam) 24%, transparent) calc(360deg - var(--cjr-tail) * .5),
-      color-mix(in srgb, var(--cjr-beam) 58%, transparent) calc(360deg - var(--cjr-tail) * .18),
-      color-mix(in srgb, var(--cjr-beam) 92%, transparent) 360deg);
-    rotate: var(--cjr-beam-angle, 0deg);
+      transparent calc(360deg - var(--cthr-tail)),
+      color-mix(in srgb, var(--cthr-beam) 0%,  transparent) calc(360deg - var(--cthr-tail)),
+      color-mix(in srgb, var(--cthr-beam) 24%, transparent) calc(360deg - var(--cthr-tail) * .5),
+      color-mix(in srgb, var(--cthr-beam) 58%, transparent) calc(360deg - var(--cthr-tail) * .18),
+      color-mix(in srgb, var(--cthr-beam) 92%, transparent) 360deg);
+    rotate: var(--cthr-beam-angle, 0deg);
     pointer-events: none;
     /* the phosphor is brightest at the hub and thins out toward the rim */
     -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 8%, rgba(0,0,0,.55) 74%, rgba(0,0,0,.25) 100%);
@@ -86,17 +86,17 @@ template.innerHTML = `
   }
   /* the leading edge itself — the line you actually watch go round */
   .beam-line {
-    stroke: var(--cjr-beam);
+    stroke: var(--cthr-beam);
     stroke-width: 1.3;
     stroke-linecap: round;
-    filter: drop-shadow(0 0 2.5px var(--cjr-beam));
-    transform: rotate(var(--cjr-beam-angle, 0deg));
+    filter: drop-shadow(0 0 2.5px var(--cthr-beam));
+    transform: rotate(var(--cthr-beam-angle, 0deg));
     transform-origin: 50% 50%;
     transform-box: view-box;
   }
   /* Driven from script so the beam can wind up and coast down. display:none is
      what made stopping look like the sweep had been deleted mid-frame. */
-  .beam, .beam-line { opacity: var(--cjr-beam-opacity, 0); }
+  .beam, .beam-line { opacity: var(--cthr-beam-opacity, 0); }
   /* with no sweep passing over them, static contacts need their own contrast */
   :host([period="0"]) .blips .dot,
   :host(:not([period])) .blips .dot { opacity: .9; }
@@ -104,32 +104,32 @@ template.innerHTML = `
   /* A contact is a dot plus a halo. The beam crossing it flares the dot white and
      fires the halo outward, then both decay until the next revolution finds it. */
   .blip .dot {
-    fill: var(--cjr-blip);
+    fill: var(--cthr-blip);
     opacity: .26;
-    transition: opacity var(--cjr-fade) linear, fill var(--cjr-fade) linear;
+    transition: opacity var(--cthr-fade) linear, fill var(--cthr-fade) linear;
   }
   .blip .halo {
-    fill: var(--cjr-blip);
+    fill: var(--cthr-blip);
     opacity: 0;
     transform-box: fill-box;
     transform-origin: center;
   }
   .blip[data-ping] .dot {
-    fill: var(--cjr-blip-hot);
+    fill: var(--cthr-blip-hot);
     opacity: 1;
     transition: none;
-    filter: drop-shadow(0 0 var(--cjr-glow) var(--cjr-blip));
+    filter: drop-shadow(0 0 var(--cthr-glow) var(--cthr-blip));
   }
-  .blip[data-ping] .halo { animation: cjr-ping var(--cjr-fade) ease-out; }
+  .blip[data-ping] .halo { animation: cthr-ping var(--cthr-fade) ease-out; }
 
-  @keyframes cjr-ping {
+  @keyframes cthr-ping {
     from { opacity: .5; scale: .4; }
     to   { opacity: 0;  scale: 3; }
   }
 
   .marks text {
-    fill: var(--cjr-mark);
-    font-size: var(--cjr-mark-size);
+    fill: var(--cthr-mark);
+    font-size: var(--cthr-mark-size);
     font-family: inherit;
     font-weight: 600;
     text-anchor: middle;
@@ -157,7 +157,7 @@ template.innerHTML = `
 <div class="beam" part="beam"></div>
 `;
 
-export class CJRadar extends HTMLElement {
+export class CTHRadar extends HTMLElement {
   static observedAttributes = ['rings', 'spokes', 'period', 'labels', 'blips', 'interactive', 'max-range'];
 
   #root;
@@ -341,8 +341,8 @@ export class CJRadar extends HTMLElement {
       cancelAnimationFrame(this.#frame);
       this.#frame = 0;
       this.#angle = this.period ? 45 : 0;
-      this.style.setProperty('--cjr-beam-angle', `${this.#angle}deg`);
-      this.style.setProperty('--cjr-beam-opacity', this.period ? '1' : '0');
+      this.style.setProperty('--cthr-beam-angle', `${this.#angle}deg`);
+      this.style.setProperty('--cthr-beam-opacity', this.period ? '1' : '0');
       return;
     }
     this.#loop();
@@ -366,8 +366,8 @@ export class CJRadar extends HTMLElement {
 
       this.#prevAngle = this.#angle;
       this.#angle = (this.#angle + this.#spin * dt) % 360;
-      this.style.setProperty('--cjr-beam-angle', `${this.#angle.toFixed(2)}deg`);
-      this.style.setProperty('--cjr-beam-opacity', this.#glow.toFixed(3));
+      this.style.setProperty('--cthr-beam-angle', `${this.#angle.toFixed(2)}deg`);
+      this.style.setProperty('--cthr-beam-opacity', this.#glow.toFixed(3));
 
       // no pings while it is barely turning, or a spin-down would fire a burst
       if (this.#spin > 2) this.#detect();
@@ -375,7 +375,7 @@ export class CJRadar extends HTMLElement {
       if (!this.period && this.#spin < 1 && this.#glow < 0.01) {
         this.#spin = 0;
         this.#glow = 0;
-        this.style.setProperty('--cjr-beam-opacity', '0');
+        this.style.setProperty('--cthr-beam-opacity', '0');
         this.#frame = 0;
         return;
       }
@@ -406,7 +406,7 @@ export class CJRadar extends HTMLElement {
         el.setAttribute('data-ping', '');
         // dropping it next frame lets the dot's own transition fade it back down
         requestAnimationFrame(() => el.removeAttribute('data-ping'));
-        this.dispatchEvent(new CustomEvent('cj-detect', {
+        this.dispatchEvent(new CustomEvent('cth-detect', {
           detail: { index: i, ...this.#blips[i] }, bubbles: true,
         }));
       }
@@ -431,12 +431,12 @@ export class CJRadar extends HTMLElement {
     const range = clamp(Math.hypot(dx, dy) / (box.width / 2 * (R / 50)), 0, 1);
     const bearing = ((Math.atan2(dx, -dy) * 180 / Math.PI) + 360) % 360;
     this.addBlip({ bearing, range });
-    this.dispatchEvent(new CustomEvent('cj-blip', {
+    this.dispatchEvent(new CustomEvent('cth-blip', {
       detail: { bearing, range, count: this.#blips.length }, bubbles: true,
     }));
   };
 }
 
-if (!customElements.get('cj-radar')) customElements.define('cj-radar', CJRadar);
+if (!customElements.get('cth-radar')) customElements.define('cth-radar', CTHRadar);
 
-export default CJRadar;
+export default CTHRadar;

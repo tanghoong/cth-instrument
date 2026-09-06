@@ -1,8 +1,8 @@
 // -------------------------------------------------
-// cj-knob — a zero-dependency SVG knob / gauge / meter
-// https://github.com/tanghoong/cj-knob
+// cth-knob — a zero-dependency SVG knob / gauge / meter
+// https://github.com/tanghoong/cth-instrument
 //
-// <cj-knob value="78"></cj-knob>
+// <cth-knob value="78"></cth-knob>
 // -------------------------------------------------
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -13,44 +13,44 @@ template.innerHTML = `
 <style>
   :host {
     /* ---- public theming API ---- */
-    --cj-size: 220px;
-    --cj-thickness: 8;
-    --cj-thickness-overflow: calc(var(--cj-thickness) * 0.55);
+    --cth-size: 220px;
+    --cth-thickness: 8;
+    --cth-thickness-overflow: calc(var(--cth-thickness) * 0.55);
     /* type scales with the knob but never shrinks below a legible floor */
-    --cj-num-size: max(13px, calc(var(--cj-size) * .2));
-    --cj-label-size: max(9px, calc(var(--cj-size) * .082));
-    --cj-track: #d9dce1;
-    --cj-value: #019ae6;
-    --cj-benchmark: #94cefe;
-    --cj-tick: #9aa3ae;
-    --cj-tick-width: .8;
-    --cj-needle: #e0433f;
-    --cj-needle-2: #2f7ae5;
-    --cj-peak: #ffc61a;
-    --cj-handle: #ffffff;
-    --cj-hit: rgba(127, 127, 127, .13);
-    --cj-gas: #9ca3af;
-    --cj-up: #16a34a;
-    --cj-down: #dc2626;
-    --cj-flat: #94a3b8;
-    --cj-liquid: #35a7ff;
-    --cj-liquid-back: rgba(53, 167, 255, .45);
-    --cj-mark: #6b7280;
-    --cj-mark-major: #14161a;
-    --cj-mark-size: 7px;
-    --cj-text: #14161a;
-    --cj-muted: #6b7280;
-    --cj-duration: 600ms;
-    --cj-easing: cubic-bezier(.22,.61,.36,1);
+    --cth-num-size: max(13px, calc(var(--cth-size) * .2));
+    --cth-label-size: max(9px, calc(var(--cth-size) * .082));
+    --cth-track: #d9dce1;
+    --cth-value: #019ae6;
+    --cth-benchmark: #94cefe;
+    --cth-tick: #9aa3ae;
+    --cth-tick-width: .8;
+    --cth-needle: #e0433f;
+    --cth-needle-2: #2f7ae5;
+    --cth-peak: #ffc61a;
+    --cth-handle: #ffffff;
+    --cth-hit: rgba(127, 127, 127, .13);
+    --cth-gas: #9ca3af;
+    --cth-up: #16a34a;
+    --cth-down: #dc2626;
+    --cth-flat: #94a3b8;
+    --cth-liquid: #35a7ff;
+    --cth-liquid-back: rgba(53, 167, 255, .45);
+    --cth-mark: #6b7280;
+    --cth-mark-major: #14161a;
+    --cth-mark-size: 7px;
+    --cth-text: #14161a;
+    --cth-muted: #6b7280;
+    --cth-duration: 600ms;
+    --cth-easing: cubic-bezier(.22,.61,.36,1);
     /* ---- internal ---- */
-    --cj-start: -90deg;
-    --cj-shift: 0px;
+    --cth-start: -90deg;
+    --cth-shift: 0px;
 
     display: inline-grid;
     place-items: center;
-    inline-size: var(--cj-size);
-    block-size: var(--cj-size);
-    color: var(--cj-text);
+    inline-size: var(--cth-size);
+    block-size: var(--cth-size);
+    color: var(--cth-text);
     font: inherit;
     -webkit-tap-highlight-color: transparent;
     /* A dial is an instrument, not text. Its numbers are drawn readings, and
@@ -63,12 +63,12 @@ template.innerHTML = `
 
   @media (prefers-color-scheme: dark) {
     :host {
-      --cj-track: #2f333a;
-      --cj-handle: #14161a;
-      --cj-text: #f2f4f7;
-      --cj-muted: #98a2b3;
-      --cj-mark: #98a2b3;
-      --cj-mark-major: #f2f4f7;
+      --cth-track: #2f333a;
+      --cth-handle: #14161a;
+      --cth-text: #f2f4f7;
+      --cth-muted: #98a2b3;
+      --cth-mark: #98a2b3;
+      --cth-mark-major: #f2f4f7;
     }
   }
 
@@ -86,32 +86,32 @@ template.innerHTML = `
   svg { grid-area: 1 / 1; inline-size: 100%; block-size: 100%; overflow: visible; }
 
   .rings {
-    transform: rotate(var(--cj-start));
+    transform: rotate(var(--cth-start));
     transform-origin: 50% 50%;
     transform-box: view-box;
   }
 
   circle {
     fill: none;
-    stroke-width: var(--cj-thickness);
+    stroke-width: var(--cth-thickness);
     stroke-linecap: round;
   }
 
-  .track     { stroke: var(--cj-track); }
-  .value     { stroke: var(--cj-value); }
+  .track     { stroke: var(--cth-track); }
+  .value     { stroke: var(--cth-value); }
   /* the benchmark is a target tick drawn over the value ring, so it stays visible either side of it */
   .benchmark {
-    stroke: var(--cj-benchmark);
+    stroke: var(--cth-benchmark);
     stroke-linecap: butt;
-    stroke-width: calc(var(--cj-thickness) * 1.5);
+    stroke-width: calc(var(--cth-thickness) * 1.5);
   }
   .benchmark[hidden] { display: none; }
   /* the peak marker: the highest reading still being held, drawn like the
      benchmark but in its own colour so the two never read as the same thing */
   .peak {
-    stroke: var(--cj-peak);
+    stroke: var(--cth-peak);
     stroke-linecap: butt;
-    stroke-width: calc(var(--cj-thickness) * 1.5);
+    stroke-width: calc(var(--cth-thickness) * 1.5);
   }
   .peak[hidden] { display: none; }
   /* With ballistics the script is already easing the reading frame by frame.
@@ -122,17 +122,17 @@ template.innerHTML = `
   :host([ballistics]) .needle-2,
   :host([ballistics]) .value-mask,
   :host([ballistics]) .peak { transition: none; }
-  .track-2   { stroke: var(--cj-track); stroke-width: var(--cj-thickness-overflow); }
-  .overflow  { stroke: var(--cj-value); stroke-width: var(--cj-thickness-overflow); }
+  .track-2   { stroke: var(--cth-track); stroke-width: var(--cth-thickness-overflow); }
+  .overflow  { stroke: var(--cth-value); stroke-width: var(--cth-thickness-overflow); }
 
   .value, .overflow, .benchmark {
-    transition: stroke-dashoffset var(--cj-duration) var(--cj-easing),
-                stroke-dasharray  var(--cj-duration) var(--cj-easing);
+    transition: stroke-dashoffset var(--cth-duration) var(--cth-easing),
+                stroke-dasharray  var(--cth-duration) var(--cth-easing);
   }
 
   .focus-ring {
     fill: none;
-    stroke: var(--cj-value);
+    stroke: var(--cth-value);
     stroke-width: 1.5;
     opacity: 0;
     transition: opacity 120ms linear;
@@ -142,22 +142,22 @@ template.innerHTML = `
 
   /* graduations. Drawn inside .rings so the group's rotation positions them for free. */
   .ticks line {
-    stroke: var(--cj-tick);
-    stroke-width: var(--cj-tick-width);
+    stroke: var(--cth-tick);
+    stroke-width: var(--cth-tick-width);
     stroke-linecap: round;
   }
-  .ticks line.major { stroke-width: calc(var(--cj-tick-width) * 2); }
+  .ticks line.major { stroke-width: calc(var(--cth-tick-width) * 2); }
 
   /* ---- liquid fill ---- */
   .liquid[hidden] { display: none; }
   /* the surface rises with the value; the transition is what makes filling and
      draining look like pouring rather than a jump cut */
   .level {
-    transform: translateY(var(--cj-level, 34px));
-    transition: transform var(--cj-duration) var(--cj-easing);
+    transform: translateY(var(--cth-level, 34px));
+    transition: transform var(--cth-duration) var(--cth-easing);
   }
   .wave {
-    fill: var(--cj-liquid);
+    fill: var(--cth-liquid);
     transform-box: view-box;
   }
   /* the readout sits over the fluid, so it needs its own contrast — a pale liquid
@@ -165,29 +165,29 @@ template.innerHTML = `
   :host([liquid]) .readout, :host([liquid]) .label {
     text-shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 0 6px rgba(0, 0, 0, .3);
   }
-  .wave-a { animation: cj-drift 3.1s linear infinite; }
-  .wave-b { fill: var(--cj-liquid-back); animation: cj-drift 4.7s linear infinite reverse; }
+  .wave-a { animation: cth-drift 3.1s linear infinite; }
+  .wave-b { fill: var(--cth-liquid-back); animation: cth-drift 4.7s linear infinite reverse; }
   /* sliding by exactly one wavelength puts the shape back where it started */
-  @keyframes cj-drift {
+  @keyframes cth-drift {
     from { transform: translateX(0); }
     to   { transform: translateX(-34px); }
   }
   @media (prefers-reduced-motion: reduce) { .wave { animation: none; } }
 
   /* zones sit on the track; segments replace the value ring */
-  .zones circle, .segments circle { stroke-width: var(--cj-thickness); }
+  .zones circle, .segments circle { stroke-width: var(--cth-thickness); }
   :host([segments]) .value { display: none; }
 
   /* the fan of colour steps, and the mask that reveals it up to the value */
   .gradient circle {
-    stroke-width: var(--cj-thickness);
+    stroke-width: var(--cth-thickness);
     stroke-linecap: butt;      /* round caps would notch every join */
   }
   .gradient[hidden] { display: none; }
   .value-mask {
-    stroke-width: var(--cj-thickness);
-    transition: stroke-dashoffset var(--cj-duration) var(--cj-easing),
-                stroke-dasharray  var(--cj-duration) var(--cj-easing);
+    stroke-width: var(--cth-thickness);
+    transition: stroke-dashoffset var(--cth-duration) var(--cth-easing),
+                stroke-dasharray  var(--cth-duration) var(--cth-easing);
   }
   :host([data-dragging]) .value-mask { transition: none; }
   /* the plain ring steps aside when a gradient is painting the value */
@@ -199,7 +199,7 @@ template.innerHTML = `
   :host([button]) { cursor: pointer; }
   :host([button][disabled]) { cursor: not-allowed; }
   .hit {
-    fill: var(--cj-hit);
+    fill: var(--cth-hit);
     stroke: none;
     opacity: 0;
     transition: opacity 140ms ease, transform 140ms ease;
@@ -215,7 +215,7 @@ template.innerHTML = `
      compose in one transform, and only the dip is ever transitioned. */
   :host([button]) .icon { transform-origin: 50% 50%; }
   :host([button]:not([spin])) .icon { transition: transform 140ms ease; }
-  :host([button]:active) { --cj-press-scale: .9; }
+  :host([button]:active) { --cth-press-scale: .9; }
   /* A button's caption is a caption: it belongs clear of the glyph, not tucked
      against it the way a number's label is. The glyph lifts to make the room.
      The width is the tight part — the space inside a ring narrows fast as you
@@ -224,8 +224,8 @@ template.innerHTML = `
      and capping it tighter than that is worse, not better, because the second
      line it then wraps onto reaches further down than the wide one ever did. */
   :host([button]) .center:has(.readout[hidden]) {
-    --icon-y: calc(var(--cj-size) * -.075);
-    --label-y: calc(var(--cj-size) * .215);
+    --icon-y: calc(var(--cth-size) * -.075);
+    --label-y: calc(var(--cth-size) * .215);
   }
   /* A disc turns about its own middle, so it cannot also be shifted up. It is
      the content rather than a glyph beside one, so it gets more room — and the
@@ -239,26 +239,26 @@ template.innerHTML = `
      it. */
   :host([spin]) .center:has(.readout[hidden]) {
     --icon-y: 0px;
-    --cj-icon-size: calc(var(--cj-size) * .31);
-    --label-y: calc(var(--cj-size) * .22);
+    --cth-icon-size: calc(var(--cth-size) * .31);
+    --label-y: calc(var(--cth-size) * .22);
   }
   /* ---- spin: the dial as a turntable ---- */
   /* Only what is in the middle turns. The ring is the scale and the track is
      the progress; a record spinning under both is what the eye reads as playing. */
   .icon {
-    transform: rotate(calc(var(--cj-spin-angle, 0deg) + var(--cj-turn-angle, 0deg)))
-               scale(var(--cj-press-scale, 1));
+    transform: rotate(calc(var(--cth-spin-angle, 0deg) + var(--cth-turn-angle, 0deg)))
+               scale(var(--cth-press-scale, 1));
     transform-origin: 50% 50%;
   }
   /* a turning face is the content, the same as a record is */
   :host([turn]) .center:has(.readout[hidden]) {
     --icon-y: 0px;
-    --cj-icon-size: calc(var(--cj-size) * .40);
-    --label-y: calc(var(--cj-size) * .26);
+    --cth-icon-size: calc(var(--cth-size) * .40);
+    --label-y: calc(var(--cth-size) * .26);
   }
   :host([turn]) .icon {
-    inline-size: var(--cj-icon-size);
-    block-size: var(--cj-icon-size);
+    inline-size: var(--cth-icon-size);
+    block-size: var(--cth-icon-size);
     display: grid;
     place-items: center;
     line-height: 1;
@@ -269,8 +269,8 @@ template.innerHTML = `
      and no wider than the glyph — and an emoji rotating about the centre of
      THAT wobbles round an axis somewhere off its own face. */
   :host([spin]) .icon {
-    inline-size: var(--cj-icon-size);
-    block-size: var(--cj-icon-size);
+    inline-size: var(--cth-icon-size);
+    block-size: var(--cth-icon-size);
     display: grid;
     place-items: center;
     line-height: 1;
@@ -304,27 +304,27 @@ template.innerHTML = `
     display: flex;
     align-items: center;
     gap: .2em;
-    font-size: calc(var(--cj-num-size) * .42);
+    font-size: calc(var(--cth-num-size) * .42);
     font-weight: 650;
     font-variant-numeric: tabular-nums;
-    color: var(--cj-flat);
+    color: var(--cth-flat);
   }
   .trend[hidden] { display: none; }
   .trend .arrow { inline-size: .74em; block-size: .74em; fill: currentColor; }
-  .trend.up { color: var(--cj-up); }
-  .trend.down { color: var(--cj-down); }
+  .trend.up { color: var(--cth-up); }
+  .trend.down { color: var(--cth-down); }
   .trend.down .arrow { transform: scaleY(-1); }
   .trend.flat .arrow { opacity: .45; transform: scaleY(.14); }
-  .center:has(.trend:not([hidden])) { --trend-y: calc(var(--cj-num-size) * .74); }
+  .center:has(.trend:not([hidden])) { --trend-y: calc(var(--cth-num-size) * .74); }
   /* the caption moves down to make room, rather than sharing a line with it */
   .center:has(.trend:not([hidden])):has(.label:not([hidden])) {
-    --label-y: calc(var(--cj-num-size) * 1.34);
+    --label-y: calc(var(--cth-num-size) * 1.34);
   }
 
   /* ---- states: an indicator that is in one of several states ---- */
-  .lamp { fill: var(--cj-value); stroke: none; }
+  .lamp { fill: var(--cth-value); stroke: none; }
   /* the lamp owns the middle, so its name sits below it */
-  :host([states]) .center:has(.readout[hidden]) { --label-y: calc(var(--cj-size) * .27); }
+  :host([states]) .center:has(.readout[hidden]) { --label-y: calc(var(--cth-size) * .27); }
   .lamp[hidden] { display: none; }
   /* the lamp is the reading, so it gets the press feedback the glyph would */
   :host([button]:active) .lamp { opacity: .72; }
@@ -345,11 +345,11 @@ template.innerHTML = `
      drifting, and the value decides how many of them exist. */
   .gas[hidden] { display: none; }
   .gas circle {
-    fill: var(--cj-gas);
+    fill: var(--cth-gas);
     stroke: none;
-    animation: cj-waft var(--cj-waft, 14s) ease-in-out infinite alternate;
+    animation: cth-waft var(--cth-waft, 14s) ease-in-out infinite alternate;
   }
-  @keyframes cj-waft {
+  @keyframes cth-waft {
     from { transform: translate(0, 0) scale(1); }
     to   { transform: translate(var(--dx), var(--dy)) scale(var(--ds)); }
   }
@@ -360,24 +360,24 @@ template.innerHTML = `
   /* range — a band floating between two handles, instead of a fill from the start */
   .handles[hidden] { display: none; }
   .handle {
-    fill: var(--cj-handle);
-    stroke: var(--cj-value);
+    fill: var(--cth-handle);
+    stroke: var(--cth-value);
     stroke-width: 2.2;
     transform-origin: 50% 50%;
     transform-box: view-box;
-    transition: transform var(--cj-duration) var(--cj-easing);
+    transition: transform var(--cth-duration) var(--cth-easing);
   }
-  .handle-lo { transform: rotate(var(--cj-lo-angle, 0deg)); }
-  .handle-hi { transform: rotate(var(--cj-hi-angle, 0deg)); }
+  .handle-lo { transform: rotate(var(--cth-lo-angle, 0deg)); }
+  .handle-hi { transform: rotate(var(--cth-hi-angle, 0deg)); }
   :host([data-dragging]) .handle { transition: none; }
   /* "20–70" is twice the width of a single number, so it needs a smaller type scale */
   :host([range]) {
-    --cj-num-size: max(11px, calc(var(--cj-size) * .125));
+    --cth-num-size: max(11px, calc(var(--cth-size) * .125));
     /* the label hangs off the number, so a smaller number would otherwise pull it up */
     --range-label-y: 1.05;
   }
   :host([range]) .center:has(.readout:not([hidden])) {
-    --label-y: calc(var(--cj-num-size) * var(--range-label-y));
+    --label-y: calc(var(--cth-num-size) * var(--range-label-y));
   }
   /* an encoder is spun, not pointed at: the ring must not ease behind the hand */
   :host([endless]) .value,
@@ -386,11 +386,11 @@ template.innerHTML = `
 
   /* a pointer that swings to the value — compass rose, speedometer, VU meter */
   .needle {
-    fill: var(--cj-needle);
-    transform: rotate(var(--cj-needle-angle, 0deg));
+    fill: var(--cth-needle);
+    transform: rotate(var(--cth-needle-angle, 0deg));
     transform-origin: 50% 50%;
     transform-box: view-box;
-    transition: transform var(--cj-duration) var(--cj-easing);
+    transition: transform var(--cth-duration) var(--cth-easing);
   }
   .needle[hidden] { display: none; }
 
@@ -398,16 +398,16 @@ template.innerHTML = `
   .hand { display: none; }
   :host([needle="hand"]) .mark { display: none; }
   :host([needle="hand"]) .hand { display: block; }
-  .hub { fill: var(--cj-needle); }
+  .hub { fill: var(--cth-needle); }
   .hub[hidden] { display: none; }
 
   /* a second pointer, for dials where the two ends mean different things */
   .needle-2 {
-    fill: var(--cj-needle-2);
-    transform: rotate(var(--cj-needle-2-angle, 0deg));
+    fill: var(--cth-needle-2);
+    transform: rotate(var(--cth-needle-2-angle, 0deg));
     transform-origin: 50% 50%;
     transform-box: view-box;
-    transition: transform var(--cj-duration) var(--cj-easing);
+    transition: transform var(--cth-duration) var(--cth-easing);
   }
   .needle-2[hidden] { display: none; }
 
@@ -415,24 +415,24 @@ template.innerHTML = `
      the way a heading indicator works, instead of a pointer moving over a fixed
      card. The card turns by -value, so the current heading ends up under the index. */
   .ticks, .marks {
-    transform: rotate(var(--cj-card-angle, 0deg));
+    transform: rotate(var(--cth-card-angle, 0deg));
     transform-origin: 50% 50%;
     transform-box: view-box;
-    transition: transform var(--cj-duration) var(--cj-easing);
+    transition: transform var(--cth-duration) var(--cth-easing);
   }
-  .lubber { fill: var(--cj-needle); }
+  .lubber { fill: var(--cth-needle); }
   .lubber[hidden] { display: none; }
 
   /* bearing labels. Outside .rings so they stay upright instead of turning with it. */
   .marks text {
-    fill: var(--cj-mark);
-    font-size: var(--cj-mark-size);
+    fill: var(--cth-mark);
+    font-size: var(--cth-mark-size);
     font-family: inherit;
     font-weight: 600;
     text-anchor: middle;
     dominant-baseline: central;
   }
-  .marks text.major { fill: var(--cj-mark-major); }
+  .marks text.major { fill: var(--cth-mark-major); }
 
   /* Everything in the middle is stacked in one grid cell and anchored off the centre,
      so the NUMBER always sits on the ring's centre point. The unit and the label hang
@@ -444,7 +444,7 @@ template.innerHTML = `
     place-items: center;
     inline-size: 100%;
     block-size: 100%;
-    translate: 0 var(--cj-shift);
+    translate: 0 var(--cth-shift);
     pointer-events: none;
     line-height: 1;
   }
@@ -452,15 +452,15 @@ template.innerHTML = `
   /* With a number AND a label the number lifts, so the lower half of the dial belongs
      to the text and the pair reads as optically centred rather than bottom-heavy. */
   .center:has(.readout:not([hidden])):has(.label:not([hidden])) {
-    translate: 0 calc(var(--cj-shift) - var(--cj-num-size) * .26);
+    translate: 0 calc(var(--cth-shift) - var(--cth-num-size) * .26);
   }
 
   /* Whatever is in the middle has to own the centre. With a number showing, the icon
      and label hang off it. With readout="none" there is nothing to hang off, so they
      take the centre themselves instead of orbiting an invisible number. */
   .center:has(.readout:not([hidden])) {
-    --icon-y: calc(var(--cj-num-size) * -.85);
-    --label-y: calc(var(--cj-num-size) * .82);
+    --icon-y: calc(var(--cth-num-size) * -.85);
+    --label-y: calc(var(--cth-num-size) * .82);
   }
   .center:has(.readout[hidden]) { --icon-y: 0px; --label-y: 0px; }
   /* An icon on its own is the centre; an icon WITH a label shares the space.
@@ -468,22 +468,22 @@ template.innerHTML = `
      third of the dial, spacing them by the caption's size puts the caption
      inside the glyph. */
   .center[data-icon]:has(.readout[hidden]):has(.label:not([hidden])) {
-    --icon-y: calc(var(--cj-icon-size) * -.34);
-    --label-y: calc(var(--cj-icon-size) * .62);
+    --icon-y: calc(var(--cth-icon-size) * -.34);
+    --label-y: calc(var(--cth-icon-size) * .62);
   }
 
   /* A centre hand pivots exactly where the number sits, so the number drops below
      the hub — which is where a real tachometer puts its digital readout anyway.
      Declared last so it beats the label-lift rule at equal specificity. */
   :host([needle="hand"]) .center:has(.readout:not([hidden])) {
-    translate: 0 calc(var(--cj-shift) + var(--cj-num-size) * .74);
+    translate: 0 calc(var(--cth-shift) + var(--cth-num-size) * .74);
   }
 
   .readout, .icon, .label { grid-area: 1 / 1; }
 
   .readout {
     position: relative;
-    font-size: var(--cj-num-size);
+    font-size: var(--cth-num-size);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     letter-spacing: -.02em;
@@ -500,7 +500,7 @@ template.innerHTML = `
     font-size: .5em;
     font-weight: 500;
     letter-spacing: 0;
-    color: var(--cj-muted);
+    color: var(--cth-muted);
   }
 
   /* offsets key off the number's size, not the knob's, so the label tucks under the
@@ -525,12 +525,12 @@ template.innerHTML = `
     /* the text lift is added back, so raising the number does not raise the
        chart with it — they would then never come apart */
     translate: 0 calc(var(--inset-y) + var(--inset-lift, 0px));
-    inline-size: calc(var(--cj-size) * var(--inset-w));
+    inline-size: calc(var(--cth-size) * var(--inset-w));
     /* Bounded, and clipped if the content overruns it. A slotted element
-       brings its own height — a cj-trace is 130px tall by default — and
+       brings its own height — a cth-trace is 130px tall by default — and
        without a ceiling it hangs out through the ring and off the dial
        entirely. Clipped inside the face beats spilling across the page. */
-    max-block-size: calc(var(--cj-size) * var(--inset-h));
+    max-block-size: calc(var(--cth-size) * var(--inset-h));
     overflow: hidden;
     display: grid;
     place-items: center;
@@ -543,7 +543,7 @@ template.innerHTML = `
     /* Every one of these is the deepest, widest, tallest box whose corners all
      still fall inside the ring: half-width .25 at .28 below centre gives a
      corner radius of .375, against an inner edge at about .39 of the size. */
-  :host { --inset-y: calc(var(--cj-size) * .17); --inset-w: .5; --inset-h: .22; }
+  :host { --inset-y: calc(var(--cth-size) * .17); --inset-w: .5; --inset-h: .22; }
   /* inset="fill" — a tube or a column standing up the middle of the face */
     /* A tube is narrow and tall, so it trades width for height and gets far more
      of it — the corners are what the circle constrains, not the height. */
@@ -552,23 +552,23 @@ template.innerHTML = `
   /* With something in the lower third, the number and its label move up out of
      the way instead of sitting on top of it. */
   .center[data-inset="low"]:has(.readout:not([hidden])) {
-    --label-y: calc(var(--cj-num-size) * .82);
-    --inset-lift: calc(var(--cj-size) * .14);
-    translate: 0 calc(var(--cj-shift) - var(--inset-lift));
+    --label-y: calc(var(--cth-num-size) * .82);
+    --inset-lift: calc(var(--cth-size) * .14);
+    translate: 0 calc(var(--cth-shift) - var(--inset-lift));
   }
 
   /* ---- the breathing ring ---- */
   .pulse {
     fill: none;
-    stroke: var(--cj-pulse, var(--cj-value));
-    stroke-width: calc(var(--cj-thickness) * .5);
+    stroke: var(--cth-pulse, var(--cth-value));
+    stroke-width: calc(var(--cth-thickness) * .5);
     transform-origin: 50% 50%;
     transform-box: view-box;
     opacity: 0;
-    animation: cj-breathe var(--cj-pulse-period, 1s) ease-out infinite;
+    animation: cth-breathe var(--cth-pulse-period, 1s) ease-out infinite;
   }
   .pulse[hidden] { display: none; }
-  @keyframes cj-breathe {
+  @keyframes cth-breathe {
     0%   { transform: scale(1);    opacity: .6; }
     75%  { transform: scale(1.17); opacity: 0; }
     100% { transform: scale(1.17); opacity: 0; }
@@ -586,36 +586,36 @@ template.innerHTML = `
      one-line position and lets any extra lines grow downward instead. */
   .label {
     align-self: start;
-    translate: 0 calc(var(--cj-size) * .5 + var(--label-y, 0px) - .6em);
+    translate: 0 calc(var(--cth-size) * .5 + var(--label-y, 0px) - .6em);
     inline-size: max-content;
-    max-inline-size: calc(var(--cj-size) * .46);
-    font-size: var(--cj-label-size);
+    max-inline-size: calc(var(--cth-size) * .46);
+    font-size: var(--cth-label-size);
     line-height: 1.2;
-    color: var(--cj-muted);
+    color: var(--cth-muted);
     text-align: center;
     text-wrap: balance;
   }
   .label[hidden] { display: none; }
   /* with no number in the way the label gets the full inner circle to wrap into */
-  .center:has(.readout[hidden]) .label { max-inline-size: calc(var(--cj-size) * .52); }
+  .center:has(.readout[hidden]) .label { max-inline-size: calc(var(--cth-size) * .52); }
 
   /* Graphics get sized by width; anything else (an emoji, a glyph) by font-size.
      With a number in the middle the icon is a label for it and steps back. With
      readout="none" the icon IS the middle, and it should look like it — a line
      drawing at 15% of the dial is a smudge you have to lean in to identify. */
-  :host { --cj-icon-size: calc(var(--cj-size) * .2); }
-  .center:has(.readout[hidden]) { --cj-icon-size: calc(var(--cj-size) * .34); }
-  ::slotted(*) { font-size: var(--cj-icon-size); line-height: 1; }
+  :host { --cth-icon-size: calc(var(--cth-size) * .2); }
+  .center:has(.readout[hidden]) { --cth-icon-size: calc(var(--cth-size) * .34); }
+  ::slotted(*) { font-size: var(--cth-icon-size); line-height: 1; }
   ::slotted(img), ::slotted(svg), ::slotted(picture) {
-    inline-size: var(--cj-icon-size);
+    inline-size: var(--cth-icon-size);
     block-size: auto;
     display: block;
   }
 
   /* opt-in entrance: grow from empty on first paint. Purely visual — the DOM is already correct. */
-  @keyframes cj-grow { from { stroke-dashoffset: var(--cj-arc); } }
+  @keyframes cth-grow { from { stroke-dashoffset: var(--cth-arc); } }
   :host([animate-in]) .value,
-  :host([animate-in]) .overflow { animation: cj-grow var(--cj-duration) var(--cj-easing); }
+  :host([animate-in]) .overflow { animation: cth-grow var(--cth-duration) var(--cth-easing); }
 
   @media (prefers-reduced-motion: reduce) {
     .value, .overflow, .benchmark { transition: none; }
@@ -625,11 +625,11 @@ template.innerHTML = `
 
 <svg viewBox="0 0 100 100" part="svg" aria-hidden="true" focusable="false">
   <defs>
-    <clipPath id="cj-vessel"><circle cx="50" cy="50" r="33"/></clipPath>
-    <filter id="cj-haze" x="-30%" y="-30%" width="160%" height="160%">
+    <clipPath id="cth-vessel"><circle cx="50" cy="50" r="33"/></clipPath>
+    <filter id="cth-haze" x="-30%" y="-30%" width="160%" height="160%">
       <feGaussianBlur stdDeviation="5.5"/>
     </filter>
-    <mask id="cj-arcmask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+    <mask id="cth-arcmask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
       <circle class="value-mask" cx="50" cy="50" r="42" pathLength="100"
               fill="none" stroke="#fff" stroke-linecap="round"
               stroke-dasharray="100 100" stroke-dashoffset="100"/>
@@ -639,9 +639,9 @@ template.innerHTML = `
   <!-- Liquid: a wave-topped body whose surface sits at the value. Two waves of
        different wavelength and speed drift across each other, which reads as
        moving fluid rather than a bar that happens to have a wavy edge. -->
-  <g class="gas" part="gas" clip-path="url(#cj-vessel)" filter="url(#cj-haze)" hidden></g>
+  <g class="gas" part="gas" clip-path="url(#cth-vessel)" filter="url(#cth-haze)" hidden></g>
 
-  <g class="liquid" part="liquid" clip-path="url(#cj-vessel)" hidden>
+  <g class="liquid" part="liquid" clip-path="url(#cth-vessel)" hidden>
     <g class="level">
       <path class="wave wave-b"/>
       <path class="wave wave-a"/>
@@ -656,7 +656,7 @@ template.innerHTML = `
          once as a fan of short solid arcs across the whole sweep, and the value
          reveals it through a mask that mirrors the value ring exactly. Changing
          the value therefore costs one dash offset, not a rebuild of the fan. -->
-    <g class="gradient" part="gradient" mask="url(#cj-arcmask)" hidden></g>
+    <g class="gradient" part="gradient" mask="url(#cth-arcmask)" hidden></g>
     <g class="segments" part="segments"></g>
     <g class="ticks"    part="ticks"></g>
     <circle class="benchmark" part="benchmark" cx="50" cy="50" r="42" pathLength="100" stroke-dasharray="0 100" hidden/>
@@ -673,7 +673,7 @@ template.innerHTML = `
     </g>
     <!-- Two pointer styles. The rim marker is the default; needle="hand" swaps in a
          centre-mounted hand, which is what a clock or a pressure gauge wants. Both
-         are drawn pointing right, i.e. at 0deg before .rings applies --cj-start. -->
+         are drawn pointing right, i.e. at 0deg before .rings applies --cth-start. -->
     <g class="needle" part="needle" hidden>
       <polygon class="mark" points="87.5,50 79.5,46.3 79.5,53.7"/>
       <polygon class="hand" points="86,50 52,48.1 43,50 52,51.9"/>
@@ -738,7 +738,7 @@ const parseColor = (c) => {
 const mixColor = (a, b, t) =>
   "#" + a.map((x, i) => Math.round(x + (b[i] - x) * t).toString(16).padStart(2, "0")).join("");
 
-export class CJKnob extends HTMLElement {
+export class CTHKnob extends HTMLElement {
   static observedAttributes = [
     'value', 'min', 'max', 'benchmark', 'sweep', 'start',
     'readout', 'unit', 'decimals', 'label', 'color',
@@ -994,11 +994,11 @@ export class CJKnob extends HTMLElement {
     const pct = clamp(raw, 0, 1);
     const over = endless ? 0 : clamp(raw - 1, 0, 1);
 
-    this.style.setProperty('--cj-start', `${this.#start}deg`);
-    this.style.setProperty('--cj-arc', String(arc));
+    this.style.setProperty('--cth-start', `${this.#start}deg`);
+    this.style.setProperty('--cth-arc', String(arc));
     // a partial arc leaves a gap at the bottom, so nudge the text up in proportion to it
     const shift = (-(360 - sweep) / 360 * 0.14).toFixed(4);
-    this.style.setProperty('--cj-shift', `calc(var(--cj-size) * ${shift})`);
+    this.style.setProperty('--cth-shift', `calc(var(--cth-size) * ${shift})`);
 
     const dash = `${arc} ${PATH_LENGTH}`;
     this.#els.track.setAttribute('stroke-dasharray', dash);
@@ -1015,8 +1015,8 @@ export class CJKnob extends HTMLElement {
       const hi = (range.high - min) / span;
       bandDash = `${arc * (hi - lo)} ${PATH_LENGTH}`;
       bandOffset = -(arc * lo);
-      this.style.setProperty('--cj-lo-angle', `${(lo * sweep).toFixed(2)}deg`);
-      this.style.setProperty('--cj-hi-angle', `${(hi * sweep).toFixed(2)}deg`);
+      this.style.setProperty('--cth-lo-angle', `${(lo * sweep).toFixed(2)}deg`);
+      this.style.setProperty('--cth-hi-angle', `${(hi * sweep).toFixed(2)}deg`);
     }
     for (const el of [this.#els.value, this.#els.valueMask]) {
       el.setAttribute('stroke-dasharray', bandDash);
@@ -1062,14 +1062,14 @@ export class CJKnob extends HTMLElement {
     this.#renderGas(pct);
     this.#renderMarks(sweep, this.#start);
 
-    // `color` is a shorthand for the --cj-value custom property. Only clear it again if
-    // WE set it — an author may have put --cj-value in their own inline style, and
+    // `color` is a shorthand for the --cth-value custom property. Only clear it again if
+    // WE set it — an author may have put --cth-value in their own inline style, and
     // removing that would silently override their choice.
     if (this.hasAttribute('color')) {
-      this.style.setProperty('--cj-value', this.getAttribute('color'));
+      this.style.setProperty('--cth-value', this.getAttribute('color'));
       this.#ownsColor = true;
     } else if (this.#ownsColor) {
-      this.style.removeProperty('--cj-value');
+      this.style.removeProperty('--cth-value');
       this.#ownsColor = false;
     }
 
@@ -1273,14 +1273,14 @@ export class CJKnob extends HTMLElement {
 
   /** needle — one or two pointers that swing to the value(s) */
   #renderNeedle(sweep, pct) {
-    // Angles are relative: .rings already carries --cj-start.
+    // Angles are relative: .rings already carries --cth-start.
     const on = this.hasAttribute('needle');
     this.#els.needle.toggleAttribute('hidden', !on);
     // centre-mounted hands need a hub to pivot on; rim markers do not
     this.#els.hub.toggleAttribute('hidden', !(on && this.getAttribute('needle') === 'hand'));
     if (on) {
       const a = this.#unwrap('n1', pct * sweep, sweep);
-      this.style.setProperty('--cj-needle-angle', `${a.toFixed(2)}deg`);
+      this.style.setProperty('--cth-needle-angle', `${a.toFixed(2)}deg`);
     }
 
     // a second pointer, for dials whose two ends mean different things
@@ -1291,7 +1291,7 @@ export class CJKnob extends HTMLElement {
       const span = (this.max - this.min) || 1;
       const pct2 = clamp((num(raw2, this.min) - this.min) / span, 0, 1);
       const a2 = this.#unwrap('n2', pct2 * sweep, sweep);
-      this.style.setProperty('--cj-needle-2-angle', `${a2.toFixed(2)}deg`);
+      this.style.setProperty('--cth-needle-2-angle', `${a2.toFixed(2)}deg`);
     }
   }
 
@@ -1327,7 +1327,7 @@ export class CJKnob extends HTMLElement {
     }
 
     // surface at the top of the vessel when full, below the bottom when empty
-    this.#els.liquid.style.setProperty('--cj-level', `${(R - pct * 2 * R).toFixed(2)}px`);
+    this.#els.liquid.style.setProperty('--cth-level', `${(R - pct * 2 * R).toFixed(2)}px`);
   }
 
   /**
@@ -1361,7 +1361,7 @@ export class CJKnob extends HTMLElement {
         c.style.setProperty('--dx', `${(Math.cos(a * 3.1) * 7).toFixed(2)}px`);
         c.style.setProperty('--dy', `${(Math.sin(a * 2.7) * 7).toFixed(2)}px`);
         c.style.setProperty('--ds', (1 + (i % 4) * 0.09).toFixed(2));
-        c.style.setProperty('--cj-waft', `${(12 + (i % 6) * 2.4).toFixed(1)}s`);
+        c.style.setProperty('--cth-waft', `${(12 + (i % 6) * 2.4).toFixed(1)}s`);
         c.style.animationDelay = `-${(i * 0.7).toFixed(1)}s`;
         frag.append(c);
       }
@@ -1427,7 +1427,7 @@ export class CJKnob extends HTMLElement {
         this.#spinRate = Math.max(target, this.#spinRate - DECEL * dt);
       }
       this.#spinAngle = (this.#spinAngle + this.#spinRate * 6 * dt) % 360;
-      this.style.setProperty('--cj-spin-angle', `${this.#spinAngle.toFixed(2)}deg`);
+      this.style.setProperty('--cth-spin-angle', `${this.#spinAngle.toFixed(2)}deg`);
       if (!on && this.#spinRate === 0) { this.#spinFrame = 0; return; }
       this.#spinFrame = requestAnimationFrame(step);
     };
@@ -1439,7 +1439,7 @@ export class CJKnob extends HTMLElement {
     const on = this.hasAttribute('rotating');
     this.#els.lubber.toggleAttribute('hidden', !on);
     const a = on ? -this.#unwrap('card', pct * sweep, sweep) : 0;
-    this.style.setProperty('--cj-card-angle', `${a.toFixed(2)}deg`);
+    this.style.setProperty('--cth-card-angle', `${a.toFixed(2)}deg`);
   }
 
   /** labels="N,E,S,W" — upright captions spaced around the arc */
@@ -1478,7 +1478,7 @@ export class CJKnob extends HTMLElement {
     const count = sweep >= 360 ? n : n + 1;
     const frag = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
-      // angles are relative: the parent .rings group already carries --cj-start
+      // angles are relative: the parent .rings group already carries --cth-start
       const a = (i / n) * sweep * Math.PI / 180;
       const isMajor = major > 0 && i % major === 0;
       const r1 = isMajor ? 31 : 33.5;
@@ -1528,7 +1528,7 @@ export class CJKnob extends HTMLElement {
     if (!on) return;
     const now = list[this.state];
     if (now?.color) {
-      this.style.setProperty('--cj-value', now.color);
+      this.style.setProperty('--cth-value', now.color);
       this.#ownsColor = true;
     }
     this.#stateName = now?.name ?? '';
@@ -1537,11 +1537,11 @@ export class CJKnob extends HTMLElement {
   /** turn — the middle swings round to face the other way, and stays there. */
   #renderTurn() {
     const raw = this.getAttribute('turn');
-    if (raw === null) return void this.style.removeProperty('--cj-turn-angle');
+    if (raw === null) return void this.style.removeProperty('--cth-turn-angle');
     const deg = num(raw, 180);
     // on a toggle it only turns while pressed, the same bargain spin makes
     const at = this.hasAttribute('toggle') && !this.pressed ? 0 : deg;
-    this.style.setProperty('--cj-turn-angle', `${at}deg`);
+    this.style.setProperty('--cth-turn-angle', `${at}deg`);
   }
 
   /**
@@ -1561,7 +1561,7 @@ export class CJKnob extends HTMLElement {
     const bpm = clamp(spec === 'auto' ? this.shown : num(spec, 60), 1, 600);
     // rounded, or every frame of a moving value restarts the animation and the
     // ring never gets far enough through a breath to be seen taking one
-    this.style.setProperty('--cj-pulse-period', `${(60 / Math.round(bpm)).toFixed(2)}s`);
+    this.style.setProperty('--cth-pulse-period', `${(60 / Math.round(bpm)).toFixed(2)}s`);
   }
 
   /**
@@ -1582,7 +1582,7 @@ export class CJKnob extends HTMLElement {
     const el = this.#els.label;
     if (!this.#boxW || el.hasAttribute('hidden')) return;
     const size = this.#boxW;
-    const th = num(getComputedStyle(this).getPropertyValue('--cj-thickness'), 8);
+    const th = num(getComputedStyle(this).getPropertyValue('--cth-thickness'), 8);
     // the inner edge of the track, less a hair so nothing sits exactly on it
     const R = (size * 0.42 - size * th / 200) * 0.97;
 
@@ -1744,7 +1744,7 @@ export class CJKnob extends HTMLElement {
     const high = this.#grab === 'low' ? r.high : Math.max(v, r.low);
     if (low === r.low && high === r.high) return;
     this.setAttribute('range', `${low} ${high}`);
-    this.dispatchEvent(new CustomEvent('cj-input', { detail: { low, high }, bubbles: true }));
+    this.dispatchEvent(new CustomEvent('cth-input', { detail: { low, high }, bubbles: true }));
   }
 
   #commit(v, type) {
@@ -1776,22 +1776,22 @@ export class CJKnob extends HTMLElement {
       this.#lastAngle = this.#angleAt(e.clientX, e.clientY);
       this.#turnAcc = this.value;
     } else {
-      this.#commit(this.#valueFromPoint(e.clientX, e.clientY), 'cj-input');
+      this.#commit(this.#valueFromPoint(e.clientX, e.clientY), 'cth-input');
     }
   };
 
   #onPointerMove = (e) => {
     if (!this.#dragging) return;
     if (this.range) this.#commitRange(this.#valueFromPoint(e.clientX, e.clientY));
-    else if (this.endless) this.#commit(this.#turnBy(e.clientX, e.clientY), 'cj-input');
-    else this.#commit(this.#valueFromPoint(e.clientX, e.clientY), 'cj-input');
+    else if (this.endless) this.#commit(this.#turnBy(e.clientX, e.clientY), 'cth-input');
+    else this.#commit(this.#valueFromPoint(e.clientX, e.clientY), 'cth-input');
   };
 
   #onPointerUp = () => {
     if (!this.#dragging) return;
     const r = this.range;
     this.#teardownPointer();
-    this.dispatchEvent(new CustomEvent('cj-change', {
+    this.dispatchEvent(new CustomEvent('cth-change', {
       detail: r ? { low: r.low, high: r.high } : { value: this.value },
       bubbles: true,
     }));
@@ -1812,7 +1812,7 @@ export class CJKnob extends HTMLElement {
     const list = this.states;
     if (list.length) this.setAttribute('state', String((this.state + 1) % list.length));
     this.#pumpSpin();
-    this.dispatchEvent(new CustomEvent('cj-press', {
+    this.dispatchEvent(new CustomEvent('cth-press', {
       detail: {
         pressed: this.pressed,
         state: list.length ? this.state : undefined,
@@ -1848,7 +1848,7 @@ export class CJKnob extends HTMLElement {
       const from = e.shiftKey ? r.low : r.high;
       const to = e.key === 'Home' ? this.min : e.key === 'End' ? this.max : from + map[e.key];
       this.#commitRange(clamp(to, this.min, this.max));
-      this.dispatchEvent(new CustomEvent('cj-change', { detail: { ...this.range }, bubbles: true }));
+      this.dispatchEvent(new CustomEvent('cth-change', { detail: { ...this.range }, bubbles: true }));
       return;
     }
 
@@ -1859,11 +1859,11 @@ export class CJKnob extends HTMLElement {
     else return;
     e.preventDefault();
     // an encoder has no ends to stop at, so stepping never clamps
-    this.#commit(this.endless && e.key in map ? next : clamp(next, this.min, this.max), 'cj-input');
-    this.dispatchEvent(new CustomEvent('cj-change', { detail: { value: this.value }, bubbles: true }));
+    this.#commit(this.endless && e.key in map ? next : clamp(next, this.min, this.max), 'cth-input');
+    this.dispatchEvent(new CustomEvent('cth-change', { detail: { value: this.value }, bubbles: true }));
   };
 }
 
-if (!customElements.get('cj-knob')) customElements.define('cj-knob', CJKnob);
+if (!customElements.get('cth-knob')) customElements.define('cth-knob', CTHKnob);
 
-export default CJKnob;
+export default CTHKnob;

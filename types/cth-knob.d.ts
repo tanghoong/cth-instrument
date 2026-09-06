@@ -1,4 +1,4 @@
-export declare class CJKnob extends HTMLElement {
+export declare class CTHKnob extends HTMLElement {
   /** Lower bound of the scale. Attribute: `min`. Default `0`. */
   min: number;
   /** Upper bound of the scale. Attribute: `max`. Default `100`. */
@@ -14,7 +14,7 @@ export declare class CJKnob extends HTMLElement {
    * `range="20 70"`. Reads back as `{low, high}`, or `null` on an ordinary dial;
    * assigning takes either `[20, 70]` or `{low: 20, high: 70}`.
    */
-  range: CJKnobRange | [number, number] | null;
+  range: CTHKnobRange | [number, number] | null;
   /**
    * A knob with no ends: dragging reports movement rather than position, so the
    * value keeps counting past `max` and below `min` while the ring wraps round.
@@ -44,7 +44,7 @@ export declare class CJKnob extends HTMLElement {
    *
    * Slots: `icon` in the middle, `icon-on` for the glyph a pressed `toggle`
    * button shows instead, and `inset` for something living inside the face —
-   * a `<cj-trace>` under the number, a `<cj-level>` up the middle. The knob
+   * a `<cth-trace>` under the number, a `<cth-level>` up the middle. The knob
    * lays the slotted element out; it does not draw it.
    */
   /** Normalised position: `(value - min) / (max - min)`. Exceeds 1 when value > max. Read-only. */
@@ -62,36 +62,36 @@ export declare class CJKnob extends HTMLElement {
   readonly peak: number | null;
 }
 
-export interface CJKnobRange {
+export interface CTHKnobRange {
   low: number;
   high: number;
 }
 
-export interface CJKnobEventDetail {
+export interface CTHKnobEventDetail {
   value: number;
 }
 
-/** What `cj-input` and `cj-change` carry from a `range` dial instead. */
-export interface CJKnobRangeEventDetail {
+/** What `cth-input` and `cth-change` carry from a `range` dial instead. */
+export interface CTHKnobRangeEventDetail {
   low: number;
   high: number;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'cj-knob': CJKnob;
+    'cth-knob': CTHKnob;
   }
   interface HTMLElementEventMap {
     /** Fired continuously while dragging or on each key press. */
-    'cj-input': CustomEvent<CJKnobEventDetail | CJKnobRangeEventDetail>;
+    'cth-input': CustomEvent<CTHKnobEventDetail | CTHKnobRangeEventDetail>;
     /** Fired when an interaction settles (pointer release, key press). */
-    'cj-change': CustomEvent<CJKnobEventDetail | CJKnobRangeEventDetail>;
+    'cth-change': CustomEvent<CTHKnobEventDetail | CTHKnobRangeEventDetail>;
     /**
      * Fired when a `button` dial is activated by click, Enter or Space.
      * `state` and `name` are present only on a `states` button.
      */
-    'cj-press': CustomEvent<{ pressed: boolean; state?: number; name?: string }>;
+    'cth-press': CustomEvent<{ pressed: boolean; state?: number; name?: string }>;
   }
 }
 
-export default CJKnob;
+export default CTHKnob;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Deep Space — cj-knob lab</title>
+<title>Deep Space — cth-instrument lab</title>
 <style>
   :root {
     color-scheme: dark;
@@ -36,9 +36,9 @@
     .row { min-height: 0; }
     .primary { flex: 1.4; }
     .engines, .secondary { flex: 1; }
-    .primary cj-knob { --cj-size: min(212px, 27vh); }
-    .secondary cj-knob { --cj-size: min(110px, 14vh); }
-    .engines cj-knob { --cj-size: min(84px, 11vh); }
+    .primary cth-knob { --cth-size: min(212px, 27vh); }
+    .secondary cth-knob { --cth-size: min(110px, 14vh); }
+    .engines cth-knob { --cth-size: min(84px, 11vh); }
   }
 
   h1 { margin: 0; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--dim); }
@@ -67,23 +67,23 @@
   .cell.lit { border-color: #35506e; }
   .cap { font-size: 9.5px; letter-spacing: .15em; color: var(--dim); text-transform: uppercase; }
 
-  cj-knob {
-    --cj-track: var(--track);
-    --cj-text: var(--ink);
-    --cj-muted: var(--dim);
-    --cj-tick: #33404f;
-    --cj-duration: 180ms;
-    --cj-easing: linear;
-    --cj-size: 110px;
-    --cj-thickness: 7;
+  cth-knob {
+    --cth-track: var(--track);
+    --cth-text: var(--ink);
+    --cth-muted: var(--dim);
+    --cth-tick: #33404f;
+    --cth-duration: 180ms;
+    --cth-easing: linear;
+    --cth-size: 110px;
+    --cth-thickness: 7;
   }
-  .primary cj-knob { --cj-size: 190px; --cj-thickness: 6; }
-  .engines cj-knob { --cj-size: 84px; --cj-thickness: 9; }
+  .primary cth-knob { --cth-size: 190px; --cth-thickness: 6; }
+  .engines cth-knob { --cth-size: 84px; --cth-thickness: 9; }
 </style>
 </head>
 <body>
 
-<h1>CJ HEAVY · ASCENT TELEMETRY — SIMULATION</h1>
+<h1>CTH HEAVY · ASCENT TELEMETRY — SIMULATION</h1>
 
 <div class="tlm">
   <span class="clk" id="t-clock">T+ 00:00:00</span>
@@ -96,23 +96,23 @@
 
 <div class="row primary">
   <div class="cell lit">
-    <cj-knob id="vel" min="0" max="28000" value="0" sweep="270" readout="value"
-             ticks="14" tick-major="7" color="var(--cool)" label="km/h"></cj-knob>
+    <cth-knob id="vel" min="0" max="28000" value="0" sweep="270" readout="value"
+             ticks="14" tick-major="7" color="var(--cool)" label="km/h"></cth-knob>
     <div class="cap">Velocity</div>
   </div>
   <div class="cell lit">
-    <cj-knob id="alt" min="0" max="400" value="0" sweep="270" readout="value" decimals="1"
-             ticks="10" tick-major="5" color="var(--ok)" benchmark="100" label="km"></cj-knob>
+    <cth-knob id="alt" min="0" max="400" value="0" sweep="270" readout="value" decimals="1"
+             ticks="10" tick-major="5" color="var(--ok)" benchmark="100" label="km"></cth-knob>
     <div class="cap">Altitude · Kármán 100</div>
   </div>
   <div class="cell lit">
-    <cj-knob id="throttle" min="0" max="100" value="0" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--hot)" label="%"></cj-knob>
+    <cth-knob id="throttle" min="0" max="100" value="0" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--hot)" label="%"></cth-knob>
     <div class="cap">Throttle</div>
   </div>
   <div class="cell lit">
-    <cj-knob id="prop" readout="none"
-             segments="52:#4aa8ff, 26:#3ee08a, 22:#171e27"><span slot="icon">🛰️</span></cj-knob>
+    <cth-knob id="prop" readout="none"
+             segments="52:#4aa8ff, 26:#3ee08a, 22:#171e27"><span slot="icon">🛰️</span></cth-knob>
     <div class="cap">S1 · S2 · reserve</div>
   </div>
 </div>
@@ -121,53 +121,53 @@
 
 <div class="row secondary">
   <div class="cell">
-    <cj-knob id="gforce" min="0" max="6" value="1" sweep="270" readout="value" decimals="1"
+    <cth-knob id="gforce" min="0" max="6" value="1" sweep="270" readout="value" decimals="1"
              ticks="6" tick-major="3" color="var(--warn)"
-             zones="4-5:#ffc542, 5-6:#ff4d5e" label="g"></cj-knob>
+             zones="4-5:#ffc542, 5-6:#ff4d5e" label="g"></cth-knob>
     <div class="cap">Acceleration</div>
   </div>
   <div class="cell">
-    <cj-knob id="maxq" min="0" max="40" value="0" sweep="270" readout="value"
+    <cth-knob id="maxq" min="0" max="40" value="0" sweep="270" readout="value"
              ticks="8" tick-major="4" color="var(--hot)"
-             zones="30-36:#ffc542, 36-40:#ff4d5e" label="kPa"></cj-knob>
+             zones="30-36:#ffc542, 36-40:#ff4d5e" label="kPa"></cth-knob>
     <div class="cap">Dynamic press</div>
   </div>
   <div class="cell">
-    <cj-knob id="dv" min="0" max="9500" value="9500" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--cool)" label="m/s"></cj-knob>
+    <cth-knob id="dv" min="0" max="9500" value="9500" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--cool)" label="m/s"></cth-knob>
     <div class="cap">Δv remaining</div>
   </div>
   <div class="cell">
-    <cj-knob id="pitch" min="0" max="90" value="90" sweep="180" readout="value"
-             ticks="9" tick-major="3" color="var(--ok)" label="deg"></cj-knob>
+    <cth-knob id="pitch" min="0" max="90" value="90" sweep="180" readout="value"
+             ticks="9" tick-major="3" color="var(--ok)" label="deg"></cth-knob>
     <div class="cap">Pitch program</div>
   </div>
   <div class="cell">
-    <cj-knob id="skin" min="0" max="1800" value="15" sweep="270" readout="value"
+    <cth-knob id="skin" min="0" max="1800" value="15" sweep="270" readout="value"
              ticks="9" tick-major="3" color="var(--hot)"
-             zones="1200-1500:#ffc542, 1500-1800:#ff4d5e" label="°C"></cj-knob>
+             zones="1200-1500:#ffc542, 1500-1800:#ff4d5e" label="°C"></cth-knob>
     <div class="cap">Skin temp</div>
   </div>
   <div class="cell">
-    <cj-knob id="power" min="0" max="100" value="94" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--ok)" label="%"></cj-knob>
+    <cth-knob id="power" min="0" max="100" value="94" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--ok)" label="%"></cth-knob>
     <div class="cap">Bus power</div>
   </div>
   <div class="cell">
-    <cj-knob id="signal" min="0" max="100" value="99" sweep="270" readout="value"
+    <cth-knob id="signal" min="0" max="100" value="99" sweep="270" readout="value"
              ticks="10" tick-major="5" color="var(--cool)"
-             zones="0-25:#ff4d5e" label="%"></cj-knob>
+             zones="0-25:#ff4d5e" label="%"></cth-knob>
     <div class="cap">Downlink</div>
   </div>
   <div class="cell">
-    <cj-knob id="rcs" min="0" max="100" value="100" sweep="270" readout="value"
-             ticks="10" tick-major="5" color="var(--warn)" label="%"></cj-knob>
+    <cth-knob id="rcs" min="0" max="100" value="100" sweep="270" readout="value"
+             ticks="10" tick-major="5" color="var(--warn)" label="%"></cth-knob>
     <div class="cap">RCS propellant</div>
   </div>
 </div>
 
 <script type="module">
-  import '../src/cj-knob.js';
+  import '../src/cth-knob.js';
 
   const $ = (id) => document.getElementById(id);
 
@@ -176,11 +176,11 @@
     const cell = document.createElement('div');
     cell.className = 'cell';
     cell.innerHTML = `
-      <cj-knob readout="value" min="0" max="110" value="0" sweep="270"
-               color="var(--hot)" zones="100-110:#ff4d5e" label="%"></cj-knob>
+      <cth-knob readout="value" min="0" max="110" value="0" sweep="270"
+               color="var(--hot)" zones="100-110:#ff4d5e" label="%"></cth-knob>
       <div class="cap">M${i + 1}</div>`;
     $('engines').append(cell);
-    return cell.querySelector('cj-knob');
+    return cell.querySelector('cth-knob');
   });
 
   // a scripted ascent: every number below is derived from one clock, so the whole

@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>cj-knob — one element, every dial</title>
+<title>cth-instrument — one element, every dial</title>
 <meta name="description" content="A knob, gauge and meter as a single custom element. Zero dependencies, no build step, 23.6 KB gzipped. Works in plain HTML, React, Vue and Svelte.">
 <!-- Holds each element's space before its module lands, so the page does not
      jump when they upgrade. No JavaScript; it stops applying by itself. -->
-<link rel="stylesheet" href="src/cj-skeleton.css">
+<link rel="stylesheet" href="src/cth-skeleton.css">
 <style>
   :root {
     color-scheme: light dark;
@@ -136,10 +136,10 @@
   .scene[hidden] { display: none; }
   .scene .lead { display: flex; align-items: center; justify-content: center; gap: 1rem; }
   .scene .strip { display: flex; gap: .9rem; flex-wrap: wrap; justify-content: center; }
-  .hero-art .big { --cj-size: 168px; --cj-thickness: 6; }
-  .hero-art .mid { --cj-size: 116px; --cj-thickness: 7; }
-  .hero-art .strip cj-knob,
-  .hero-art .strip cj-heat { --cj-size: 78px; --cj-thickness: 9; }
+  .hero-art .big { --cth-size: 168px; --cth-thickness: 6; }
+  .hero-art .mid { --cth-size: 116px; --cth-thickness: 7; }
+  .hero-art .strip cth-knob,
+  .hero-art .strip cth-heat { --cth-size: 78px; --cth-thickness: 9; }
   .hero-art .wave { inline-size: min(300px, 100%); }
   .hero-art .cap { font: 500 10px/1 ui-monospace, monospace; color: var(--dim);
                    letter-spacing: .06em; text-align: center; margin-top: .35rem; }
@@ -230,8 +230,8 @@
           padding: .875rem .625rem .75rem; display: grid; justify-items: center; gap: .625rem; }
   .card code { font-size: .625rem; line-height: 1.45; color: var(--dim); text-align: center;
                word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  cj-knob { --cj-size: 104px; }
-  cj-level { --cjl-height: 150px; }
+  cth-knob { --cth-size: 104px; }
+  cth-level { --cthl-height: 150px; }
   .tubes .card { padding-top: 1rem; }
   .scale { display: flex; align-items: center; justify-content: center; gap: 1.5rem;
            flex-wrap: wrap; background: var(--card); border: 1px solid var(--line);
@@ -243,8 +243,8 @@
   .stack > * { grid-area: 1 / 1; }
   .clock-time { font: 600 14px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
                 font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
-  @keyframes cj-spin { to { rotate: 360deg; } }
-  .spinner { animation: cj-spin 900ms linear infinite; }
+  @keyframes cth-spin { to { rotate: 360deg; } }
+  .spinner { animation: cth-spin 900ms linear infinite; }
   .wide { grid-column: span 2; }
 
   /* ---------- playground ---------- */
@@ -302,7 +302,7 @@
     border: 1px solid var(--line); border-radius: 99px; padding: .35rem .6rem;
   }
   .lab-art { display: grid; grid-template-columns: repeat(3, auto); gap: .75rem; }
-  .lab-art cj-knob { --cj-size: 62px; --cj-thickness: 10; }
+  .lab-art cth-knob { --cth-size: 62px; --cth-thickness: 10; }
 
   /* ---------- footer ---------- */
   footer { border-top: 1px solid var(--line); padding: 2rem 0 3rem; color: var(--dim); font-size: 13px; }
@@ -316,7 +316,7 @@
 
 <header class="site-head">
   <div class="wrap">
-    <a class="brand" href="#top">cj-knob <span class="ver">v1.0</span></a>
+    <a class="brand" href="#top">cth-instrument <span class="ver">v1.0</span></a>
     <nav class="site-nav">
       <a href="#start">Quick start</a>
       <a href="#why">Why</a>
@@ -337,12 +337,12 @@
       <p class="lede">
         A knob, gauge, meter and radial chart in a single custom element.
         No framework, no build step, no dependencies — paste one script tag and write
-        <code>&lt;cj-knob value="78"&gt;</code>.
+        <code>&lt;cth-knob value="78"&gt;</code>.
       </p>
 
       <div class="install">
         <span class="p">$</span>
-        <code id="npm-cmd">npm install cj-knob</code>
+        <code id="npm-cmd">npm install cth-instrument</code>
         <button type="button" id="copy">Copy</button>
       </div>
 
@@ -356,7 +356,7 @@
       <div class="actions">
         <a class="btn primary" href="#start">Get started</a>
         <a class="btn" href="lab/">See 30 dashboards</a>
-        <a class="btn" href="https://github.com/tanghoong/cj-knob">GitHub</a>
+        <a class="btn" href="https://github.com/tanghoong/cth-instrument">GitHub</a>
       </div>
     </div>
 
@@ -368,36 +368,36 @@
       <div class="scenes">
         <div class="scene" data-name="vitals">
           <div class="lead">
-            <cj-knob class="big" id="hero" value="72" min="40" max="180" readout="value"
+            <cth-knob class="big" id="hero" value="72" min="40" max="180" readout="value"
                      unit="bpm" label="resting" pulse="auto" color="#e0433f" animate-in>
-              <cj-trace slot="inset" beat="72" readout="none" pen="none" samples="150"
-                        style="--cj-height:34px;--cj-trace:#e0433f;--cj-width:1.7"></cj-trace>
-            </cj-knob>
+              <cth-trace slot="inset" beat="72" readout="none" pen="none" samples="150"
+                        style="--cth-height:34px;--cth-trace:#e0433f;--cth-width:1.7"></cth-trace>
+            </cth-knob>
             <figure>
-              <cj-knob class="mid" id="hero-listen" value="0" readout="none" label="listening"
-                       color="#0ea5e9" style="--cj-thickness:7">
-                <cj-trace slot="inset" id="hero-voice" voice mirror pen="none"
-                          style="--cj-height:26px;--cj-trace:#0ea5e9;--cj-width:1.2"></cj-trace>
-              </cj-knob>
+              <cth-knob class="mid" id="hero-listen" value="0" readout="none" label="listening"
+                       color="#0ea5e9" style="--cth-thickness:7">
+                <cth-trace slot="inset" id="hero-voice" voice mirror pen="none"
+                          style="--cth-height:26px;--cth-trace:#0ea5e9;--cth-width:1.2"></cth-trace>
+              </cth-knob>
               <figcaption class="cap">voice</figcaption>
             </figure>
           </div>
           <div class="strip">
             <figure>
-              <cj-knob value="97" readout="value" unit="%" decimals="0" label="SpO₂"
-                       color="#22c55e"></cj-knob>
+              <cth-knob value="97" readout="value" unit="%" decimals="0" label="SpO₂"
+                       color="#22c55e"></cth-knob>
               <figcaption class="cap">oxygen</figcaption>
             </figure>
             <figure>
               <!-- no caption inside: at 78px the fluid, a number and a word is one -->
               <!-- thing too many, and the figcaption below already names it -->
-              <cj-knob value="36" min="30" max="42" readout="value" unit="°C" decimals="1"
-                       liquid color="#f59e0b" style="--cj-liquid:#f59e0b"></cj-knob>
+              <cth-knob value="36" min="30" max="42" readout="value" unit="°C" decimals="1"
+                       liquid color="#f59e0b" style="--cth-liquid:#f59e0b"></cth-knob>
               <figcaption class="cap">liquid</figcaption>
             </figure>
             <figure>
-              <cj-knob gas value="61" readout="none" color="#a3e635"
-                       style="--cj-gas:#a3e635"><span slot="icon">☁️</span></cj-knob>
+              <cth-knob gas value="61" readout="none" color="#a3e635"
+                       style="--cth-gas:#a3e635"><span slot="icon">☁️</span></cth-knob>
               <figcaption class="cap">gas</figcaption>
             </figure>
           </div>
@@ -405,7 +405,7 @@
 
         <div class="scene" data-name="sound" hidden>
           <div class="lead">
-            <cj-knob class="big" id="hero-vinyl" button toggle spin="33" value="21"
+            <cth-knob class="big" id="hero-vinyl" button toggle spin="33" value="21"
                      readout="none" label="Blue Train" color="#e0b04a">
               <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
                 <defs><linearGradient id="hsleeve" x1="0" y1="0" x2="1" y2="1">
@@ -422,31 +422,31 @@
                 <circle cx="50" cy="50" r="17" fill="#e8c37a"/>
                 <circle cx="50" cy="50" r="2.3" fill="#0e131a"/>
               </svg>
-            </cj-knob>
+            </cth-knob>
             <figure>
-              <cj-knob class="mid vu" data-vu="4" sweep="100" needle="hand" readout="none"
+              <cth-knob class="mid vu" data-vu="4" sweep="100" needle="hand" readout="none"
                        ballistics=".01 .55" peak-hold="1.2" ticks="10" tick-major="5"
                        zones="80-100:#fee2e2" color="#14161a"
-                       style="--cj-thickness:5"></cj-knob>
+                       style="--cth-thickness:5"></cth-knob>
               <figcaption class="cap">VU · ballistics</figcaption>
             </figure>
           </div>
           <div class="strip">
             <figure>
-              <cj-knob class="vu" data-vu="5" sweep="270" readout="none" label="L"
-                       ballistics=".01 .8" peak-hold="1.4" color="#16a34a"></cj-knob>
+              <cth-knob class="vu" data-vu="5" sweep="270" readout="none" label="L"
+                       ballistics=".01 .8" peak-hold="1.4" color="#16a34a"></cth-knob>
               <figcaption class="cap">peak hold</figcaption>
             </figure>
             <figure>
-              <cj-knob class="vu" data-vu="6" sweep="270" readout="none" label="R"
-                       ballistics=".01 .8" peak-hold="1.4" color="#16a34a"></cj-knob>
+              <cth-knob class="vu" data-vu="6" sweep="270" readout="none" label="R"
+                       ballistics=".01 .8" peak-hold="1.4" color="#16a34a"></cth-knob>
               <figcaption class="cap">peak hold</figcaption>
             </figure>
             <figure>
-              <cj-knob id="hero-play" button toggle value="37" readout="none" color="#16a34a">
+              <cth-knob id="hero-play" button toggle value="37" readout="none" color="#16a34a">
                 <svg slot="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.4a1.2 1.2 0 0 1 0 2l-8.2 5.4a1 1 0 0 1-1.52-.85z"/></svg>
                 <svg slot="icon-on" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7.2" y="5" width="3.9" height="14" rx="1.5"/><rect x="12.9" y="5" width="3.9" height="14" rx="1.5"/></svg>
-              </cj-knob>
+              </cth-knob>
               <figcaption class="cap">play</figcaption>
             </figure>
           </div>
@@ -454,13 +454,13 @@
 
         <div class="scene" data-name="house" hidden>
           <div class="lead">
-            <cj-knob class="big" value="21.5" min="10" max="32" step=".5" decimals="1"
+            <cth-knob class="big" value="21.5" min="10" max="32" step=".5" decimals="1"
                      readout="value" unit="°C" label="living room" interactive
                      ticks="22" tick-major="4" color="#0ea5e9"
-                     gradient="#38bdf8,#a3e635,#f59e0b"></cj-knob>
+                     gradient="#38bdf8,#a3e635,#f59e0b"></cth-knob>
             <figure>
-              <cj-knob class="mid" id="hero-sky" button toggle turn="180" readout="none"
-                       label="day" color="#fbbf24" style="--cj-thickness:7">
+              <cth-knob class="mid" id="hero-sky" button toggle turn="180" readout="none"
+                       label="day" color="#fbbf24" style="--cth-thickness:7">
                 <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
                   <defs><linearGradient id="hsky" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0" stop-color="#7dd3fc"/><stop offset=".5" stop-color="#fde68a"/>
@@ -472,24 +472,24 @@
                   <circle cx="30" cy="80" r="1.6" fill="#e2e8f0"/>
                   <circle cx="70" cy="84" r="1.3" fill="#e2e8f0"/>
                 </svg>
-              </cj-knob>
+              </cth-knob>
               <figcaption class="cap">day · night</figcaption>
             </figure>
           </div>
           <div class="strip">
             <figure>
-              <cj-knob value="72" readout="value" unit="%" decimals="0" label="lamp"
-                       interactive color="#f59e0b"></cj-knob>
+              <cth-knob value="72" readout="value" unit="%" decimals="0" label="lamp"
+                       interactive color="#f59e0b"></cth-knob>
               <figcaption class="cap">brightness</figcaption>
             </figure>
             <figure>
-              <cj-knob value="41" liquid readout="none" color="#0ea5e9"
-                       style="--cj-liquid:#0ea5e9"><span slot="icon">💧</span></cj-knob>
+              <cth-knob value="41" liquid readout="none" color="#0ea5e9"
+                       style="--cth-liquid:#0ea5e9"><span slot="icon">💧</span></cth-knob>
               <figcaption class="cap">tank</figcaption>
             </figure>
             <figure>
-              <cj-knob id="hero-light" button readout="none" style="--cj-thickness:11"
-                       states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cj-knob>
+              <cth-knob id="hero-light" button readout="none" style="--cth-thickness:11"
+                       states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cth-knob>
               <figcaption class="cap">states</figcaption>
             </figure>
           </div>
@@ -497,33 +497,33 @@
 
         <div class="scene" data-name="numbers" hidden>
           <div class="lead">
-            <cj-heat class="big" id="hero-year" shape="bars" readout="none" scale="#22c55e"
+            <cth-heat class="big" id="hero-year" shape="bars" readout="none" scale="#22c55e"
                      labels="D,J,F,M,A,M,J,J,A,S,O,N"
-                     style="--cj-size:168px">
+                     style="--cth-size:168px">
               <div slot="center" class="yr-mid"><b>2025</b><span id="hero-year-total">—</span></div>
-            </cj-heat>
+            </cth-heat>
             <figure>
-              <cj-knob class="mid" id="hero-stock" value="68" min="0" max="120"
+              <cth-knob class="mid" id="hero-stock" value="68" min="0" max="120"
                        readout="value" decimals="2" unit="$" label="ACME"
                        trend="1.84" trend-unit="%" color="#16a34a"
-                       style="--cj-thickness:7"></cj-knob>
+                       style="--cth-thickness:7"></cth-knob>
               <figcaption class="cap">trend</figcaption>
             </figure>
           </div>
           <div class="strip">
             <figure>
-              <cj-knob value="2841" min="0" max="4000" readout="value" decimals="0"
-                       label="kWh" gradient="#22c55e,#f59e0b,#ef4444"></cj-knob>
+              <cth-knob value="2841" min="0" max="4000" readout="value" decimals="0"
+                       label="kWh" gradient="#22c55e,#f59e0b,#ef4444"></cth-knob>
               <figcaption class="cap">meter</figcaption>
             </figure>
             <figure>
-              <cj-knob value="63" readout="value" unit="%" decimals="0" label="data"
-                       benchmark="80" zones="80-100:#fee2e2" color="#7c3aed"></cj-knob>
+              <cth-knob value="63" readout="value" unit="%" decimals="0" label="data"
+                       benchmark="80" zones="80-100:#fee2e2" color="#7c3aed"></cth-knob>
               <figcaption class="cap">against a cap</figcaption>
             </figure>
             <figure>
-              <cj-heat readout="none" style="--cj-size:78px;--cj-thickness:7"
-                values="7,6,6,5,5,6,8,11,14,17,20,22,24,25,24,22,19,16,14,12,10,9,8,7"></cj-heat>
+              <cth-heat readout="none" style="--cth-size:78px;--cth-thickness:7"
+                values="7,6,6,5,5,6,8,11,14,17,20,22,24,25,24,22,19,16,14,12,10,9,8,7"></cth-heat>
               <figcaption class="cap">a day</figcaption>
             </figure>
           </div>
@@ -552,39 +552,39 @@
         <div class="n">1</div>
         <h4>Load it</h4>
         <p>One module script. No bundler, no config file, no peer dependencies.</p>
-<pre><span class="c">&lt;!-- or ./src/cj-knob.js --&gt;</span>
+<pre><span class="c">&lt;!-- or ./src/cth-knob.js --&gt;</span>
 <span class="t">&lt;script</span> <span class="a">type</span>=<span class="s">"module"</span>
- <span class="a">src</span>=<span class="s">"https://esm.sh/cj-knob"</span><span class="t">&gt;</span>
+ <span class="a">src</span>=<span class="s">"https://esm.sh/cth-instrument"</span><span class="t">&gt;</span>
 <span class="t">&lt;/script&gt;</span></pre>
       </div>
       <div class="step">
         <div class="n">2</div>
         <h4>Write the tag</h4>
         <p>Attributes are the whole API. Change one and the dial re-renders itself.</p>
-<pre><span class="t">&lt;cj-knob</span> <span class="a">value</span>=<span class="s">"78"</span><span class="t">&gt;&lt;/cj-knob&gt;</span></pre>
+<pre><span class="t">&lt;cth-knob</span> <span class="a">value</span>=<span class="s">"78"</span><span class="t">&gt;&lt;/cth-knob&gt;</span></pre>
       </div>
       <div class="step">
         <div class="n">3</div>
         <h4>Make it yours</h4>
         <p>Every colour and size is a CSS custom property. There is no options object.</p>
-<pre>cj-knob {
-  <span class="a">--cj-size</span>: <span class="s">180px</span>;
-  <span class="a">--cj-value</span>: <span class="s">#16a34a</span>;
+<pre>cth-knob {
+  <span class="a">--cth-size</span>: <span class="s">180px</span>;
+  <span class="a">--cth-value</span>: <span class="s">#16a34a</span>;
 }</pre>
       </div>
     </div>
 
     <div class="demo-of">
       <div>
-<pre><span class="t">&lt;cj-knob</span> <span class="a">value</span>=<span class="s">"64"</span> <span class="a">sweep</span>=<span class="s">"270"</span>
+<pre><span class="t">&lt;cth-knob</span> <span class="a">value</span>=<span class="s">"64"</span> <span class="a">sweep</span>=<span class="s">"270"</span>
          <span class="a">ticks</span>=<span class="s">"12"</span> <span class="a">tick-major</span>=<span class="s">"3"</span>
          <span class="a">zones</span>=<span class="s">"85-100:#ef4444"</span>
-         <span class="a">color</span>=<span class="s">"#7c3aed"</span> <span class="a">label</span>=<span class="s">"CPU"</span><span class="t">&gt;&lt;/cj-knob&gt;</span></pre>
+         <span class="a">color</span>=<span class="s">"#7c3aed"</span> <span class="a">label</span>=<span class="s">"CPU"</span><span class="t">&gt;&lt;/cth-knob&gt;</span></pre>
       </div>
       <div class="out">
-        <cj-knob value="64" sweep="270" ticks="12" tick-major="3"
+        <cth-knob value="64" sweep="270" ticks="12" tick-major="3"
                  zones="85-100:#ef4444" color="#7c3aed" label="CPU"
-                 style="--cj-size:132px" animate-in></cj-knob>
+                 style="--cth-size:132px" animate-in></cth-knob>
         <span class="hint">that markup, rendered</span>
       </div>
     </div>
@@ -592,13 +592,13 @@
     <h3>The same tag in every framework</h3>
     <div class="frameworks">
       <div class="fw"><b>HTML</b>
-<pre><span class="t">&lt;cj-knob</span> <span class="a">value</span>=<span class="s">"78"</span><span class="t">&gt;</span></pre></div>
+<pre><span class="t">&lt;cth-knob</span> <span class="a">value</span>=<span class="s">"78"</span><span class="t">&gt;</span></pre></div>
       <div class="fw"><b>React</b>
-<pre>&lt;<span class="t">cj-knob</span> <span class="a">value</span>={<span class="s">v</span>} /&gt;</pre></div>
+<pre>&lt;<span class="t">cth-knob</span> <span class="a">value</span>={<span class="s">v</span>} /&gt;</pre></div>
       <div class="fw"><b>Vue</b>
-<pre>&lt;<span class="t">cj-knob</span> <span class="a">:value</span>=<span class="s">"v"</span> /&gt;</pre></div>
+<pre>&lt;<span class="t">cth-knob</span> <span class="a">:value</span>=<span class="s">"v"</span> /&gt;</pre></div>
       <div class="fw"><b>Svelte</b>
-<pre>&lt;<span class="t">cj-knob</span> <span class="a">value</span>={<span class="s">v</span>} /&gt;</pre></div>
+<pre>&lt;<span class="t">cth-knob</span> <span class="a">value</span>={<span class="s">v</span>} /&gt;</pre></div>
     </div>
   </div>
 </section>
@@ -642,19 +642,19 @@
 <h3>Basics</h3>
 <div class="grid">
   <div class="card">
-    <cj-knob value="78"></cj-knob>
-    <code>&lt;cj-knob value="78"&gt;</code>
+    <cth-knob value="78"></cth-knob>
+    <code>&lt;cth-knob value="78"&gt;</code>
   </div>
   <div class="card">
-    <cj-knob value="42" color="#16a34a" label="Storage"></cj-knob>
+    <cth-knob value="42" color="#16a34a" label="Storage"></cth-knob>
     <code>color="#16a34a" label="Storage"</code>
   </div>
   <div class="card">
-    <cj-knob value="91" color="#dc2626" benchmark="70" label="CPU"></cj-knob>
+    <cth-knob value="91" color="#dc2626" benchmark="70" label="CPU"></cth-knob>
     <code>benchmark="70"</code>
   </div>
   <div class="card">
-    <cj-knob value="145" color="#f59e0b" label="Peak"></cj-knob>
+    <cth-knob value="145" color="#f59e0b" label="Peak"></cth-knob>
     <code>value="145" &rarr; overflow ring</code>
   </div>
 </div>
@@ -662,109 +662,109 @@
 <h3>Shapes — any arc via <code>sweep</code></h3>
 <div class="grid">
   <div class="card">
-    <cj-knob value="64" sweep="270" color="#7c3aed" label="Gauge"></cj-knob>
+    <cth-knob value="64" sweep="270" color="#7c3aed" label="Gauge"></cth-knob>
     <code>sweep="270"</code>
   </div>
   <div class="card">
-    <cj-knob value="30" sweep="180" color="#0891b2" label="Half"></cj-knob>
+    <cth-knob value="30" sweep="180" color="#0891b2" label="Half"></cth-knob>
     <code>sweep="180"</code>
   </div>
   <div class="card">
-    <cj-knob value="55" sweep="240" start="150" color="#db2777"></cj-knob>
+    <cth-knob value="55" sweep="240" start="150" color="#db2777"></cth-knob>
     <code>sweep="240" start="150"</code>
   </div>
   <div class="card">
-    <cj-knob value="88" style="--cj-thickness: 3" color="currentColor"></cj-knob>
-    <code>--cj-thickness: 3</code>
+    <cth-knob value="88" style="--cth-thickness: 3" color="currentColor"></cth-knob>
+    <code>--cth-thickness: 3</code>
   </div>
 </div>
 
 <h3>Readout &amp; units</h3>
 <div class="grid">
   <div class="card">
-    <cj-knob value="36.6" min="34" max="42" readout="value" unit="°C" decimals="1"
-             sweep="270" color="#ef4444" label="Temperature"></cj-knob>
+    <cth-knob value="36.6" min="34" max="42" readout="value" unit="°C" decimals="1"
+             sweep="270" color="#ef4444" label="Temperature"></cth-knob>
     <code>readout="value" unit="°C" decimals="1"</code>
   </div>
   <div class="card">
-    <cj-knob value="7300" max="10000" readout="value" label="steps today"
-             color="#22c55e"></cj-knob>
+    <cth-knob value="7300" max="10000" readout="value" label="steps today"
+             color="#22c55e"></cth-knob>
     <code>max="10000" readout="value"</code>
   </div>
   <div class="card">
-    <cj-knob value="68" readout="none" color="#3b82f6">
+    <cth-knob value="68" readout="none" color="#3b82f6">
       <svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
            stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>
       </svg>
-    </cj-knob>
+    </cth-knob>
     <code>readout="none" + slot="icon"</code>
   </div>
   <div class="card">
-    <cj-knob value="25" style="--cj-duration: 2s" color="#8b5cf6" id="anim"></cj-knob>
-    <code>--cj-duration: 2s (click me)</code>
+    <cth-knob value="25" style="--cth-duration: 2s" color="#8b5cf6" id="anim"></cth-knob>
+    <code>--cth-duration: 2s (click me)</code>
   </div>
 </div>
 
 <h3>Zones, ticks &amp; stacked segments</h3>
 <div class="grid">
   <div class="card">
-    <cj-knob value="82" sweep="270" ticks="12" tick-major="3" label="RPM"
+    <cth-knob value="82" sweep="270" ticks="12" tick-major="3" label="RPM"
              zones="0-60:#22c55e, 60-85:#f59e0b, 85-100:#ef4444"
-             color="#14161a" style="--cj-thickness:6"></cj-knob>
+             color="#14161a" style="--cth-thickness:6"></cth-knob>
     <code>zones + ticks + tick-major</code>
   </div>
   <div class="card">
-    <cj-knob value="42" min="0" max="360" readout="value" unit="°" needle
+    <cth-knob value="42" min="0" max="360" readout="value" unit="°" needle
              ticks="24" tick-major="6" labels="N,E,S,W" color="transparent"
-             style="--cj-thickness:4"></cj-knob>
+             style="--cth-thickness:4"></cth-knob>
     <code>needle + labels="N,E,S,W"</code>
   </div>
   <div class="card">
-    <cj-knob readout="none" label="disk"
-             segments="42:#3b82f6, 23:#8b5cf6, 14:#f59e0b, 9:#64748b"><span slot="icon">💾</span></cj-knob>
+    <cth-knob readout="none" label="disk"
+             segments="42:#3b82f6, 23:#8b5cf6, 14:#f59e0b, 9:#64748b"><span slot="icon">💾</span></cth-knob>
     <code>segments="42:… 23:… 14:… 9:…"</code>
   </div>
   <div class="card">
-    <cj-knob value="7.4" min="0" max="10" decimals="1" readout="value" sweep="240" start="150"
+    <cth-knob value="7.4" min="0" max="10" decimals="1" readout="value" sweep="240" start="150"
              ticks="10" tick-major="5" label="score" color="#16a34a"
-             zones="0-4:#fecaca, 4-7:#fde68a, 7-10:#bbf7d0" style="--cj-thickness:7"></cj-knob>
+             zones="0-4:#fecaca, 4-7:#fde68a, 7-10:#bbf7d0" style="--cth-thickness:7"></cth-knob>
     <code>zones under a value ring</code>
   </div>
 </div>
 
 <h3>Same element, four sizes — SVG never blurs</h3>
 <div class="scale">
-  <figure><cj-knob value="72" color="#019ae6" style="--cj-size:56px"></cj-knob><figcaption>56px</figcaption></figure>
-  <figure><cj-knob value="72" color="#019ae6" style="--cj-size:80px"></cj-knob><figcaption>80px</figcaption></figure>
-  <figure><cj-knob value="72" color="#019ae6" style="--cj-size:120px" label="Load"></cj-knob><figcaption>120px</figcaption></figure>
-  <figure><cj-knob value="72" color="#019ae6" style="--cj-size:180px" label="Load"></cj-knob><figcaption>180px</figcaption></figure>
+  <figure><cth-knob value="72" color="#019ae6" style="--cth-size:56px"></cth-knob><figcaption>56px</figcaption></figure>
+  <figure><cth-knob value="72" color="#019ae6" style="--cth-size:80px"></cth-knob><figcaption>80px</figcaption></figure>
+  <figure><cth-knob value="72" color="#019ae6" style="--cth-size:120px" label="Load"></cth-knob><figcaption>120px</figcaption></figure>
+  <figure><cth-knob value="72" color="#019ae6" style="--cth-size:180px" label="Load"></cth-knob><figcaption>180px</figcaption></figure>
 </div>
 
 <h3>VU &amp; peak hold — a needle with ballistics</h3>
 <div class="grid">
   <div class="card">
-    <cj-knob class="vu" data-vu="0" sweep="100" needle="hand" readout="none"
+    <cth-knob class="vu" data-vu="0" sweep="100" needle="hand" readout="none"
              ballistics=".02 .5" peak-hold="1" ticks="10" tick-major="5"
              zones="80-100:#fee2e2" color="#14161a"
-             style="--cj-thickness:5"></cj-knob>
+             style="--cth-thickness:5"></cth-knob>
     <code>ballistics=".02 .5" peak-hold="1"<br>a classic VU face</code>
   </div>
   <div class="card">
-    <cj-knob class="vu" data-vu="1" sweep="270" readout="value" unit="dB" label="left"
+    <cth-knob class="vu" data-vu="1" sweep="270" readout="value" unit="dB" label="left"
              ballistics=".01 .8" peak-hold="1.4" ticks="10" tick-major="5"
-             zones="85-100:#fee2e2" color="#16a34a"></cj-knob>
+             zones="85-100:#fee2e2" color="#16a34a"></cth-knob>
     <code>the bar reads, the tick holds the peak</code>
   </div>
   <div class="card">
-    <cj-knob class="vu" data-vu="2" sweep="270" readout="value" unit="dB" label="right"
+    <cth-knob class="vu" data-vu="2" sweep="270" readout="value" unit="dB" label="right"
              ballistics=".01 .8" peak-hold="1.4" ticks="10" tick-major="5"
-             zones="85-100:#fee2e2" color="#16a34a"></cj-knob>
+             zones="85-100:#fee2e2" color="#16a34a"></cth-knob>
     <code>same signal, its own peak</code>
   </div>
   <div class="card">
-    <cj-knob class="vu" data-vu="3" sweep="270" readout="value" unit="dB" label="no ballistics"
-             ticks="10" tick-major="5" zones="85-100:#fee2e2" color="#64748b"></cj-knob>
+    <cth-knob class="vu" data-vu="3" sweep="270" readout="value" unit="dB" label="no ballistics"
+             ticks="10" tick-major="5" zones="85-100:#fee2e2" color="#64748b"></cth-knob>
     <code>the same numbers, unsmoothed<br>— every transient reads the same</code>
   </div>
 </div>
@@ -772,37 +772,37 @@
 <h3>Range &amp; endless — two ways to take input</h3>
 <div class="grid">
   <div class="card wide">
-    <cj-knob id="ex-range" range="18 26" min="10" max="32" sweep="270" step="0.5" decimals="1"
+    <cth-knob id="ex-range" range="18 26" min="10" max="32" sweep="270" step="0.5" decimals="1"
              unit="°C" label="comfort band" interactive color="#0ea5e9"
-             ticks="11" tick-major="5" style="--cj-size:136px"></cj-knob>
+             ticks="11" tick-major="5" style="--cth-size:136px"></cth-knob>
     <code>range="18 26" — drag either handle<br>arrows move the high one, shift+arrows the low</code>
   </div>
   <div class="card">
-    <cj-knob id="ex-endless" endless value="0" readout="value" label="turn me" interactive
-             ticks="24" tick-major="6" color="#7c3aed"></cj-knob>
+    <cth-knob id="ex-endless" endless value="0" readout="value" label="turn me" interactive
+             ticks="24" tick-major="6" color="#7c3aed"></cth-knob>
     <code>endless — no ends to hit.<br>Keep dragging; the count keeps going.</code>
   </div>
   <div class="card">
-    <cj-knob range="30 70" readout="none" sweep="360" color="#f43f5e"
-             style="--cj-thickness:14"></cj-knob>
+    <cth-knob range="30 70" readout="none" sweep="360" color="#f43f5e"
+             style="--cth-thickness:14"></cth-knob>
     <code>without <code>interactive</code> the same band<br>is a read-only display</code>
   </div>
 </div>
 
-<h3>&lt;cj-trace&gt; — the one reading a dial cannot give</h3>
+<h3>&lt;cth-trace&gt; — the one reading a dial cannot give</h3>
 <div class="grid">
   <div class="card wide">
-    <cj-trace beat="72" label="heart" grid style="--cj-trace:#16a34a;--cj-height:120px"></cj-trace>
+    <cth-trace beat="72" label="heart" grid style="--cth-trace:#16a34a;--cth-height:120px"></cth-trace>
     <code>beat="72" grid — a built-in ECG,<br>no script at all</code>
   </div>
   <div class="card wide">
-    <cj-trace id="ex-trace-live" label="cpu" readout="value" unit="%" grid
-              samples="180" style="--cj-trace:#f59e0b;--cj-height:120px"></cj-trace>
+    <cth-trace id="ex-trace-live" label="cpu" readout="value" unit="%" grid
+              samples="180" style="--cth-trace:#f59e0b;--cth-height:120px"></cth-trace>
     <code>trace.push(v) — feed it your own numbers</code>
   </div>
   <div class="card">
-    <cj-trace shape="ring" beat="66" label="pulse"
-              style="--cj-trace:#0ea5e9;--cj-size:150px"></cj-trace>
+    <cth-trace shape="ring" beat="66" label="pulse"
+              style="--cth-trace:#0ea5e9;--cth-size:150px"></cth-trace>
     <code>shape="ring" — the same trace,<br>wrapped round the dial</code>
   </div>
 </div>
@@ -812,17 +812,17 @@
   none of these are charts. They are all the same ring, read differently.</p>
 <div class="grid">
   <div class="card">
-    <cj-knob id="w-stock" value="68" min="0" max="120" readout="value" decimals="2"
-             unit="$" label="ACME" trend="1.84" trend-unit="%" color="#16a34a"></cj-knob>
+    <cth-knob id="w-stock" value="68" min="0" max="120" readout="value" decimals="2"
+             unit="$" label="ACME" trend="1.84" trend-unit="%" color="#16a34a"></cth-knob>
     <code><code>trend</code> — a price is two readings:<br>where it is and which way it went</code>
   </div>
   <div class="card">
-    <cj-knob id="w-light" button readout="none" style="--cj-thickness:11"
-             states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cj-knob>
+    <cth-knob id="w-light" button readout="none" style="--cth-thickness:11"
+             states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cth-knob>
     <code><code>states</code> — press to advance.<br>A light is not a low value of green.</code>
   </div>
   <div class="card">
-    <cj-knob id="w-sky" button toggle turn="180" readout="none" label="day" color="#fbbf24">
+    <cth-knob id="w-sky" button toggle turn="180" readout="none" label="day" color="#fbbf24">
       <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
         <defs><linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#7dd3fc"/><stop offset=".5" stop-color="#fde68a"/>
@@ -834,40 +834,40 @@
         <circle cx="30" cy="80" r="1.6" fill="#e2e8f0"/><circle cx="70" cy="84" r="1.3" fill="#e2e8f0"/>
         <circle cx="62" cy="92" r="1.1" fill="#e2e8f0"/>
       </svg>
-    </cj-knob>
+    </cth-knob>
     <code><code>turn="180"</code> — press and it<br>swings round to the other half</code>
   </div>
   <div class="card">
-    <cj-knob value="2841" min="0" max="4000" readout="value" unit="kWh" label="meter"
-             decimals="0" ticks="20" tick-major="5" gradient="#22c55e,#f59e0b,#ef4444"></cj-knob>
+    <cth-knob value="2841" min="0" max="4000" readout="value" unit="kWh" label="meter"
+             decimals="0" ticks="20" tick-major="5" gradient="#22c55e,#f59e0b,#ef4444"></cth-knob>
     <code>an electricity meter — <code>gradient</code><br>maps the scale, not the value</code>
   </div>
   <div class="card">
-    <cj-knob value="63" readout="value" unit="%" label="data" decimals="0"
-             benchmark="80" zones="80-100:#fee2e2" color="#7c3aed"></cj-knob>
+    <cth-knob value="63" readout="value" unit="%" label="data" decimals="0"
+             benchmark="80" zones="80-100:#fee2e2" color="#7c3aed"></cth-knob>
     <code>mobile data against its cap —<br><code>benchmark</code> is the allowance</code>
   </div>
   <div class="card">
-    <cj-knob value="86" readout="value" label="safety" decimals="0" sweep="270"
+    <cth-knob value="86" readout="value" label="safety" decimals="0" sweep="270"
              zones="0-40:#fee2e2, 40-70:#fef3c7, 70-100:#dcfce7" color="#16a34a"
-             ticks="10" tick-major="5"></cj-knob>
+             ticks="10" tick-major="5"></cth-knob>
     <code>a safety index — <code>zones</code> say<br>what the number means</code>
   </div>
   <div class="card">
-    <cj-knob id="w-bright" value="72" readout="value" unit="%" label="brightness"
-             interactive color="#f59e0b" style="--cj-thickness:12"></cj-knob>
+    <cth-knob id="w-bright" value="72" readout="value" unit="%" label="brightness"
+             interactive color="#f59e0b" style="--cth-thickness:12"></cth-knob>
     <code>brightness — drag it.<br>The same ring, now an input.</code>
   </div>
   <div class="card">
-    <cj-knob id="w-switch" button toggle readout="none" label="off" color="#64748b"
-             style="--cj-thickness:10">
+    <cth-knob id="w-switch" button toggle readout="none" label="off" color="#64748b"
+             style="--cth-thickness:10">
       <span slot="icon">⏻</span><span slot="icon-on">⏻</span>
-    </cj-knob>
+    </cth-knob>
     <code>a switch — <code>toggle</code> and two<br>icon slots is the whole of it</code>
   </div>
   <div class="card">
-    <cj-knob value="41" min="0" max="100" liquid readout="value" unit="%" label="tank"
-             ticks="10" tick-major="5" color="#0ea5e9" style="--cj-liquid:#0ea5e9"></cj-knob>
+    <cth-knob value="41" min="0" max="100" liquid readout="value" unit="%" label="tank"
+             ticks="10" tick-major="5" color="#0ea5e9" style="--cth-liquid:#0ea5e9"></cth-knob>
     <code>a water tank — the face is the vessel</code>
   </div>
 </div>
@@ -875,29 +875,29 @@
 <h3>Buttons, gas and voice</h3>
 <div class="grid">
   <div class="card wide">
-    <cj-knob id="ex-play" button toggle value="37" readout="none" label="Midnight City"
-             color="#16a34a" style="--cj-size:150px">
+    <cth-knob id="ex-play" button toggle value="37" readout="none" label="Midnight City"
+             color="#16a34a" style="--cth-size:150px">
     <svg slot="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.4a1.2 1.2 0 0 1 0 2l-8.2 5.4a1 1 0 0 1-1.52-.85z"/></svg>
         <svg slot="icon-on" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7.2" y="5" width="3.9" height="14" rx="1.5"/><rect x="12.9" y="5" width="3.9" height="14" rx="1.5"/></svg>
-    </cj-knob>
+    </cth-knob>
     <code><code>button toggle</code> with two icon slots.<br>The ring is how far through the song you are.</code>
   </div>
   <div class="card">
-    <cj-knob gas value="26" readout="value" unit="ppm" label="CO₂" color="#a3e635"
-             style="--cj-gas:#a3e635"></cj-knob>
+    <cth-knob gas value="26" readout="value" unit="ppm" label="CO₂" color="#a3e635"
+             style="--cth-gas:#a3e635"></cth-knob>
     <code><code>gas</code> — liquid has a surface,<br>a gas only has density</code>
   </div>
   <div class="card">
-    <cj-knob gas value="81" readout="value" unit="ppm" label="CO₂" color="#f87171"
-             style="--cj-gas:#f87171"></cj-knob>
+    <cth-knob gas value="81" readout="value" unit="ppm" label="CO₂" color="#f87171"
+             style="--cth-gas:#f87171"></cth-knob>
     <code>the same dial, thicker air</code>
   </div>
   <div class="card wide">
-    <cj-knob id="ex-listen" value="0" readout="none" label="listening" color="#0ea5e9"
-             style="--cj-size:150px;--cj-thickness:6">
-      <cj-trace slot="inset" id="ex-voice" voice mirror pen="none"
-                style="--cj-height:34px;--cj-trace:#0ea5e9;--cj-width:1.3"></cj-trace>
-    </cj-knob>
+    <cth-knob id="ex-listen" value="0" readout="none" label="listening" color="#0ea5e9"
+             style="--cth-size:150px;--cth-thickness:6">
+      <cth-trace slot="inset" id="ex-voice" voice mirror pen="none"
+                style="--cth-height:34px;--cth-trace:#0ea5e9;--cth-width:1.3"></cth-trace>
+    </cth-knob>
     <code>a voice inside the dial: it jumps while someone is talking and lies flat
       while nobody is, and the ring follows <code>.level</code>.
       <span id="ex-voice-state">silent</span></code>
@@ -907,8 +907,8 @@
 <h3>The dial as a turntable</h3>
 <div class="grid">
   <div class="card wide">
-    <cj-knob id="ex-vinyl" button toggle spin="33" value="21" readout="none" label="Blue Train"
-             color="#e0b04a" style="--cj-size:170px;--cj-thickness:5">
+    <cth-knob id="ex-vinyl" button toggle spin="33" value="21" readout="none" label="Blue Train"
+             color="#e0b04a" style="--cth-size:170px;--cth-thickness:5">
       <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
         <defs>
           <linearGradient id="sleeveicon" x1="0" y1="0" x2="1" y2="1">
@@ -947,15 +947,15 @@
         <circle cx="50" cy="50" r="17" fill="#e8c37a" fill-opacity=".92"/>
         <circle cx="50" cy="50" r="2.3" fill="#0e131a"/>
       </svg>
-    </cj-knob>
+    </cth-knob>
     <code><code>spin="33"</code> on a <code>toggle</code> button. It winds up
       like a motor and coasts down like friction, and the track carries the song.</code>
   </div>
   <div class="card">
-    <cj-knob spin="78" value="64" readout="value" unit="%" label="platter"
-             color="#94a3b8" style="--cj-thickness:5">
+    <cth-knob spin="78" value="64" readout="value" unit="%" label="platter"
+             color="#94a3b8" style="--cth-thickness:5">
       <span slot="icon">💿</span>
-    </cj-knob>
+    </cth-knob>
     <code>any middle can turn —<br><code>spin</code> is revolutions per minute</code>
   </div>
 </div>
@@ -963,95 +963,95 @@
 <h3>Dials with something inside them</h3>
 <div class="grid">
   <div class="card wide">
-    <cj-knob id="ex-heart" value="72" min="40" max="180" readout="value" unit="bpm" label="heart"
-             pulse="auto" color="#e0433f" style="--cj-size:172px;--cj-thickness:6">
-      <cj-trace slot="inset" beat="72" readout="none" pen="none" samples="150"
-                style="--cj-height:40px;--cj-trace:#e0433f;--cj-width:1.8"></cj-trace>
-    </cj-knob>
-    <code>a <code>&lt;cj-trace&gt;</code> in <code>slot="inset"</code>, and
+    <cth-knob id="ex-heart" value="72" min="40" max="180" readout="value" unit="bpm" label="heart"
+             pulse="auto" color="#e0433f" style="--cth-size:172px;--cth-thickness:6">
+      <cth-trace slot="inset" beat="72" readout="none" pen="none" samples="150"
+                style="--cth-height:40px;--cth-trace:#e0433f;--cth-width:1.8"></cth-trace>
+    </cth-knob>
+    <code>a <code>&lt;cth-trace&gt;</code> in <code>slot="inset"</code>, and
       <code>pulse="auto"</code> — the ring breathes at whatever the number says</code>
   </div>
   <div class="card wide">
-    <cj-knob id="ex-tube" value="62" min="0" max="100" liquid readout="value" unit="°C"
+    <cth-knob id="ex-tube" value="62" min="0" max="100" liquid readout="value" unit="°C"
              label="coolant" ticks="20" tick-major="5" color="#35a7ff"
-             style="--cj-size:172px;--cj-thickness:6;--cj-liquid:#35a7ff"></cj-knob>
+             style="--cth-size:172px;--cth-thickness:6;--cth-liquid:#35a7ff"></cth-knob>
     <code>no tube drawn inside the ring — the face<br><em>is</em> the bore, and the fluid sits in it</code>
   </div>
 </div>
 
-<h3>&lt;cj-heat shape="bars"&gt; — a year you can read like a skyline</h3>
+<h3>&lt;cth-heat shape="bars"&gt; — a year you can read like a skyline</h3>
 <div class="grid">
   <div class="card wide">
-    <cj-heat id="ex-year" shape="bars" readout="none" scale="#22c55e" interactive
+    <cth-heat id="ex-year" shape="bars" readout="none" scale="#22c55e" interactive
              labels="Dec,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov"
-             style="--cj-size:212px">
+             style="--cth-size:212px">
       <div slot="center" class="yr-mid">
         <b>2025</b><span id="ex-year-total">—</span>
       </div>
-    </cj-heat>
+    </cth-heat>
     <code id="ex-year-cap">365 days round one ring</code>
   </div>
   <div class="card">
-    <cj-heat shape="bars" label="months" decimals="0" scale="#22c55e"
-             style="--cj-size:150px;--cj-gap:.3"
-             values="42,38,55,71,96,120,141,133,101,74,52,45"></cj-heat>
+    <cth-heat shape="bars" label="months" decimals="0" scale="#22c55e"
+             style="--cth-size:150px;--cth-gap:.3"
+             values="42,38,55,71,96,120,141,133,101,74,52,45"></cth-heat>
     <code>the same thing with twelve</code>
   </div>
 </div>
 
-<h3>&lt;cj-heat&gt; — a hundred values on one ring</h3>
+<h3>&lt;cth-heat&gt; — a hundred values on one ring</h3>
 <div class="grid">
   <div class="card">
-    <cj-heat label="a day" unit="°C" interactive decimals="0" style="--cj-size:150px"
-      values="7,6,6,5,5,6,8,11,14,17,20,22,24,25,24,22,19,16,14,12,10,9,8,7"></cj-heat>
+    <cth-heat label="a day" unit="°C" interactive decimals="0" style="--cth-size:150px"
+      values="7,6,6,5,5,6,8,11,14,17,20,22,24,25,24,22,19,16,14,12,10,9,8,7"></cth-heat>
     <code>24 hours round a clock face.<br>Hover a cell to read it.</code>
   </div>
   <div class="card wide">
-    <cj-heat id="ex-heat-week" rows="7" label="a week" unit="%" interactive
-             style="--cj-size:206px;--cj-thickness:5"></cj-heat>
+    <cth-heat id="ex-heat-week" rows="7" label="a week" unit="%" interactive
+             style="--cth-size:206px;--cth-thickness:5"></cth-heat>
     <code>rows="7" — a polar calendar:<br>seven days, twenty-four hours each</code>
   </div>
   <div class="card">
-    <cj-heat id="ex-heat-year" label="a year" unit="mm" sweep="340" start="100"
-             style="--cj-size:150px;--cj-thickness:7;--cj-gap:.22"></cj-heat>
+    <cth-heat id="ex-heat-year" label="a year" unit="mm" sweep="340" start="100"
+             style="--cth-size:150px;--cth-thickness:7;--cth-gap:.22"></cth-heat>
     <code>52 weeks, and the scale<br>fits itself to your data</code>
   </div>
 </div>
 
-<h3>&lt;cj-rings&gt; — concentric knobs without the arithmetic</h3>
+<h3>&lt;cth-rings&gt; — concentric knobs without the arithmetic</h3>
 <div class="grid">
   <div class="card">
-    <cj-rings id="ring-clock" style="--cjs-size:118px">
-      <cj-knob readout="none" max="12" data-h ticks="12" tick-major="3" color="#019ae6"></cj-knob>
-      <cj-knob readout="none" max="60" data-m color="#7c3aed"></cj-knob>
-      <cj-knob readout="none" max="60" data-s color="#f59e0b"></cj-knob>
+    <cth-rings id="ring-clock" style="--cths-size:118px">
+      <cth-knob readout="none" max="12" data-h ticks="12" tick-major="3" color="#019ae6"></cth-knob>
+      <cth-knob readout="none" max="60" data-m color="#7c3aed"></cth-knob>
+      <cth-knob readout="none" max="60" data-s color="#f59e0b"></cth-knob>
       <div slot="center" class="clock-time" data-t>--:--:--</div>
-    </cj-rings>
+    </cth-rings>
     <code>three knobs, sizes worked out for you</code>
   </div>
   <div class="card">
-    <cj-rings style="--cjs-size:118px">
-      <cj-knob readout="none" value="82" color="#22c55e"></cj-knob>
-      <cj-knob readout="none" value="64" color="#0ea5e9"></cj-knob>
-      <cj-knob readout="none" value="41" color="#f43f5e"></cj-knob>
+    <cth-rings style="--cths-size:118px">
+      <cth-knob readout="none" value="82" color="#22c55e"></cth-knob>
+      <cth-knob readout="none" value="64" color="#0ea5e9"></cth-knob>
+      <cth-knob readout="none" value="41" color="#f43f5e"></cth-knob>
       <div slot="center">🎯</div>
-    </cj-rings>
+    </cth-rings>
     <code>activity rings + a centre slot</code>
   </div>
   <div class="card">
-    <cj-rings thickness=".09" gap=".03" style="--cjs-size:118px">
-      <cj-knob readout="none" value="80" color="#f59e0b"></cj-knob>
-      <cj-knob readout="none" value="55" color="#8b5cf6"></cj-knob>
-      <cj-knob readout="none" value="30" color="#14b8a6"></cj-knob>
-    </cj-rings>
+    <cth-rings thickness=".09" gap=".03" style="--cths-size:118px">
+      <cth-knob readout="none" value="80" color="#f59e0b"></cth-knob>
+      <cth-knob readout="none" value="55" color="#8b5cf6"></cth-knob>
+      <cth-knob readout="none" value="30" color="#14b8a6"></cth-knob>
+    </cth-rings>
     <code>thickness=".09" gap=".03"</code>
   </div>
   <div class="card">
-    <cj-rings style="--cjs-size:118px">
-      <cj-knob readout="none" value="90" gradient="#22c55e,#ef4444"></cj-knob>
-      <cj-knob readout="none" value="70" gradient="#0ea5e9,#a855f7"></cj-knob>
-      <cj-knob readout="none" value="50" gradient="#facc15,#f97316"></cj-knob>
-    </cj-rings>
+    <cth-rings style="--cths-size:118px">
+      <cth-knob readout="none" value="90" gradient="#22c55e,#ef4444"></cth-knob>
+      <cth-knob readout="none" value="70" gradient="#0ea5e9,#a855f7"></cth-knob>
+      <cth-knob readout="none" value="50" gradient="#facc15,#f97316"></cth-knob>
+    </cth-rings>
     <code>each ring is still a whole knob<br>— here, three gradients</code>
   </div>
 </div>
@@ -1060,24 +1060,24 @@
 <div class="grid">
   <div class="card wide">
     <div class="stack" id="clock">
-      <cj-knob readout="none" max="12" style="--cj-size:148px;--cj-thickness:4.2;--cj-duration:0ms" color="#019ae6" data-hand="h"></cj-knob>
-      <cj-knob readout="none" max="60" style="--cj-size:110px;--cj-thickness:5.7;--cj-duration:0ms" color="#7c3aed" data-hand="m"></cj-knob>
-      <cj-knob readout="none" max="60" style="--cj-size:72px;--cj-thickness:8.7;--cj-duration:0ms"  color="#f59e0b" data-hand="s"></cj-knob>
+      <cth-knob readout="none" max="12" style="--cth-size:148px;--cth-thickness:4.2;--cth-duration:0ms" color="#019ae6" data-hand="h"></cth-knob>
+      <cth-knob readout="none" max="60" style="--cth-size:110px;--cth-thickness:5.7;--cth-duration:0ms" color="#7c3aed" data-hand="m"></cth-knob>
+      <cth-knob readout="none" max="60" style="--cth-size:72px;--cth-thickness:8.7;--cth-duration:0ms"  color="#f59e0b" data-hand="s"></cth-knob>
       <div class="clock-time">--:--:--</div>
     </div>
     <code>three concentric knobs = a clock<br>hours / minutes / seconds, no numbers on the rings</code>
   </div>
 
   <div class="card">
-    <cj-knob class="spinner" readout="none" sweep="70" value="100"
-             style="--cj-track:transparent;--cj-thickness:9;--cj-size:88px" color="#019ae6"></cj-knob>
+    <cth-knob class="spinner" readout="none" sweep="70" value="100"
+             style="--cth-track:transparent;--cth-thickness:9;--cth-size:88px" color="#019ae6"></cth-knob>
     <code>indeterminate<br>sweep="70" + CSS rotate</code>
   </div>
 
   <div class="card">
-    <cj-knob id="timer" max="10" value="10" readout="value" unit="s" decimals="1"
+    <cth-knob id="timer" max="10" value="10" readout="value" unit="s" decimals="1"
              sweep="360" color="#dc2626" label="countdown"
-             style="--cj-duration:0ms;--cj-size:88px"></cj-knob>
+             style="--cth-duration:0ms;--cth-size:88px"></cth-knob>
     <code>a 10s countdown<br>driven by requestAnimationFrame</code>
   </div>
 </div>
@@ -1089,28 +1089,28 @@
 </p>
 <div class="grid">
   <div class="card">
-    <cj-radar period="4" rings="4" spokes="8" labels="N,E,S,W"
+    <cth-radar period="4" rings="4" spokes="8" labels="N,E,S,W"
               blips="35:0.62, 118:0.34, 214:0.78, 300:0.5"
-              style="--cjr-size:132px"></cj-radar>
+              style="--cthr-size:132px"></cth-radar>
     <code>period="4" — sweeping</code>
   </div>
   <div class="card">
-    <cj-radar rings="6" spokes="12" labels="N,E,S,W"
+    <cth-radar rings="6" spokes="12" labels="N,E,S,W"
               blips="20:0.9, 75:0.45, 160:0.66, 250:0.28, 330:0.82"
-              style="--cjr-size:132px"></cj-radar>
+              style="--cthr-size:132px"></cth-radar>
     <code>no period — static range rings</code>
   </div>
   <div class="card">
-    <cj-radar period="2.4" rings="3" spokes="0" blips="90:0.5, 270:0.5"
-              style="--cjr-size:132px;--cjr-field:#0b1020;--cjr-grid:#2b4a8a;
-                     --cjr-beam:#5b9cff;--cjr-blip:#5b9cff"></cj-radar>
-    <code>themed with --cjr-* variables</code>
+    <cth-radar period="2.4" rings="3" spokes="0" blips="90:0.5, 270:0.5"
+              style="--cthr-size:132px;--cthr-field:#0b1020;--cthr-grid:#2b4a8a;
+                     --cthr-beam:#5b9cff;--cthr-blip:#5b9cff"></cth-radar>
+    <code>themed with --cthr-* variables</code>
   </div>
   <div class="card">
-    <cj-radar period="6" rings="5" spokes="16" labels="N,NE,E,SE,S,SW,W,NW"
+    <cth-radar period="6" rings="5" spokes="16" labels="N,NE,E,SE,S,SW,W,NW"
               blips="10:0.3, 55:0.7, 140:0.5, 200:0.9, 280:0.4"
-              style="--cjr-size:132px;--cjr-field:#1a0f14;--cjr-grid:#7a2a3a;
-                     --cjr-beam:#ff5c7a;--cjr-blip:#ff5c7a;--cjr-mark:#b06070"></cj-radar>
+              style="--cthr-size:132px;--cthr-field:#1a0f14;--cthr-grid:#7a2a3a;
+                     --cthr-beam:#ff5c7a;--cthr-blip:#ff5c7a;--cthr-mark:#b06070"></cth-radar>
     <code>rings="5" spokes="16"</code>
   </div>
 </div>
@@ -1118,24 +1118,24 @@
 <h3>Gradient — a colour ramp that follows the arc</h3>
 <div class="grid">
   <div class="card">
-    <cj-knob gradient="#22c55e,#f59e0b,#ef4444" value="82" sweep="270"
-             ticks="10" tick-major="5" readout="value" unit="%" label="load"></cj-knob>
+    <cth-knob gradient="#22c55e,#f59e0b,#ef4444" value="82" sweep="270"
+             ticks="10" tick-major="5" readout="value" unit="%" label="load"></cth-knob>
     <code>gradient="#22c55e,#f59e0b,#ef4444"</code>
   </div>
   <div class="card">
-    <cj-knob gradient="#0ea5e9,#8b5cf6,#ec4899" value="68"
-             readout="value" unit="%" label="full ring"></cj-knob>
+    <cth-knob gradient="#0ea5e9,#8b5cf6,#ec4899" value="68"
+             readout="value" unit="%" label="full ring"></cth-knob>
     <code>the ramp bends round the whole circle</code>
   </div>
   <div class="card">
-    <cj-knob gradient="#facc15,#f97316,#dc2626" value="35" sweep="240" start="150"
-             ticks="8" tick-major="4" readout="value" unit="°C" label="oven"></cj-knob>
+    <cth-knob gradient="#facc15,#f97316,#dc2626" value="35" sweep="240" start="150"
+             ticks="8" tick-major="4" readout="value" unit="°C" label="oven"></cth-knob>
     <code>colour is the scale, not the value<br>— 35% only reaches the yellow</code>
   </div>
   <div class="card">
-    <cj-knob id="gradlive" gradient="#22c55e,#a3e635,#facc15,#f97316,#ef4444"
+    <cth-knob id="gradlive" gradient="#22c55e,#a3e635,#facc15,#f97316,#ef4444"
              value="20" sweep="270" readout="value" unit="%" label="click me"
-             style="--cj-duration:900ms"></cj-knob>
+             style="--cth-duration:900ms"></cth-knob>
     <code>the value reveals the ramp</code>
   </div>
 </div>
@@ -1143,53 +1143,53 @@
 <h3>Liquid — for anything that really is a fluid</h3>
 <div class="grid">
   <div class="card">
-    <cj-knob liquid value="72" readout="value" unit="%" label="H₂O"
-             style="--cj-thickness:5" color="#35a7ff"></cj-knob>
+    <cth-knob liquid value="72" readout="value" unit="%" label="H₂O"
+             style="--cth-thickness:5" color="#35a7ff"></cth-knob>
     <code>liquid — waves drift while it sits</code>
   </div>
   <div class="card">
-    <cj-knob id="tank" liquid value="34" readout="value" unit="L" min="0" max="60"
-             label="petrol" style="--cj-thickness:5;--cj-liquid:#f0a020;
-             --cj-liquid-back:rgba(240,160,32,.45)" color="#f0a020"></cj-knob>
-    <code>themed with --cj-liquid<br>(click to pour)</code>
+    <cth-knob id="tank" liquid value="34" readout="value" unit="L" min="0" max="60"
+             label="petrol" style="--cth-thickness:5;--cth-liquid:#f0a020;
+             --cth-liquid-back:rgba(240,160,32,.45)" color="#f0a020"></cth-knob>
+    <code>themed with --cth-liquid<br>(click to pour)</code>
   </div>
   <div class="card">
-    <cj-knob liquid value="18" readout="value" unit="%" label="reagent"
+    <cth-knob liquid value="18" readout="value" unit="%" label="reagent"
              sweep="270" ticks="10" tick-major="5"
-             style="--cj-thickness:5;--cj-liquid:#a3e635;
-             --cj-liquid-back:rgba(163,230,53,.4)" color="#a3e635"
-             zones="0-20:#fee2e2"></cj-knob>
+             style="--cth-thickness:5;--cth-liquid:#a3e635;
+             --cth-liquid-back:rgba(163,230,53,.4)" color="#a3e635"
+             zones="0-20:#fee2e2"></cth-knob>
     <code>liquid + zones + ticks</code>
   </div>
   <div class="card">
-    <cj-knob liquid value="91" readout="value" unit="%" label="coolant"
-             style="--cj-thickness:5;--cj-liquid:#f472b6;
-             --cj-liquid-back:rgba(244,114,182,.4)" color="#f472b6"></cj-knob>
+    <cth-knob liquid value="91" readout="value" unit="%" label="coolant"
+             style="--cth-thickness:5;--cth-liquid:#f472b6;
+             --cth-liquid-back:rgba(244,114,182,.4)" color="#f472b6"></cth-knob>
     <code>a nearly full tank</code>
   </div>
 </div>
 
-<h3>&lt;cj-level&gt; — the straight tube a ring cannot give you</h3>
+<h3>&lt;cth-level&gt; — the straight tube a ring cannot give you</h3>
 <div class="grid tubes">
   <div class="card">
-    <cj-level value="62" unit="L" label="fryer oil" liquid ticks="10" tick-major="5"
-              color="#e8b33c" style="--cjl-fill-back:rgba(232,179,60,.45)"></cj-level>
+    <cth-level value="62" unit="L" label="fryer oil" liquid ticks="10" tick-major="5"
+              color="#e8b33c" style="--cthl-fill-back:rgba(232,179,60,.45)"></cth-level>
     <code>liquid + ticks</code>
   </div>
   <div class="card">
-    <cj-level value="9" min="0" max="60" unit="L" label="milk" liquid
+    <cth-level value="9" min="0" max="60" unit="L" label="milk" liquid
               ticks="6" tick-major="3" zones="0-12:#ef4444"
-              color="#dbe4ee" style="--cjl-fill-back:rgba(219,228,238,.4)"></cj-level>
+              color="#dbe4ee" style="--cthl-fill-back:rgba(219,228,238,.4)"></cth-level>
     <code>zones tint the fluid sitting in them</code>
   </div>
   <div class="card">
-    <cj-level value="36.6" min="34" max="42" decimals="1" unit="°C" label="body"
+    <cth-level value="36.6" min="34" max="42" decimals="1" unit="°C" label="body"
               bulb liquid ticks="8" tick-major="2" color="#ef4444"
-              style="--cjl-fill-back:rgba(239,68,68,.4)"></cj-level>
+              style="--cthl-fill-back:rgba(239,68,68,.4)"></cth-level>
     <code>bulb — a thermometer</code>
   </div>
   <div class="card">
-    <cj-level id="tube" value="74" unit="%" label="tank" ticks="10" tick-major="5"></cj-level>
+    <cth-level id="tube" value="74" unit="%" label="tank" ticks="10" tick-major="5"></cth-level>
     <code>no liquid — a plain column<br>(click to fill)</code>
   </div>
 </div>
@@ -1197,50 +1197,50 @@
 <h3>Instruments — hands, attitude, gyro, two pointers</h3>
 <div class="grid">
   <div class="card">
-    <cj-horizon pitch="0" roll="0" style="--cjh-size:132px"></cj-horizon>
-    <code>&lt;cj-horizon&gt; — wings level</code>
+    <cth-horizon pitch="0" roll="0" style="--cthh-size:132px"></cth-horizon>
+    <code>&lt;cth-horizon&gt; — wings level</code>
   </div>
   <div class="card">
-    <cj-horizon pitch="12" roll="-25" style="--cjh-size:132px"></cj-horizon>
+    <cth-horizon pitch="12" roll="-25" style="--cthh-size:132px"></cth-horizon>
     <code>pitch="12" roll="-25"</code>
   </div>
   <div class="card">
-    <cj-knob value="120" min="0" max="360" rotating readout="value" unit="°"
+    <cth-knob value="120" min="0" max="360" rotating readout="value" unit="°"
              ticks="36" tick-major="9" labels="N,3,6,E,12,15,S,21,24,W,30,33"
-             color="transparent" style="--cj-thickness:4"></cj-knob>
+             color="transparent" style="--cth-thickness:4"></cth-knob>
     <code>rotating — the card turns, the index stays</code>
   </div>
   <div class="card">
-    <cj-knob value="20" value-2="70" needle ticks="12" tick-major="3"
+    <cth-knob value="20" value-2="70" needle ticks="12" tick-major="3"
              readout="none" label="min · max" color="#019ae6"
-             style="--cj-thickness:6"></cj-knob>
+             style="--cth-thickness:6"></cth-knob>
     <code>value-2 — a second pointer</code>
   </div>
 </div>
 
 <div class="grid">
   <div class="card">
-    <cj-knob id="handclock" needle="hand" min="0" max="60" value="0" value-2="0"
+    <cth-knob id="handclock" needle="hand" min="0" max="60" value="0" value-2="0"
              ticks="60" tick-major="5" labels="12,1,2,3,4,5,6,7,8,9,10,11"
-             readout="none" color="transparent" style="--cj-thickness:3"></cj-knob>
+             readout="none" color="transparent" style="--cth-thickness:3"></cth-knob>
     <code>needle="hand" + value-2<br>= a live clock face</code>
   </div>
   <div class="card">
-    <cj-knob needle="hand" value="72" min="0" max="160" sweep="270"
+    <cth-knob needle="hand" value="72" min="0" max="160" sweep="270"
              ticks="8" tick-major="4" readout="none" label="psi"
-             zones="130-160:#fee2e2" color="#019ae6" style="--cj-thickness:5"></cj-knob>
+             zones="130-160:#fee2e2" color="#019ae6" style="--cth-thickness:5"></cth-knob>
     <code>a hand on a pressure gauge</code>
   </div>
   <div class="card">
-    <cj-knob needle="hand" value="6200" min="0" max="9000" sweep="240" start="150"
+    <cth-knob needle="hand" value="6200" min="0" max="9000" sweep="240" start="150"
              ticks="9" tick-major="3" readout="value" label="rpm"
-             zones="7000-9000:#fee2e2" color="#dc2626" style="--cj-thickness:5"></cj-knob>
+             zones="7000-9000:#fee2e2" color="#dc2626" style="--cth-thickness:5"></cth-knob>
     <code>tachometer — hand + red line</code>
   </div>
   <div class="card">
-    <cj-knob needle value="88" min="0" max="100" sweep="270"
+    <cth-knob needle value="88" min="0" max="100" sweep="270"
              ticks="10" tick-major="5" readout="value" unit="dB" label="peak"
-             color="#16a34a" style="--cj-thickness:6"></cj-knob>
+             color="#16a34a" style="--cth-thickness:6"></cth-knob>
     <code>the default rim marker</code>
   </div>
 </div>
@@ -1248,16 +1248,16 @@
 <h3>Interactive — drag or use arrow keys</h3>
 <div class="grid">
   <div class="card">
-    <cj-knob value="60" interactive color="#019ae6" label="Volume" id="vol"></cj-knob>
-    <code id="vol-out">cj-change &rarr; —</code>
+    <cth-knob value="60" interactive color="#019ae6" label="Volume" id="vol"></cth-knob>
+    <code id="vol-out">cth-change &rarr; —</code>
   </div>
   <div class="card">
-    <cj-knob value="18" min="0" max="30" step="1" sweep="270" interactive
-             readout="value" unit="°" color="#f97316" label="Thermostat"></cj-knob>
+    <cth-knob value="18" min="0" max="30" step="1" sweep="270" interactive
+             readout="value" unit="°" color="#f97316" label="Thermostat"></cth-knob>
     <code>min/max/step + sweep="270"</code>
   </div>
   <div class="card">
-    <cj-knob value="50" interactive disabled color="#019ae6" label="Disabled"></cj-knob>
+    <cth-knob value="50" interactive disabled color="#019ae6" label="Disabled"></cth-knob>
     <code>disabled</code>
   </div>
 </div>
@@ -1276,9 +1276,9 @@
 
     <div class="play">
       <div class="play-card">
-        <cj-knob id="pg-timer" min="0" max="60" value="60" readout="value" unit="s"
+        <cth-knob id="pg-timer" min="0" max="60" value="60" readout="value" unit="s"
                  decimals="1" color="#dc2626" label="countdown"
-                 style="--cj-size:150px;--cj-duration:0ms"></cj-knob>
+                 style="--cth-size:150px;--cth-duration:0ms"></cth-knob>
         <div class="ctl">
           <button data-timer="start">Start</button>
           <button data-timer="pause">Pause</button>
@@ -1288,9 +1288,9 @@
       </div>
 
       <div class="play-card">
-        <cj-knob id="pg-watch" min="0" max="60" value="0" readout="value" unit="s"
+        <cth-knob id="pg-watch" min="0" max="60" value="0" readout="value" unit="s"
                  decimals="2" color="#16a34a" label="stopwatch" ticks="12" tick-major="3"
-                 style="--cj-size:150px;--cj-duration:0ms"></cj-knob>
+                 style="--cth-size:150px;--cth-duration:0ms"></cth-knob>
         <div class="ctl">
           <button data-watch="start">Start</button>
           <button data-watch="pause">Pause</button>
@@ -1300,9 +1300,9 @@
       </div>
 
       <div class="play-card">
-        <cj-knob id="pg-count" min="0" max="20" value="7" readout="value"
+        <cth-knob id="pg-count" min="0" max="20" value="7" readout="value"
                  color="#7c3aed" label="items" ticks="20" tick-major="5"
-                 style="--cj-size:150px"></cj-knob>
+                 style="--cth-size:150px"></cth-knob>
         <div class="ctl">
           <button data-count="-5">−5</button>
           <button data-count="-1">−1</button>
@@ -1314,11 +1314,11 @@
       </div>
 
       <div class="play-card">
-        <cj-knob id="pg-thermo" min="10" max="32" value="21" step="0.5" sweep="270"
+        <cth-knob id="pg-thermo" min="10" max="32" value="21" step="0.5" sweep="270"
                  readout="value" unit="°C" decimals="1" color="#f97316" label="target"
                  ticks="11" tick-major="5"
                  zones="10-16:#dbeafe, 26-32:#fee2e2"
-                 style="--cj-size:150px"></cj-knob>
+                 style="--cth-size:150px"></cth-knob>
         <div class="ctl">
           <button data-thermo="-0.5">−</button>
           <button data-thermo="0.5">+</button>
@@ -1329,9 +1329,9 @@
       </div>
 
       <div class="play-card">
-        <cj-knob id="pg-compass" min="0" max="360" value="0" readout="value" unit="°"
+        <cth-knob id="pg-compass" min="0" max="360" value="0" readout="value" unit="°"
                  needle ticks="36" tick-major="9" labels="N,NE,E,SE,S,SW,W,NW"
-                 color="transparent" style="--cj-size:150px;--cj-thickness:4"></cj-knob>
+                 color="transparent" style="--cth-size:150px;--cth-thickness:4"></cth-knob>
         <div class="ctl">
           <button data-heading="0">N</button>
           <button data-heading="90">E</button>
@@ -1343,7 +1343,7 @@
       </div>
 
       <div class="play-card">
-        <cj-horizon id="pg-horizon" pitch="0" roll="0" style="--cjh-size:150px"></cj-horizon>
+        <cth-horizon id="pg-horizon" pitch="0" roll="0" style="--cthh-size:150px"></cth-horizon>
         <div class="ctl">
           <button data-att="pitch:5">Nose ↑</button>
           <button data-att="pitch:-5">Nose ↓</button>
@@ -1355,9 +1355,9 @@
       </div>
 
       <div class="play-card">
-        <cj-knob id="pg-gyro" min="0" max="360" value="0" rotating readout="value" unit="°"
+        <cth-knob id="pg-gyro" min="0" max="360" value="0" rotating readout="value" unit="°"
                  ticks="36" tick-major="9" labels="N,3,6,E,12,15,S,21,24,W,30,33"
-                 color="transparent" style="--cj-size:150px;--cj-thickness:4"></cj-knob>
+                 color="transparent" style="--cth-size:150px;--cth-thickness:4"></cth-knob>
         <div class="ctl">
           <button data-gyro="-30">↺ 30°</button>
           <button data-gyro="-10">↺ 10°</button>
@@ -1369,10 +1369,10 @@
       </div>
 
       <div class="play-card">
-        <cj-knob id="pg-vu" sweep="270" readout="value" unit="dB" label="output"
+        <cth-knob id="pg-vu" sweep="270" readout="value" unit="dB" label="output"
                  ballistics=".015 .7" peak-hold="1.5" ticks="10" tick-major="5"
                  zones="85-100:#fee2e2" color="#16a34a"
-                 style="--cj-size:150px"></cj-knob>
+                 style="--cth-size:150px"></cth-knob>
         <div class="ctl">
           <button data-vuctl="hit">Hit</button>
           <button data-vuctl="run" aria-pressed="true">Pause</button>
@@ -1382,8 +1382,8 @@
       </div>
 
       <div class="play-card">
-        <cj-radar id="pg-radar" period="4" rings="4" spokes="8" labels="N,E,S,W"
-                  interactive style="--cjr-size:150px"></cj-radar>
+        <cth-radar id="pg-radar" period="4" rings="4" spokes="8" labels="N,E,S,W"
+                  interactive style="--cthr-size:150px"></cth-radar>
         <div class="ctl">
           <button data-radar="scatter">Scatter</button>
           <button data-radar="clear">Clear</button>
@@ -1405,9 +1405,9 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
 <section class="band" id="api">
   <div class="wrap">
     <h2>The whole API</h2>
-    <p class="sub">Forty-two attributes on <code>&lt;cj-knob&gt;</code>, thirteen on
-      <code>&lt;cj-level&gt;</code>, six on <code>&lt;cj-radar&gt;</code>, four on
-      <code>&lt;cj-horizon&gt;</code>. That is all of it — there is no second page.</p>
+    <p class="sub">Forty-two attributes on <code>&lt;cth-knob&gt;</code>, thirteen on
+      <code>&lt;cth-level&gt;</code>, six on <code>&lt;cth-radar&gt;</code>, four on
+      <code>&lt;cth-horizon&gt;</code>. That is all of it — there is no second page.</p>
 
     <div class="table-scroll">
       <table class="api">
@@ -1424,7 +1424,7 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
           <tr><td><code>readout</code></td><td><code>percent</code></td><td><code>percent</code>, <code>value</code> or <code>none</code>.</td></tr>
           <tr><td><code>unit</code> / <code>decimals</code></td><td><code>%</code> / <code>0</code></td><td>Suffix and precision for the number.</td></tr>
           <tr><td><code>label</code></td><td>—</td><td>Caption under the number, and the accessible name.</td></tr>
-          <tr><td><code>color</code></td><td>—</td><td>Shorthand for <code>--cj-value</code>.</td></tr>
+          <tr><td><code>color</code></td><td>—</td><td>Shorthand for <code>--cth-value</code>.</td></tr>
           <tr><td><code>interactive</code> / <code>step</code></td><td>— / <code>1</code></td><td>Turns it into a draggable, keyboard-operable slider.</td></tr>
           <tr><td><code>disabled</code></td><td>—</td><td>Dims it and ignores input.</td></tr>
           <tr><td><code>animate-in</code></td><td>—</td><td>Grow from empty on first paint.</td></tr>
@@ -1433,27 +1433,27 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
           <tr><td><code>label-radius</code></td><td><code>29.5</code></td><td>How far out the captions sit, in the 0–100 viewBox.</td></tr>
           <tr><td><code>value-2</code></td><td>—</td><td>A second value, drawn as a second pointer alongside the first.</td></tr>
           <tr><td><code>rotating</code></td><td>—</td><td>The card turns under a fixed index, the way a heading indicator works.</td></tr>
-          <tr><td><code>button</code></td><td>—</td><td>The dial becomes a button: focusable, Enter/Space activates it, and it fires <code>cj-press</code>. Add <code>toggle</code> to make it latch, and <code>slot="icon-on"</code> for the pressed glyph.</td></tr>
+          <tr><td><code>button</code></td><td>—</td><td>The dial becomes a button: focusable, Enter/Space activates it, and it fires <code>cth-press</code>. Add <code>toggle</code> to make it latch, and <code>slot="icon-on"</code> for the pressed glyph.</td></tr>
           <tr><td><code>trend</code></td><td>—</td><td>A rise or a fall shown beside the number, with a drawn arrow and a sign colour. <code>trend-unit</code> suffixes it.</td></tr>
           <tr><td><code>states</code></td><td>—</td><td>A button that cycles: <code>"stop:#ef4444, go:#22c55e"</code>. Each press advances, the lamp and ring take the colour, the caption the name. Read it back as <code>.state</code>.</td></tr>
           <tr><td><code>turn</code></td><td><code>180</code></td><td>The middle swings round to this angle and stays. On a <code>toggle</code> button it swings back when released.</td></tr>
           <tr><td><code>spin</code></td><td><code>33</code></td><td>The middle turns, in revolutions per minute. On a <code>toggle</code> button it only turns while pressed. Winds up like a motor, coasts down like friction.</td></tr>
           <tr><td><code>gas</code></td><td>—</td><td>Fills the face with drifting haze whose density is the value. Liquid has a surface; a gas only has how much of it there is.</td></tr>
-          <tr><td><code>slot="inset"</code></td><td>—</td><td>Put a <code>&lt;cj-trace&gt;</code>, a <code>&lt;cj-level&gt;</code> or anything else inside the face. The knob lays it out; it stays an ordinary element you can script.</td></tr>
+          <tr><td><code>slot="inset"</code></td><td>—</td><td>Put a <code>&lt;cth-trace&gt;</code>, a <code>&lt;cth-level&gt;</code> or anything else inside the face. The knob lays it out; it stays an ordinary element you can script.</td></tr>
           <tr><td><code>inset</code></td><td><code>low</code></td><td>Where the inset sits: <code>low</code> for a chart under the number, <code>fill</code> for a tube up the middle.</td></tr>
           <tr><td><code>pulse</code></td><td><code>60</code></td><td>A ring that swells and fades at this many beats per minute, so the rhythm is legible from across the room.</td></tr>
           <tr><td><code>range</code></td><td>—</td><td>Two handles with a band between them: <code>range="20 70"</code>. Reads back as <code>{low, high}</code>.</td></tr>
           <tr><td><code>endless</code></td><td>—</td><td>No ends: dragging reports movement, so the value counts past <code>max</code> while the ring wraps round.</td></tr>
           <tr><td><code>ballistics</code></td><td>—</td><td>Meter ballistics: <code>"attack release"</code> in seconds, one number for both. The reading snaps up and sags back instead of tracking the value.</td></tr>
-          <tr><td><code>peak-hold</code></td><td><code>1.2</code></td><td>Seconds to hold the highest reading before it starts to fall. Draws a marker in <code>--cj-peak</code>.</td></tr>
+          <tr><td><code>peak-hold</code></td><td><code>1.2</code></td><td>Seconds to hold the highest reading before it starts to fall. Draws a marker in <code>--cth-peak</code>.</td></tr>
           <tr><td><code>peak-fall</code></td><td>—</td><td>How fast the held peak decays, in value units per second.</td></tr>
-          <tr><td><code>liquid</code></td><td>—</td><td>Fills the dial with fluid whose surface sits at the value, with drifting waves. Theme with <code>--cj-liquid</code>.</td></tr>
+          <tr><td><code>liquid</code></td><td>—</td><td>Fills the dial with fluid whose surface sits at the value, with drifting waves. Theme with <code>--cth-liquid</code>.</td></tr>
           <tr><td><code>gradient</code></td><td>—</td><td>A colour ramp that follows the arc: <code>"#22c55e,#f59e0b,#ef4444"</code>. Colour maps to the scale, so the value reveals part of the ramp.</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h3>&lt;cj-radar&gt;</h3>
+    <h3>&lt;cth-radar&gt;</h3>
     <div class="table-scroll">
       <table class="api">
         <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
@@ -1469,7 +1469,7 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
       </table>
     </div>
 
-    <h3>&lt;cj-rings&gt;</h3>
+    <h3>&lt;cth-rings&gt;</h3>
     <p class="sub" style="margin-bottom:1rem">
       Lays out; does not draw. The children stay ordinary knobs, so ticks, gradients,
       needles and zones all still work on them and script still sets their values
@@ -1481,12 +1481,12 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
         <tbody>
           <tr><td><code>thickness</code></td><td><code>0.043</code></td><td>Ring weight as a fraction of the box, so every ring gets the same pixel stroke.</td></tr>
           <tr><td><code>gap</code></td><td><code>0.065</code></td><td>Space between rings, also a fraction of the box.</td></tr>
-          <tr><td colspan="3" style="color:var(--dim)">Size comes from <code>--cjs-size</code>. Put anything in the middle with <code>slot="center"</code>. A ring the box has no room for is dropped rather than drawn inside out, and the layout redoes itself on resize.</td></tr>
+          <tr><td colspan="3" style="color:var(--dim)">Size comes from <code>--cths-size</code>. Put anything in the middle with <code>slot="center"</code>. A ring the box has no room for is dropped rather than drawn inside out, and the layout redoes itself on resize.</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h3>&lt;cj-level&gt;</h3>
+    <h3>&lt;cth-level&gt;</h3>
     <div class="table-scroll">
       <table class="api">
         <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
@@ -1497,13 +1497,13 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
           <tr><td><code>ticks</code> / <code>tick-major</code></td><td>—</td><td>Graduations down the side, every Nth one labelled.</td></tr>
           <tr><td><code>zones</code></td><td>—</td><td>Bands painted over the column, so they tint the fluid sitting in them.</td></tr>
           <tr><td><code>readout</code></td><td><code>value</code></td><td><code>value</code>, <code>percent</code> or <code>none</code>.</td></tr>
-          <tr><td><code>unit</code> / <code>decimals</code> / <code>label</code></td><td>—</td><td>As on <code>&lt;cj-knob&gt;</code>.</td></tr>
-          <tr><td><code>color</code></td><td>—</td><td>Shorthand for <code>--cjl-fill</code>. Height is <code>--cjl-height</code>.</td></tr>
+          <tr><td><code>unit</code> / <code>decimals</code> / <code>label</code></td><td>—</td><td>As on <code>&lt;cth-knob&gt;</code>.</td></tr>
+          <tr><td><code>color</code></td><td>—</td><td>Shorthand for <code>--cthl-fill</code>. Height is <code>--cthl-height</code>.</td></tr>
         </tbody>
       </table>
     </div>
 
-    <h3>&lt;cj-horizon&gt;</h3>
+    <h3>&lt;cth-horizon&gt;</h3>
     <div class="table-scroll">
       <table class="api">
         <thead><tr><th>Attribute</th><th>Default</th><th>What it does</th></tr></thead>
@@ -1519,21 +1519,21 @@ document.querySelector(<span class="s">'[data-count="1"]'</span>).onclick = () =
 <pre><span class="c">// contacts are a property, not just an attribute</span>
 radar.blips = [{ <span class="a">bearing</span>: <span class="s">45</span>, <span class="a">range</span>: <span class="s">0.6</span> }];
 radar.scatter(<span class="s">6</span>);
-radar.addEventListener(<span class="s">'cj-detect'</span>, (e) =&gt; hit(e.detail.bearing));</pre>
+radar.addEventListener(<span class="s">'cth-detect'</span>, (e) =&gt; hit(e.detail.bearing));</pre>
 
     <h3>Theming</h3>
-<pre>cj-knob {
-  <span class="a">--cj-size</span>: <span class="s">180px</span>;        <span class="c">/* everything scales from this */</span>
-  <span class="a">--cj-thickness</span>: <span class="s">10</span>;       <span class="c">/* unitless, in a 0–100 viewBox */</span>
-  <span class="a">--cj-value</span>: <span class="s">#019ae6</span>;
-  <span class="a">--cj-track</span>: <span class="s">#d9dce1</span>;
-  <span class="a">--cj-duration</span>: <span class="s">600ms</span>;
+<pre>cth-knob {
+  <span class="a">--cth-size</span>: <span class="s">180px</span>;        <span class="c">/* everything scales from this */</span>
+  <span class="a">--cth-thickness</span>: <span class="s">10</span>;       <span class="c">/* unitless, in a 0–100 viewBox */</span>
+  <span class="a">--cth-value</span>: <span class="s">#019ae6</span>;
+  <span class="a">--cth-track</span>: <span class="s">#d9dce1</span>;
+  <span class="a">--cth-duration</span>: <span class="s">600ms</span>;
 }
 <span class="c">/* internals are reachable too */</span>
-cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shadow(0 0 5px currentColor)</span>; }</pre>
+cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shadow(0 0 5px currentColor)</span>; }</pre>
 
     <h3>Events</h3>
-<pre>knob.addEventListener(<span class="s">'cj-change'</span>, (e) =&gt; console.log(e.detail.value));</pre>
+<pre>knob.addEventListener(<span class="s">'cth-change'</span>, (e) =&gt; console.log(e.detail.value));</pre>
   </div>
 </section>
 
@@ -1546,7 +1546,7 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
         <p class="sub" style="margin-bottom:0">
           The instrument lab is a stress test disguised as a showcase: aircraft six-packs,
           a submarine sonar, brass steampunk dials, a reactor core, a 96-dial server wall
-          and a world-clock departure board — all driven by <code>&lt;cj-knob&gt;</code>
+          and a world-clock departure board — all driven by <code>&lt;cth-knob&gt;</code>
           and a handful of CSS variables.
         </p>
         <div class="lab-tags">
@@ -1557,12 +1557,12 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
         <a class="btn primary" href="lab/">Open the instrument lab &rarr;</a>
       </div>
       <div class="lab-art">
-        <cj-knob value="82" sweep="270" ticks="10" color="#019ae6" readout="none"></cj-knob>
-        <cj-knob value="46" color="#16a34a" readout="none"></cj-knob>
-        <cj-knob value="91" sweep="270" color="#ef4444" readout="none"></cj-knob>
-        <cj-knob readout="none" segments="40:#f59e0b, 35:#7c3aed, 25:#334155"></cj-knob>
-        <cj-knob value="67" sweep="180" color="#0891b2" readout="none"></cj-knob>
-        <cj-knob value="30" ticks="24" color="#db2777" readout="none"></cj-knob>
+        <cth-knob value="82" sweep="270" ticks="10" color="#019ae6" readout="none"></cth-knob>
+        <cth-knob value="46" color="#16a34a" readout="none"></cth-knob>
+        <cth-knob value="91" sweep="270" color="#ef4444" readout="none"></cth-knob>
+        <cth-knob readout="none" segments="40:#f59e0b, 35:#7c3aed, 25:#334155"></cth-knob>
+        <cth-knob value="67" sweep="180" color="#0891b2" readout="none"></cth-knob>
+        <cth-knob value="30" ticks="24" color="#db2777" readout="none"></cth-knob>
       </div>
     </div>
   </div>
@@ -1570,23 +1570,23 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
 
 <footer>
   <div class="wrap">
-    <span>cj-knob — started 19 June 2013, rewritten 2026.</span>
-    <span class="sp"><a href="https://github.com/tanghoong/cj-knob">GitHub</a></span>
+    <span>cth-instrument — started 19 June 2013, rewritten 2026.</span>
+    <span class="sp"><a href="https://github.com/tanghoong/cth-instrument">GitHub</a></span>
     <span><a href="lab/">Lab</a></span>
     <span>MIT</span>
   </div>
 </footer>
 
-<!-- If the module never loads, <cj-knob> stays an unknown tag and the page renders blank.
+<!-- If the module never loads, <cth-knob> stays an unknown tag and the page renders blank.
      Say so out loud instead of failing silently. -->
 <script>
   setTimeout(() => {
-    if (customElements.get('cj-knob') && customElements.get('cj-radar')
-        && customElements.get('cj-horizon') && customElements.get('cj-level')
-        && customElements.get('cj-rings')) return;
+    if (customElements.get('cth-knob') && customElements.get('cth-radar')
+        && customElements.get('cth-horizon') && customElements.get('cth-level')
+        && customElements.get('cth-rings')) return;
     const b = document.createElement('div');
     b.style.cssText = 'position:fixed;inset:0 0 auto 0;padding:1rem 1.25rem;background:#b91c1c;color:#fff;font:14px/1.5 ui-monospace,monospace;z-index:99';
-    b.innerHTML = '<strong>cj-knob failed to load.</strong> Serve from the repository root, not from a subfolder &mdash;'
+    b.innerHTML = '<strong>cth-instrument failed to load.</strong> Serve from the repository root, not from a subfolder &mdash;'
       + ' <code>php -S localhost:8000</code> in the folder that contains <code>src/</code>, then open'
       + ' <code>http://localhost:8000/</code>. Opening this file over <code>file://</code> will not work either.';
     document.body.append(b);
@@ -1594,13 +1594,13 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
 </script>
 
 <script type="module">
-  import './src/cj-knob.js';
-  import './src/cj-radar.js';
-  import './src/cj-horizon.js';
-  import './src/cj-level.js';
-  import './src/cj-rings.js';
-  import './src/cj-trace.js';
-  import './src/cj-heat.js';
+  import './src/cth-knob.js';
+  import './src/cth-radar.js';
+  import './src/cth-horizon.js';
+  import './src/cth-level.js';
+  import './src/cth-rings.js';
+  import './src/cth-trace.js';
+  import './src/cth-heat.js';
 
   // ---- copy the install line --------------------------------------------
   const copy = document.getElementById('copy');
@@ -1643,8 +1643,8 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
   // ---- the live demos ----------------------------------------------------
   const vol = document.getElementById('vol');
   const out = document.getElementById('vol-out');
-  vol.addEventListener('cj-input', (e) => { out.textContent = `cj-input → ${e.detail.value}`; });
-  vol.addEventListener('cj-change', (e) => { out.textContent = `cj-change → ${e.detail.value}`; });
+  vol.addEventListener('cth-input', (e) => { out.textContent = `cth-input → ${e.detail.value}`; });
+  vol.addEventListener('cth-change', (e) => { out.textContent = `cth-change → ${e.detail.value}`; });
 
   const anim = document.getElementById('anim');
   anim.addEventListener('click', () => { anim.value = Math.round(Math.random() * 100); });
@@ -1741,7 +1741,7 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
   // a real clock on the hand-pointer face: value is seconds, value-2 is minutes
   const handclock = $('#handclock');
 
-  // and one on cj-rings, to show the rings are still ordinary knobs
+  // and one on cth-rings, to show the rings are still ordinary knobs
   const ringClock = $('#ring-clock');
   const rh = ringClock.querySelector('[data-h]');
   const rm = ringClock.querySelector('[data-m]');
@@ -1754,11 +1754,11 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
   // ---- range and endless read back what the pointer did ------------------
   {
     const band = document.getElementById('ex-range');
-    if (band) band.addEventListener('cj-input', (e) => {
+    if (band) band.addEventListener('cth-input', (e) => {
       band.setAttribute('label', `${e.detail.low.toFixed(1)}–${e.detail.high.toFixed(1)}°`);
     });
     const enc = document.getElementById('ex-endless');
-    if (enc) enc.addEventListener('cj-input', () => {
+    if (enc) enc.addEventListener('cth-input', () => {
       const turns = enc.value / 100;
       enc.setAttribute('label', `${turns >= 0 ? '+' : ''}${turns.toFixed(2)} turns`);
     });
@@ -1768,12 +1768,12 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
   {
     const v = document.getElementById('ex-voice');
     const state = document.getElementById('ex-voice-state');
-    if (v && state) v.addEventListener('cj-speech', (e) => {
+    if (v && state) v.addEventListener('cth-speech', (e) => {
       state.textContent = e.detail.speaking ? 'speaking' : 'silent';
     });
   }
   const listen = document.getElementById('ex-listen');
-  const listenTrace = listen?.querySelector('cj-trace');
+  const listenTrace = listen?.querySelector('cth-trace');
 
   // ---- the hero slider -----------------------------------------------------
   {
@@ -1829,23 +1829,23 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
       if (tot) tot.textContent = days.reduce((a, b) => a + b, 0).toLocaleString();
     }
     const sky = document.getElementById('hero-sky');
-    if (sky) sky.addEventListener('cj-press', (e) => {
+    if (sky) sky.addEventListener('cth-press', (e) => {
       sky.setAttribute('label', e.detail.pressed ? 'night' : 'day');
       sky.setAttribute('color', e.detail.pressed ? '#64748b' : '#fbbf24');
     });
   }
   const heroPlay = document.getElementById('hero-play');
   let playing = false;
-  if (heroPlay) heroPlay.addEventListener('cj-press', (e) => { playing = e.detail.pressed; });
+  if (heroPlay) heroPlay.addEventListener('cth-press', (e) => { playing = e.detail.pressed; });
   // ---- the world-view row: the two that read back, and a drifting price ------
   {
     const sky = document.getElementById('w-sky');
-    if (sky) sky.addEventListener('cj-press', (e) => {
+    if (sky) sky.addEventListener('cth-press', (e) => {
       sky.setAttribute('label', e.detail.pressed ? 'night' : 'day');
       sky.setAttribute('color', e.detail.pressed ? '#64748b' : '#fbbf24');
     });
     const sw = document.getElementById('w-switch');
-    if (sw) sw.addEventListener('cj-press', (e) => {
+    if (sw) sw.addEventListener('cth-press', (e) => {
       sw.setAttribute('label', e.detail.pressed ? 'on' : 'off');
       sw.setAttribute('color', e.detail.pressed ? '#22c55e' : '#64748b');
     });
@@ -1854,13 +1854,13 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
 
   const heroVinyl = document.getElementById('hero-vinyl');
   const heroListen = document.getElementById('hero-listen');
-  const heroListenTrace = heroListen?.querySelector('cj-trace');
+  const heroListenTrace = heroListen?.querySelector('cth-trace');
   const heroStock = document.getElementById('hero-stock');
 
   const exVinyl = document.getElementById('ex-vinyl');
   const exPlay = document.getElementById('ex-play');
   let exPlaying = false;
-  if (exPlay) exPlay.addEventListener('cj-press', (e) => { exPlaying = e.detail.pressed; });
+  if (exPlay) exPlay.addEventListener('cth-press', (e) => { exPlaying = e.detail.pressed; });
 
   // ---- heat rings: made-up data, but shaped like the real thing ----------
   {
@@ -1952,7 +1952,7 @@ cj-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shado
   };
   radar.scatter(5);
   radarCount();
-  radar.addEventListener('cj-blip', radarCount);
+  radar.addEventListener('cth-blip', radarCount);
   on('[data-radar]', ({ radar: a }) => {
     if (a === 'scatter') radar.scatter(4 + Math.floor(Math.random() * 4));
     if (a === 'clear') radar.clearBlips();

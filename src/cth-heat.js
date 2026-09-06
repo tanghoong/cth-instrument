@@ -1,9 +1,9 @@
 // -------------------------------------------------
-// cj-heat — a ring of cells coloured by their own values
-// https://github.com/tanghoong/cj-knob
+// cth-heat — a ring of cells coloured by their own values
+// https://github.com/tanghoong/cth-instrument
 //
-// <cj-heat values="4,6,9,14,19,23,25,22,17,11,7,5" label="year" unit="°C"></cj-heat>
-// <cj-heat values="..." rows="7" scale="#0b2b4a,#1f6feb,#3fb950,#d29922,#f85149"></cj-heat>
+// <cth-heat values="4,6,9,14,19,23,25,22,17,11,7,5" label="year" unit="°C"></cth-heat>
+// <cth-heat values="..." rows="7" scale="#0b2b4a,#1f6feb,#3fb950,#d29922,#f85149"></cth-heat>
 //
 // A knob shows one value on a ring. This shows a hundred of them on the same
 // ring, by colour instead of by length — twenty-four hours round a clock face,
@@ -57,20 +57,20 @@ template.innerHTML = `
 <style>
   :host {
     /* ---- public theming API ---- */
-    --cj-size: 220px;
-    --cj-thickness: 9;
-    --cj-gap: .12;              /* of a cell, so it holds at any cell count */
-    --cj-empty: rgba(127, 127, 127, .16);
-    --cj-num-size: max(13px, calc(var(--cj-size) * .19));
-    --cj-label-size: max(9px, calc(var(--cj-size) * .075));
-    --cj-text: #14161a;
-    --cj-muted: #6b7280;
+    --cth-size: 220px;
+    --cth-thickness: 9;
+    --cth-gap: .12;              /* of a cell, so it holds at any cell count */
+    --cth-empty: rgba(127, 127, 127, .16);
+    --cth-num-size: max(13px, calc(var(--cth-size) * .19));
+    --cth-label-size: max(9px, calc(var(--cth-size) * .075));
+    --cth-text: #14161a;
+    --cth-muted: #6b7280;
 
     display: inline-grid;
     place-items: center;
-    inline-size: var(--cj-size);
-    block-size: var(--cj-size);
-    color: var(--cj-text);
+    inline-size: var(--cth-size);
+    block-size: var(--cth-size);
+    color: var(--cth-text);
     font: inherit;
     -webkit-tap-highlight-color: transparent;
     /* A dial is an instrument, not text. Its numbers are drawn readings, and
@@ -84,22 +84,22 @@ template.innerHTML = `
   :host([interactive]) { cursor: crosshair; }
 
   @media (prefers-color-scheme: dark) {
-    :host { --cj-text: #f2f4f7; --cj-muted: #98a2b3; }
+    :host { --cth-text: #f2f4f7; --cth-muted: #98a2b3; }
   }
 
   svg { grid-area: 1 / 1; inline-size: 100%; block-size: 100%; overflow: visible; }
-  .cells { transform: rotate(var(--cj-start, -90deg)); transform-origin: 50% 50%; transform-box: view-box; }
+  .cells { transform: rotate(var(--cth-start, -90deg)); transform-origin: 50% 50%; transform-box: view-box; }
   circle, line { fill: none; stroke-linecap: butt; }
   /* the baseline the towers stand on, so a short one still reads as a value and
      not as a gap in the ring */
-  .base, .rim { stroke: var(--cj-empty); stroke-width: .8; }
+  .base, .rim { stroke: var(--cth-empty); stroke-width: .8; }
   .base[hidden], .rim[hidden] { display: none; }
 
   /* month captions, sitting outside the towers the way a clock face carries its
      hours — the ring says how much, these say when */
   .marks text {
-    fill: var(--cj-mark, var(--cj-muted));
-    font-size: var(--cj-mark-size, 4.6px);
+    fill: var(--cth-mark, var(--cth-muted));
+    font-size: var(--cth-mark-size, 4.6px);
     font-weight: 600;
     text-anchor: middle;
     dominant-baseline: middle;
@@ -112,23 +112,23 @@ template.innerHTML = `
 
   /* the cell under the pointer lifts out of the ring rather than changing colour,
      which would be indistinguishable from it simply holding a different value */
-  .hot { stroke-width: calc(var(--cj-cell-width, 9) * 1.35); }
+  .hot { stroke-width: calc(var(--cth-cell-width, 9) * 1.35); }
 
   .center { grid-area: 1 / 1; display: grid; place-items: center; text-align: center; pointer-events: none; line-height: 1.05; }
   .readout {
-    font-size: var(--cj-num-size);
+    font-size: var(--cth-num-size);
     font-weight: 650;
     font-variant-numeric: tabular-nums;
     letter-spacing: -.02em;
   }
   .readout[hidden] { display: none; }
-  .unit { font-size: .5em; font-weight: 600; margin-inline-start: .12em; color: var(--cj-muted); }
+  .unit { font-size: .5em; font-weight: 600; margin-inline-start: .12em; color: var(--cth-muted); }
   .label {
-    font-size: var(--cj-label-size);
+    font-size: var(--cth-label-size);
     font-weight: 600;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--cj-muted);
+    color: var(--cth-muted);
   }
   .label[hidden] { display: none; }
 </style>
@@ -149,7 +149,7 @@ template.innerHTML = `
 </div>
 `;
 
-export class CJHeat extends HTMLElement {
+export class CTHHeat extends HTMLElement {
   static observedAttributes = [
     'values', 'scale', 'min', 'max', 'rows', 'sweep', 'start', 'shape', 'labels', 'label-radius',
     'label', 'unit', 'decimals', 'readout', 'interactive',
@@ -259,10 +259,10 @@ export class CJHeat extends HTMLElement {
     const rows = this.rows;
     const sweep = clamp(num(this.getAttribute('sweep'), 360), 1, 360);
     const start = num(this.getAttribute('start'), -90);
-    const thickness = num(getComputedStyle(this).getPropertyValue('--cj-thickness'), 9);
-    const gapFrac = clamp(num(getComputedStyle(this).getPropertyValue('--cj-gap'), 0.12), 0, 0.9);
+    const thickness = num(getComputedStyle(this).getPropertyValue('--cth-thickness'), 9);
+    const gapFrac = clamp(num(getComputedStyle(this).getPropertyValue('--cth-gap'), 0.12), 0, 0.9);
 
-    this.style.setProperty('--cj-start', `${start}deg`);
+    this.style.setProperty('--cth-start', `${start}deg`);
 
     // A cell is a dash: geometry that only changes when the shape of the data
     // does. Rebuilding a year of them because one value moved would throw away
@@ -303,7 +303,7 @@ export class CJHeat extends HTMLElement {
           this.#cells.push(l);
         }
         this.#els.cells.replaceChildren(frag);
-        this.style.setProperty('--cj-cell-width', w.toFixed(3));
+        this.style.setProperty('--cth-cell-width', w.toFixed(3));
       } else {
         // Rows step inward from the rim, oldest outermost. They are squeezed to
       // fit between the rim and a reserved middle rather than marching on to the
@@ -335,7 +335,7 @@ export class CJHeat extends HTMLElement {
         this.#cells.push(c);
       }
         this.#els.cells.replaceChildren(frag);
-        this.style.setProperty('--cj-cell-width', width.toFixed(2));
+        this.style.setProperty('--cth-cell-width', width.toFixed(2));
       }
     }
 
@@ -346,7 +346,7 @@ export class CJHeat extends HTMLElement {
       const c = this.#cells[i];
       const colour = Number.isFinite(v)
         ? this.#colorAt((v - lo) / (hi - lo), stops)
-        : getComputedStyle(this).getPropertyValue('--cj-empty').trim() || 'rgba(127,127,127,.16)';
+        : getComputedStyle(this).getPropertyValue('--cth-empty').trim() || 'rgba(127,127,127,.16)';
       if (c.getAttribute('stroke') !== colour) c.setAttribute('stroke', colour);
       if (bars) {
         // a value of zero still gets a stub, so the ring reads as 365 days with
@@ -444,7 +444,7 @@ export class CJHeat extends HTMLElement {
     const start = num(this.getAttribute('start'), -90);
     const rows = this.rows;
     const perRow = Math.ceil(n / rows);
-    const thickness = num(getComputedStyle(this).getPropertyValue('--cj-thickness'), 9);
+    const thickness = num(getComputedStyle(this).getPropertyValue('--cth-thickness'), 9);
 
     // the viewBox is 100 wide however big the element is drawn
     const r = Math.hypot(dx, dy) / size * 100;
@@ -482,7 +482,7 @@ export class CJHeat extends HTMLElement {
     if (i === this.#hot) return;
     this.#hot = i;
     this.#render();
-    this.dispatchEvent(new CustomEvent('cj-hover', {
+    this.dispatchEvent(new CustomEvent('cth-hover', {
       detail: { index: i, value: i >= 0 ? this.#values[i] : null },
       bubbles: true,
     }));
@@ -492,10 +492,10 @@ export class CJHeat extends HTMLElement {
     if (this.#hot === -1) return;
     this.#hot = -1;
     if (this.isConnected) this.#render();
-    this.dispatchEvent(new CustomEvent('cj-hover', { detail: { index: -1, value: null }, bubbles: true }));
+    this.dispatchEvent(new CustomEvent('cth-hover', { detail: { index: -1, value: null }, bubbles: true }));
   };
 }
 
-if (!customElements.get('cj-heat')) customElements.define('cj-heat', CJHeat);
+if (!customElements.get('cth-heat')) customElements.define('cth-heat', CTHHeat);
 
-export default CJHeat;
+export default CTHHeat;
