@@ -222,7 +222,13 @@
   .feat code { color: var(--accent); }
 
   /* ---------- examples ---------- */
-  .tiles { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); }
+  /* The groups below are written in fours, and a .wide tile is two of them,
+     so the column count is fixed rather than auto-filled — auto-fill gave
+     seven tracks at this container width and left every group of four
+     hanging off the left edge. */
+  .tiles { display: grid; gap: var(--s-3); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (width >= 560px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (width >= 900px) { .tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .tile {
     display: grid; justify-items: center; gap: var(--s-3);
     padding: var(--s-4) var(--s-3) var(--s-3);
@@ -232,7 +238,13 @@
   .tile code {
     font-family: var(--font-mono); font-size: 10px; line-height: 1.45;
     color: var(--text-3); text-align: center; word-break: break-word;
+    /* A .wide tile is 600px across and a caption is 10px type: without a cap
+       the long ones run as one unreadable line. */
+    max-inline-size: 34ch; margin-inline: auto;
   }
+  /* Four columns give a roomier tile than the old auto-filled seven, so the
+     dial grows to match. An inline --cth-size on a specific tile still wins. */
+  @media (width >= 900px) { #examples .tile cth-knob { --cth-size: 128px; } }
   .tubes .tile { padding-block-start: var(--s-5); }
   .wide { grid-column: span 2; }
   .scale {
@@ -1059,7 +1071,7 @@
     <code id="ex-year-cap">365 days round one ring</code>
   </div>
   <div class="tile">
-    <cth-heat shape="bars" label="months" decimals="0" scale="#22c55e"
+    <cth-heat shape="bars" label="monthly average" unit="mm" decimals="0" scale="#22c55e"
              style="--cth-size:150px;--cth-gap:.3"
              values="42,38,55,71,96,120,141,133,101,74,52,45"></cth-heat>
     <code>the same thing with twelve</code>
