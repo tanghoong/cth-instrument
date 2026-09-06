@@ -78,6 +78,34 @@
   }
 
   h1 { padding-left: .5rem; border-left: 3px solid var(--a1); }
+
+  /* The middle of the wall is the suit itself: reactor on the left, the
+     frame in the centre where a pilot glances for damage, the pilot's own
+     trace on the right. */
+  .row.frame { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1.1fr); }
+
+  .mech { inline-size: auto; block-size: 188px; }
+  /* Each section is filled from its own integrity, so the whole silhouette
+     is readable at a glance and the eight dials below are the detail. */
+  .mech [data-part] {
+    fill: currentColor; fill-opacity: .22;
+    stroke: currentColor; stroke-width: 1.6;
+    stroke-linejoin: round;
+    transition: color .3s linear, fill-opacity .3s linear;
+  }
+  .mech .frame-line { fill: none; stroke: var(--edge); stroke-width: 1; }
+
+  .row.frame cth-trace {
+    --cth-height: 132px; --cth-trace: #ff5c5c; --cth-grid: rgba(255, 92, 92, .14);
+    --cth-face: transparent; --cth-pen: #ff9aa0;
+  }
+  .vitals-line {
+    margin-top: .25rem; font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--dim);
+  }
+  .vitals-line b { color: var(--a2); font-weight: 600; }
+  .vitals-line b.strained { color: var(--a3); }
+  .vitals-line b.critical { color: #ff5c5c; }
 </style>
 </head>
 <body>
@@ -99,6 +127,8 @@ import '../src/cth-trace.js';
       { id: 'gen', label: 'generator', value: '—' },
       { id: 'prop', label: 'propellant', value: '—' },
       { id: 'apo', label: 'apogee motor', value: '—' },
+      { id: 'pilot', label: 'pilot', value: '—' },
+      { id: 'threat', label: 'threat', value: '—' },
       { id: 'alert', flag: true, value: '' },
     ],
     rows: [
@@ -116,14 +146,8 @@ import '../src/cth-trace.js';
           { id: 'reactor', cap: 'Fusion output', min: 0, max: 120, sweep: 270, readout: 'value',
             decimals: 1, ticks: 12, tickMajor: 6, label: '% rated', color: 'var(--a1)',
             zones: '100-110:#4a3d10, 110-120:#4a1a1a', benchmark: 100 },
-          { id: 'armour', cap: 'Frame integrity', readout: 'none', icon: '🤖',
-            segments: '64:#64e37a, 22:#ffd23f, 14:#ff5c5c',
-            legend: [['intact', '#64e37a'], ['damaged', '#ffd23f'], ['lost', '#ff5c5c']] },
-          { id: 'thrust', cap: 'Thruster vector', min: 0, max: 100, sweep: 270, readout: 'value',
-            ticks: 10, tickMajor: 5, label: '%', color: 'var(--a3)' },
-          { id: 'beam', cap: 'Beam charge', min: 0, max: 100, sweep: 270, readout: 'value',
-            ticks: 10, tickMajor: 5, label: '%', color: 'var(--a1)', benchmark: 80,
-            zones: '0-25:#4a1a1a' },
+          // the silhouette is inserted here once the row exists
+          { id: 'vitals', tag: 'cth-trace', cap: 'Pilot vitals' },
         ],
       },
       {
@@ -135,6 +159,11 @@ import '../src/cth-trace.js';
       },
       {
         size: 'md', items: [
+          { id: 'thrust', cap: 'Thruster vector', min: 0, max: 100, sweep: 270, readout: 'value',
+            ticks: 10, tickMajor: 5, label: '%', color: 'var(--a3)' },
+          { id: 'beam', cap: 'Beam charge', min: 0, max: 100, sweep: 270, readout: 'value',
+            ticks: 10, tickMajor: 5, label: '%', color: 'var(--a1)', benchmark: 80,
+            zones: '0-25:#4a1a1a' },
           { id: 'propellant', cap: 'Propellant', min: 0, max: 100, sweep: 270, readout: 'value',
             ticks: 10, tickMajor: 5, label: '%', color: 'var(--a2)', zones: '0-15:#4a1a1a' },
           { id: 'gforce', cap: 'Pilot g-load', min: 0, max: 12, sweep: 270, readout: 'value',
@@ -181,14 +210,35 @@ import '../src/cth-trace.js';
       set('ammo', Math.max(0, Math.round(20 - (u / CYCLE) * 17)));
       set('vulcan', Math.max(0, Math.round(60 - (u / CYCLE) * 44)));
       set('radar', 34 + intensity * 52);
-      set('contacts', Math.round(intensity * 18 + 2));
+      const contacts = Math.round(intensity * 18 + 2);
+      set('contacts', contacts);
 
       const damage = (u / CYCLE) * 34;
       LIMBS.forEach(([name], i) => {
         set(name, clamp(100 - damage * (0.5 + (i % 4) * 0.42) - wave(t, 13 + i, 6, i), 0, 100));
       });
-      const lost = damage * 0.42, hurt = damage * 0.7;
-      set.seg('armour', [[100 - lost - hurt, '#64e37a'], [hurt, '#ffd23f'], [lost, '#ff5c5c']]);
+      // The silhouette reads the same eight numbers the dials below do.
+      paintFrame(LIMBS.map(([name]) => [name, +(set.knob(name)?.getAttribute('value') ?? 100)]));
+
+      // The pilot. A linear seat takes the g-load straight into the spine,
+      // so the heart follows the manoeuvre and the condition follows the g.
+      const g = 1 + intensity * 9.4;
+      const bpm = Math.round(64 + intensity * 74 + g * 2.2);
+      if (vitals && vitals.getAttribute('beat') !== String(bpm)) {
+        vitals.setAttribute('beat', bpm);
+      }
+      if (bpmEl) bpmEl.textContent = bpm + ' bpm';
+      const cond = g > 8.2 ? ['GREY-OUT RISK', 'critical']
+        : g > 5.4 ? ['STRAINED', 'strained'] : ['STABLE', ''];
+      if (condEl && condEl.textContent !== cond[0]) {
+        condEl.textContent = cond[0];
+        condEl.className = cond[1];
+      }
+      set.text('pilot', bpm + ' bpm · ' + cond[0].toLowerCase());
+
+      // Where they are coming from, not just how many.
+      const near = (0.3 + (1 - intensity) * 1.9).toFixed(1);
+      set.text('threat', contacts + ' contacts · nearest ' + near + ' km');
 
       set.text('state', intensity > 0.5 ? 'ENGAGED' : 'SORTIE');
       set.text('gen', (62 + intensity * 46).toFixed(0) + ' %');
@@ -203,9 +253,8 @@ import '../src/cth-trace.js';
       set.attr('att', 'roll', (wave(t, 5, 22) * (0.4 + intensity)).toFixed(1));
 
       // Contacts on the scope are the same number the Contacts dial reads.
-      const n = Math.round(intensity * 18 + 2);
       const blips = [];
-      for (let i = 0; i < n; i++) {
+      for (let i = 0; i < contacts; i++) {
         const bearing = (i * 47 + t * 6 + wave(t, 11 + i, 40, i)) % 360;
         const range = 0.25 + ((i * 37) % 70) / 100;
         blips.push(bearing.toFixed(0) + ':' + range.toFixed(2));
@@ -233,21 +282,73 @@ import '../src/cth-trace.js';
   psycommu.setAttribute('readout', 'none');
   document.querySelector('.row')?.classList.add('pano');
 
-  // A mobile suit head reads at 38px where an emoji reads as an emoji.
-  const face = panel.knobs.armour.querySelector('[slot="icon"]');
-  if (face) {
-    face.textContent = '';
-    face.style.color = 'var(--a2)';
-    face.innerHTML =
-      '<svg width="38" viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
-      ' stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">' +
-      '<path d="M12 1.6 10.2 6 12 4.9 13.8 6z"/>' +
-      '<path d="M7.4 7.6h9.2l1.5 4.3-2.1 3.5H8l-2.1-3.5z"/>' +
-      '<path d="M9 10.2h6l-.6 2.2H9.6z"/>' +
-      '<path d="M10.2 16.4h3.6l.9 2.2H9.3z"/>' +
-      '<path d="M6.6 9.4 5 8.2M17.4 9.4 19 8.2"/>' +
-      '</svg>';
+  // ---- the frame ------------------------------------------------------
+  // A front elevation with one shape per section, coloured from that
+  // section's own integrity. Angular on purpose: a mobile suit is plate,
+  // not moulding, and the eight dials below carry the numbers.
+  const MECH =
+    '<svg class="mech" viewBox="0 0 200 250" role="img"' +
+    ' aria-label="Frame integrity by section">' +
+      '<path data-part="backpack" d="M60 46h80v30l-9 13h-62l-9-13z"/>' +
+      '<path data-part="backpack" d="M56 90h16v30l-8 8-8-8zM128 90h16v30l-8 8-8-8z"/>' +
+      '<path data-part="head" d="M100 4 88 12v4l-6-8 5 12v10l6 7h14l6-7V20l5-12-6 8v-4z"/>' +
+      '<path data-part="torso" d="M74 46h52l10 22-5 40-11 14H80l-11-14-5-40z"/>' +
+      '<path class="frame-line" d="M86 68h28v22H86z"/>' +
+      '<path data-part="torso" d="M84 124h32l6 20-8 12H86l-8-12z"/>' +
+      '<path data-part="l-arm" d="M40 50h26v26H40zM45 80h16v32l-3 24h-10l-3-24z"/>' +
+      '<path data-part="r-arm" d="M134 50h26v26h-26zM139 80h16v32l-3 24h-10l-3-24z"/>' +
+      '<path data-part="shield" d="M8 46h22l6 16v58l-17 18-17-18V62z"/>' +
+      '<path data-part="l-leg" d="M76 158h20l4 34-2 30 4 18H70l4-18-2-30z"/>' +
+      '<path data-part="r-leg" d="M104 158h20l2 34-2 30 4 18h-26l4-18-2-30z"/>' +
+      '<path data-part="l-leg" d="M66 240h32v10H66z"/>' +
+      '<path data-part="r-leg" d="M102 240h32v10h-32z"/>' +
+    '</svg>';
+
+  const frameRow = document.querySelectorAll('.row')[1];
+  frameRow.classList.add('frame');
+  const mechCell = document.createElement('div');
+  mechCell.className = 'cell';
+  mechCell.innerHTML = MECH
+    + '<div class="cap">Frame integrity</div>'
+    + '<div class="legend">'
+    +   '<span><i style="background:#64e37a"></i>intact</span>'
+    +   '<span><i style="background:#ffd23f"></i>damaged</span>'
+    +   '<span><i style="background:#ff5c5c"></i>lost</span>'
+    + '</div>';
+  frameRow.insertBefore(mechCell, frameRow.children[1]);
+
+  // One colour per section, stepped rather than ramped: a pilot needs to
+  // know which band a limb is in, not its exact percentage.
+  const parts = {};
+  for (const el of mechCell.querySelectorAll('[data-part]')) {
+    (parts[el.dataset.part] ??= []).push(el);
   }
+  const band = (v) => v > 75 ? '#64e37a' : v > 45 ? '#ffd23f'
+    : v > 20 ? '#ff8a3d' : '#ff5c5c';
+  const paintFrame = (readings) => {
+    for (const [name, v] of readings) {
+      for (const el of parts[name] ?? []) {
+        el.style.color = band(v);
+        el.style.fillOpacity = 0.1 + (v / 100) * 0.28;
+      }
+    }
+  };
+
+  // ---- the pilot ------------------------------------------------------
+  const vitals = panel.knobs.vitals;
+  vitals.setAttribute('grid', '');
+  vitals.setAttribute('readout', 'none');
+  vitals.setAttribute('beat', '64');
+  const bpmEl = document.createElement('b');
+  bpmEl.textContent = '64 bpm';
+  const condEl = document.createElement('b');
+  condEl.textContent = 'STABLE';
+  const vLine = document.createElement('div');
+  vLine.className = 'vitals-line';
+  vLine.append(bpmEl, document.createTextNode(' · '), condEl);
+  vitals.closest('.cell').append(vLine);
+
+
 </script>
 </body>
 </html>

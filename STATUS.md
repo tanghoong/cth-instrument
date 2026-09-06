@@ -100,7 +100,7 @@ Done, and what it got:
 
 | Page | Treatment |
 | --- | --- |
-| `gundam` | A linear seat: panoramic band of attitude + Minovsky scope + psycommu waveform above the gauges, armour plates notched at two corners, scanlines and a glass vignette over the lot, a caution lamp that only exists when there is something to say, and a mobile-suit head where an emoji was. |
+| `gundam` | A linear seat. Panoramic band across the top — attitude, Minovsky scope, psycommu waveform — then the suit itself: a front-elevation silhouette coloured section by section from the same eight numbers the dials below carry, the pilot’s own ECG beside it, and their condition read off the g-load. Armour plates notched at two corners, scanlines and a glass vignette over the lot, a caution lamp that only exists when there is something to say. |
 
 Not started: aviation, alien, body, business, charm, countries, emotion,
 ferrari, food, futuristic, jobs, kitchen, lifeos, malaysia, micro,
