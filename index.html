@@ -266,12 +266,6 @@
 
      The prefix is for weight, not for scope: the grid's own rule for
      cth-knob is (1,1,1) and an id alone would lose to it. */
-  #examples .tile #w-sky,
-  #examples .tile #w-season,
-  #examples .tile #w-weather { --cth-size: 176px; }
-  #examples .tile #w-switch { --cth-size: 152px; }
-  #examples .tile #ex-play { --cth-size: 184px; }
-  #examples .tile .platter { --cth-size: 164px; }
 
   /* ---- buttons whose face is the picture ------------------------------
      A few of these are a picture with a dial round it rather than a dial
@@ -285,6 +279,15 @@
      element centres on the face exactly as it centres anything else. The
      artwork then hangs off that point, so nothing out here has to know how
      big the element decided the slot should be. */
+  /* turn takes 850ms, and the sky changes through the middle of it rather
+     than at either end — both skies live in the one face and cross over as
+     the dial goes edge-on. */
+  #w-sky .sky { transition: opacity 520ms linear 180ms; }
+  #w-sky .sky-night { opacity: 0; }
+  #w-sky[pressed] .sky-day { opacity: 0; }
+  #w-sky[pressed] .sky-night { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { #w-sky .sky { transition: none; } }
+
   /* The element lifts a small icon to make room for the caption beneath it.
      A picture that IS the face does not step aside for its own caption, so
      that lift is zeroed and the caption sits on the artwork. */
@@ -967,32 +970,43 @@
   <div class="tile">
     <cth-knob id="w-sky" class="face" button toggle turn="180" value="100" readout="none"
              label="day" color="#fbbf24">
+      <!-- Both skies are in the one face. The element swaps icon/icon-on by
+           display, which cannot fade; two layers in a single slot can. The
+           night one is drawn upright and pre-turned, so the 180 degrees the
+           dial swings land it the right way up. -->
       <span slot="icon" class="art"><svg viewBox="0 0 100 100" aria-hidden="true">
-        <defs><linearGradient id="dayg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#1f92d8"/><stop offset=".5" stop-color="#7fc9ef"/>
-          <stop offset="1" stop-color="#dcf0fb"/>
-        </linearGradient></defs>
-        <circle cx="50" cy="50" r="50" fill="url(#dayg)"/>
-        <circle cx="50" cy="36" r="21" fill="#fde047" fill-opacity=".22"/>
-        <circle cx="50" cy="36" r="14" fill="#fde047"/>
-        <path d="M20 62a8 8 0 0 1 2-15 11 11 0 0 1 20 2 7 7 0 0 1-1 13z" fill="#ffffff" fill-opacity=".9"/>
-        <path d="M64 66a6 6 0 0 1 1-12 9 9 0 0 1 16 2 5 5 0 0 1-1 10z" fill="#ffffff" fill-opacity=".72"/>
-      </svg></span>
-      <!-- Drawn upright and pre-turned: the dial swings it 180 degrees when
-           it is pressed, which lands this the right way up. -->
-      <span slot="icon-on" class="art"><svg viewBox="0 0 100 100" aria-hidden="true">
-        <defs><linearGradient id="nightg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#050a1c"/><stop offset=".55" stop-color="#16224a"/>
-          <stop offset="1" stop-color="#33406e"/>
-        </linearGradient></defs>
-        <g transform="rotate(180 50 50)">
+        <defs>
+          <linearGradient id="dayg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1c8fd6"/><stop offset=".55" stop-color="#7cc8ee"/>
+            <stop offset="1" stop-color="#dff1fc"/>
+          </linearGradient>
+          <linearGradient id="nightg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#040818"/><stop offset=".55" stop-color="#152147"/>
+            <stop offset="1" stop-color="#37456f"/>
+          </linearGradient>
+        </defs>
+        <g class="sky sky-day">
+          <circle cx="50" cy="50" r="50" fill="url(#dayg)"/>
+          <circle cx="50" cy="34" r="22" fill="#fde047" fill-opacity=".2"/>
+          <circle cx="50" cy="34" r="14" fill="#fde047"/>
+          <g fill="#ffffff">
+            <circle cx="30" cy="56" r="9"/><circle cx="42" cy="52" r="11"/>
+            <circle cx="52" cy="58" r="8"/><rect x="22" y="57" width="36" height="10" rx="5"/>
+          </g>
+          <g fill="#ffffff" fill-opacity=".72">
+            <circle cx="68" cy="45" r="6"/><circle cx="76" cy="42" r="7.5"/>
+            <rect x="63" y="45" width="22" height="7" rx="3.5"/>
+          </g>
+        </g>
+        <g class="sky sky-night" transform="rotate(180 50 50)">
           <circle cx="50" cy="50" r="50" fill="url(#nightg)"/>
-          <circle cx="50" cy="36" r="20" fill="#e8eefc" fill-opacity=".12"/>
-          <path d="M58 36a14 14 0 1 1-14-14 11 11 0 0 0 14 14z" fill="#eef3ff"/>
+          <circle cx="50" cy="34" r="21" fill="#e8eefc" fill-opacity=".1"/>
+          <path d="M58 34a14 14 0 1 1-14-14 11 11 0 0 0 14 14z" fill="#eef3ff"/>
           <g fill="#eef3ff">
             <circle cx="22" cy="30" r="1.9"/><circle cx="78" cy="24" r="1.6"/>
-            <circle cx="30" cy="56" r="1.5"/><circle cx="72" cy="52" r="2"/>
-            <circle cx="16" cy="46" r="1.3"/><circle cx="60" cy="16" r="1.4"/>
+            <circle cx="28" cy="54" r="1.5"/><circle cx="74" cy="50" r="2"/>
+            <circle cx="16" cy="44" r="1.3"/><circle cx="62" cy="15" r="1.4"/>
+            <circle cx="40" cy="62" r="1.2"/>
           </g>
         </g>
       </svg></span>
@@ -1011,33 +1025,65 @@
         </defs>
         <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#spr)"/>
-          <path d="M0 62c14-7 26-7 34-3s20 5 34-1 22-4 32 1v45H0z" fill="#7cc47f"/>
-          <path d="M47 70V44" stroke="#6b4a2f" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="47" cy="36" r="13" fill="#f9a8d4"/><circle cx="37" cy="43" r="8" fill="#fbcfe8"/>
-          <circle cx="57" cy="43" r="8" fill="#fbcfe8"/><circle cx="70" cy="60" r="3" fill="#fbcfe8"/>
-          <circle cx="22" cy="55" r="2.4" fill="#fbcfe8"/>
+          <path d="M0 70c12-9 24-9 34-3s22 7 34 1 22-6 32-1v39H0z" fill="#8fd08c"/>
+          <path d="M0 80c14-6 26-5 38 0s26 4 38-2 18-3 24 0v28H0z" fill="#6bbd72"/>
+          <path d="M46 74V44" stroke="#7a5334" stroke-width="3.4" stroke-linecap="round"/>
+          <path d="M46 56l-8-6M46 62l8-6" stroke="#7a5334" stroke-width="2.2" stroke-linecap="round"/>
+          <g fill="#f9a8d4">
+            <circle cx="46" cy="34" r="11"/><circle cx="36" cy="41" r="8"/>
+            <circle cx="56" cy="41" r="8.5"/><circle cx="46" cy="44" r="8"/>
+          </g>
+          <g fill="#fbcfe8">
+            <circle cx="42" cy="31" r="3.4"/><circle cx="53" cy="36" r="2.6"/>
+            <circle cx="70" cy="52" r="2.4"/><circle cx="24" cy="46" r="2"/>
+            <circle cx="66" cy="30" r="1.8"/>
+          </g>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#sum)"/>
-          <circle cx="50" cy="26" r="13" fill="#fde047"/><circle cx="50" cy="26" r="19" fill="#fde047" fill-opacity=".3"/>
-          <path d="M0 64c16-6 28-6 36-2s20 4 32-2 22-3 32 2v42H0z" fill="#22a447"/>
-          <path d="M0 78c18-5 30-4 40 0s24 3 34-2 18-2 26 2v26H0z" fill="#15803d"/>
+          <circle cx="70" cy="26" r="18" fill="#fde047" fill-opacity=".22"/>
+          <circle cx="70" cy="26" r="11" fill="#fde047"/>
+          <path d="M0 68c12-9 24-9 34-3s22 7 34 1 22-6 32-1v41H0z" fill="#2fae52"/>
+          <path d="M0 79c14-6 26-5 38 0s26 4 38-2 18-3 24 0v29H0z" fill="#12803c"/>
+          <path d="M30 72V48" stroke="#5b3f26" stroke-width="3.4" stroke-linecap="round"/>
+          <g fill="#1e9d47">
+            <circle cx="30" cy="38" r="11"/><circle cx="21" cy="45" r="8"/>
+            <circle cx="39" cy="45" r="8.5"/>
+          </g>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#aut)"/>
-          <path d="M0 66c16-6 28-5 36-1s22 3 34-3 20-2 30 2v40H0z" fill="#b45309"/>
-          <path d="M52 74V48" stroke="#5b3a21" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="52" cy="40" r="13" fill="#ea580c"/><circle cx="42" cy="47" r="8" fill="#f97316"/>
-          <circle cx="62" cy="47" r="8" fill="#fb923c"/>
-          <path d="M22 44c4 2 5 6 3 9s-6 3-8 0 1-8 5-9z" fill="#ea580c"/>
-          <path d="M76 58c4 2 5 6 3 9s-6 3-8 0 1-8 5-9z" fill="#f97316"/>
+          <path d="M0 70c12-9 24-9 34-3s22 7 34 1 22-6 32-1v39H0z" fill="#c2751f"/>
+          <path d="M0 80c14-6 26-5 38 0s26 4 38-2 18-3 24 0v28H0z" fill="#96551a"/>
+          <path d="M52 74V44" stroke="#5b3a21" stroke-width="3.4" stroke-linecap="round"/>
+          <path d="M52 56l-8-6M52 62l8-6" stroke="#5b3a21" stroke-width="2.2" stroke-linecap="round"/>
+          <g fill="#e2620f">
+            <circle cx="52" cy="34" r="11"/><circle cx="42" cy="41" r="8"/>
+            <circle cx="62" cy="41" r="8.5"/>
+          </g>
+          <g fill="#f59e0b"><circle cx="47" cy="33" r="3"/><circle cx="58" cy="38" r="2.4"/></g>
+          <path d="M22 48c4 1.6 5 5.4 3 8s-6 2.6-8 0 1-7 5-8z" fill="#ea580c"/>
+          <path d="M78 40c4 1.6 5 5.4 3 8s-6 2.6-8 0 1-7 5-8z" fill="#f97316"/>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#win)"/>
-          <path d="M0 68c16-7 28-6 36-2s22 2 34-4 20-2 30 3v41H0z" fill="#ffffff"/>
-          <path d="M50 76V50m0-8V50m0 0-9-7m9 7 9-7" stroke="#6b7f93" stroke-width="3.4" stroke-linecap="round" fill="none"/>
-          <g fill="#ffffff"><circle cx="24" cy="30" r="2.6"/><circle cx="72" cy="24" r="2.2"/><circle cx="34" cy="52" r="2"/><circle cx="78" cy="46" r="2.4"/><circle cx="16" cy="46" r="1.8"/></g>
+          <path d="M0 72c12-9 24-9 34-3s22 7 34 1 22-6 32-1v37H0z" fill="#f4fbff"/>
+          <path d="M0 82c14-6 26-5 38 0s26 4 38-2 18-3 24 0v26H0z" fill="#dceaf6"/>
+          <g stroke="#8a6a4d" stroke-width="3.2" stroke-linecap="round" fill="none">
+            <path d="M50 76V38"/>
+          </g>
+          <g stroke="#8a6a4d" stroke-width="2.2" stroke-linecap="round" fill="none">
+            <path d="M50 52l-10-9M50 60l10-8M50 44l-7-7M50 46l8-7"/>
+          </g>
+          <g fill="#ffffff">
+            <circle cx="24" cy="30" r="2.6"/><circle cx="74" cy="26" r="2.2"/>
+            <circle cx="32" cy="52" r="2"/><circle cx="78" cy="46" r="2.4"/>
+            <circle cx="18" cy="44" r="1.8"/><circle cx="64" cy="58" r="1.9"/>
+          </g>
         </g>
+      </svg></span>
+    </cth-knob>
+    <code>the same button, four faces
       </svg></span>
     </cth-knob>
     <code>the same button, four faces —<br><code>states</code> walks the year round</code>
@@ -1055,36 +1101,56 @@
         </defs>
         <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#wc)"/>
-          <circle cx="50" cy="40" r="12.5" fill="#fde047"/>
+          <circle cx="50" cy="38" r="19" fill="#fde047" fill-opacity=".22"/>
+          <circle cx="50" cy="38" r="12" fill="#fde047"/>
           <g stroke="#fde047" stroke-width="3" stroke-linecap="round">
-            <path d="M50 20v-6M28 40h-6M72 40h6M34 24l-4-4M66 24l4-4M34 56l-4 4M66 56l4 4"/>
+            <path d="M50 19v-5M50 57v5M31 38h-5M69 38h5M36 24l-3.5-3.5M64 24l3.5-3.5M36 52l-3.5 3.5M64 52l3.5 3.5"/>
           </g>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#wo)"/>
-          <path d="M30 52a10 10 0 0 1 2-20 14 14 0 0 1 26 3 9 9 0 0 1-2 17z" fill="#ffffff"/>
-          <path d="M52 62a7 7 0 0 1 1-14 10 10 0 0 1 19 2 6 6 0 0 1-1 12z" fill="#e2e8f0"/>
+          <g fill="#e6edf5">
+            <circle cx="62" cy="34" r="8"/><circle cx="72" cy="39" r="7"/>
+            <rect x="56" y="36" width="24" height="9" rx="4.5"/>
+          </g>
+          <g fill="#ffffff">
+            <circle cx="36" cy="40" r="11"/><circle cx="50" cy="36" r="13"/>
+            <circle cx="61" cy="44" r="9"/><rect x="27" y="43" width="40" height="12" rx="6"/>
+          </g>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#wr)"/>
-          <path d="M30 46a10 10 0 0 1 2-20 14 14 0 0 1 26 3 9 9 0 0 1-2 17z" fill="#e8eef5"/>
-          <g stroke="#bfe0ff" stroke-width="3" stroke-linecap="round">
-            <path d="M34 52l-3 9M46 52l-3 11M58 52l-3 9"/>
+          <g fill="#e8eef5">
+            <circle cx="38" cy="34" r="10"/><circle cx="51" cy="30" r="12"/>
+            <circle cx="61" cy="37" r="8"/><rect x="30" y="34" width="38" height="11" rx="5.5"/>
+          </g>
+          <g fill="#8ec9ff">
+            <path d="M38 50c2.4 3.6 3.4 5.4 3.4 6.8a3.4 3.4 0 0 1-6.8 0c0-1.4 1-3.2 3.4-6.8z"/>
+            <path d="M50 54c2.4 3.6 3.4 5.4 3.4 6.8a3.4 3.4 0 0 1-6.8 0c0-1.4 1-3.2 3.4-6.8z"/>
+            <path d="M61 50c2.4 3.6 3.4 5.4 3.4 6.8a3.4 3.4 0 0 1-6.8 0c0-1.4 1-3.2 3.4-6.8z"/>
           </g>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#ws)"/>
-          <path d="M30 44a10 10 0 0 1 2-20 14 14 0 0 1 26 3 9 9 0 0 1-2 17z" fill="#5b5a86"/>
-          <path d="M48 44 38 62h8l-3 12 15-19h-8l5-11z" fill="#fde047"/>
+          <g fill="#5f5d8c">
+            <circle cx="38" cy="32" r="10"/><circle cx="51" cy="28" r="12"/>
+            <circle cx="61" cy="35" r="8"/><rect x="30" y="32" width="38" height="11" rx="5.5"/>
+          </g>
+          <path d="M50 42 40 60h7.5l-3 12 15-19h-8l5-11z" fill="#fde047"/>
+          <g fill="#8f8dc0"><circle cx="35" cy="54" r="2"/><circle cx="66" cy="52" r="1.8"/></g>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#ww)"/>
-          <g stroke="#0f766e" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity=".62">
-            <path d="M20 32h34a6 6 0 1 0-6-6"/>
-            <path d="M24 44h40a6 6 0 1 1-6 6"/>
-            <path d="M28 56h24"/>
+          <g stroke="#0f766e" stroke-width="3.2" stroke-linecap="round" fill="none" stroke-opacity=".6">
+            <path d="M22 30h30a6.5 6.5 0 1 0-6.5-6.5"/>
+            <path d="M26 43h36a6.5 6.5 0 1 1-6.5 6.5"/>
+            <path d="M30 56h20"/>
           </g>
+          <path d="M64 60c4-2 8-1 9 2s-2 6-6 5-4-5-3-7z" fill="#0f766e" fill-opacity=".45"/>
         </g>
+      </svg></span>
+    </cth-knob>
+    <code>and five more
       </svg></span>
     </cth-knob>
     <code>and five more — a face per<br>state, not a value per state</code>
