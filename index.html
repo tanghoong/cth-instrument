@@ -266,10 +266,45 @@
 
      The prefix is for weight, not for scope: the grid's own rule for
      cth-knob is (1,1,1) and an id alone would lose to it. */
-  #examples .tile #w-sky { --cth-size: 176px; }
+  #examples .tile #w-sky,
+  #examples .tile #w-season,
+  #examples .tile #w-weather { --cth-size: 176px; }
   #examples .tile #w-switch { --cth-size: 152px; }
   #examples .tile #ex-play { --cth-size: 184px; }
   #examples .tile .platter { --cth-size: 164px; }
+
+  /* ---- buttons whose face is the picture ------------------------------
+     A few of these are a picture with a dial round it rather than a dial
+     with a picture in it. The artwork is sized to the inside of the track
+     — the dial less the ring on both sides, which is exactly
+     (1 - thickness/50) of it, since thickness is a stroke width in a
+     100-unit box — so the artwork's edge lands exactly where the ring
+     starts and there is no seam between the two. The caption then sits on
+     the picture, so it is set in white with its own shadow. */
+  /* The slotted thing is a point, not a picture: a zero-size span, which the
+     element centres on the face exactly as it centres anything else. The
+     artwork then hangs off that point, so nothing out here has to know how
+     big the element decided the slot should be. */
+  /* The element lifts a small icon to make room for the caption beneath it.
+     A picture that IS the face does not step aside for its own caption, so
+     that lift is zeroed and the caption sits on the artwork. */
+  .face::part(center) { --icon-y: 0px; }
+  .face > .art { display: block; inline-size: 0; block-size: 0; position: relative; }
+  .face > .art > svg {
+    position: absolute; inset: 0 auto auto 0;
+    max-inline-size: none;
+    inline-size: calc(var(--cth-size) * (1 - var(--cth-thickness, 8) / 50));
+    translate: -50% -50%;
+  }
+  .face::part(label) {
+    color: #ffffff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .7), 0 0 2px rgba(0, 0, 0, .5);
+  }
+  /* One face at a time. [hidden] is an HTML attribute and the UA sheet does
+     not apply it to SVG, so the rule is written out here. The class is not
+     .scene: that belongs to the hero slider, which hides every .scene on the
+     page but the one it is showing. */
+  .faceset > g[hidden] { display: none; }
 
   /* The switch says its state in the middle in its own colour, which is
      the whole reading — so it carries no caption underneath. */
@@ -913,14 +948,14 @@
     <code><code>trend</code> — a price is two readings:<br>where it is and which way it went</code>
   </div>
   <div class="tile">
-    <cth-knob id="w-light" button readout="none" style="--cth-thickness:11"
+    <cth-knob id="w-light" button value="100" readout="none" style="--cth-thickness:11"
              states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cth-knob>
     <code><code>states</code> — press to advance.<br>A light is not a low value of green.</code>
   </div>
   <div class="tile">
-    <cth-knob id="w-sky" button toggle turn="180" value="100" readout="none"
+    <cth-knob id="w-sky" class="face" button toggle turn="180" value="100" readout="none"
              label="day" color="#fbbf24">
-      <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
+      <span slot="icon" class="art"><svg viewBox="0 0 100 100" aria-hidden="true">
         <defs><linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#38bdf8"/><stop offset=".34" stop-color="#a5dcfb"/>
           <stop offset=".5" stop-color="#fcd9a0"/><stop offset=".64" stop-color="#3f4a63"/>
@@ -934,9 +969,99 @@
         <circle cx="72" cy="83" r="1.2" fill="#e8eefc"/>
         <circle cx="38" cy="90" r="1" fill="#e8eefc"/>
         <circle cx="63" cy="93" r="1.3" fill="#e8eefc"/>
-      </svg>
+      </svg></span>
     </cth-knob>
     <code><code>turn="180"</code> — press and it<br>swings round to the other half</code>
+  </div>
+  <div class="tile">
+    <cth-knob id="w-season" class="face" button value="100" readout="none"
+             states="spring:#4ade80, summer:#f59e0b, autumn:#ea580c, winter:#7dd3fc">
+      <span slot="icon" class="art"><svg class="faceset" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <linearGradient id="spr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe4ff"/><stop offset="1" stop-color="#eaf7e2"/></linearGradient>
+          <linearGradient id="sum" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#bff0ff"/></linearGradient>
+          <linearGradient id="aut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c177"/><stop offset="1" stop-color="#f3ddb6"/></linearGradient>
+          <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fbcd6"/><stop offset="1" stop-color="#e8f2fa"/></linearGradient>
+        </defs>
+        <g data-scene>
+          <circle cx="50" cy="50" r="50" fill="url(#spr)"/>
+          <path d="M0 66c14-7 26-7 34-3s20 5 34-1 22-4 32 1v37H0z" fill="#7cc47f"/>
+          <path d="M47 70V44" stroke="#6b4a2f" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="47" cy="36" r="13" fill="#f9a8d4"/><circle cx="37" cy="43" r="8" fill="#fbcfe8"/>
+          <circle cx="57" cy="43" r="8" fill="#fbcfe8"/><circle cx="70" cy="60" r="3" fill="#fbcfe8"/>
+          <circle cx="22" cy="55" r="2.4" fill="#fbcfe8"/>
+        </g>
+        <g data-scene hidden>
+          <circle cx="50" cy="50" r="50" fill="url(#sum)"/>
+          <circle cx="50" cy="26" r="13" fill="#fde047"/><circle cx="50" cy="26" r="19" fill="#fde047" fill-opacity=".3"/>
+          <path d="M0 70c16-6 28-6 36-2s20 4 32-2 22-3 32 2v34H0z" fill="#22a447"/>
+          <path d="M0 82c18-5 30-4 40 0s24 3 34-2 18-2 26 2v20H0z" fill="#15803d"/>
+        </g>
+        <g data-scene hidden>
+          <circle cx="50" cy="50" r="50" fill="url(#aut)"/>
+          <path d="M0 72c16-6 28-5 36-1s22 3 34-3 20-2 30 2v32H0z" fill="#b45309"/>
+          <path d="M52 74V48" stroke="#5b3a21" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="52" cy="40" r="13" fill="#ea580c"/><circle cx="42" cy="47" r="8" fill="#f97316"/>
+          <circle cx="62" cy="47" r="8" fill="#fb923c"/>
+          <path d="M22 44c4 2 5 6 3 9s-6 3-8 0 1-8 5-9z" fill="#ea580c"/>
+          <path d="M76 58c4 2 5 6 3 9s-6 3-8 0 1-8 5-9z" fill="#f97316"/>
+        </g>
+        <g data-scene hidden>
+          <circle cx="50" cy="50" r="50" fill="url(#win)"/>
+          <path d="M0 74c16-7 28-6 36-2s22 2 34-4 20-2 30 3v33H0z" fill="#ffffff"/>
+          <path d="M50 76V50m0-8V50m0 0-9-7m9 7 9-7" stroke="#6b7f93" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+          <g fill="#ffffff"><circle cx="24" cy="30" r="2.6"/><circle cx="72" cy="24" r="2.2"/><circle cx="34" cy="52" r="2"/><circle cx="78" cy="46" r="2.4"/><circle cx="16" cy="46" r="1.8"/></g>
+        </g>
+      </svg></span>
+    </cth-knob>
+    <code>the same button, four faces —<br><code>states</code> walks the year round</code>
+  </div>
+  <div class="tile">
+    <cth-knob id="w-weather" class="face" button value="100" readout="none"
+             states="clear:#38bdf8, cloudy:#94a3b8, rain:#3b82f6, storm:#8b5cf6, wind:#14b8a6">
+      <span slot="icon" class="art"><svg class="faceset" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <linearGradient id="wc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#bae6fd"/></linearGradient>
+          <linearGradient id="wo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d94ab"/><stop offset="1" stop-color="#cfdae4"/></linearGradient>
+          <linearGradient id="wr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f5d80"/><stop offset="1" stop-color="#8ba7c2"/></linearGradient>
+          <linearGradient id="ws" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#221f43"/><stop offset="1" stop-color="#4c4a76"/></linearGradient>
+          <linearGradient id="ww" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5eead4"/><stop offset="1" stop-color="#dcfaf4"/></linearGradient>
+        </defs>
+        <g data-scene>
+          <circle cx="50" cy="50" r="50" fill="url(#wc)"/>
+          <circle cx="50" cy="46" r="16" fill="#fde047"/>
+          <g stroke="#fde047" stroke-width="3.6" stroke-linecap="round">
+            <path d="M50 20v-8M50 80v8M24 46h-8M76 46h8M32 28l-6-6M68 28l6-6M32 64l-6 6M68 64l6 6"/>
+          </g>
+        </g>
+        <g data-scene hidden>
+          <circle cx="50" cy="50" r="50" fill="url(#wo)"/>
+          <path d="M28 62a12 12 0 0 1 2-24 17 17 0 0 1 32 4 11 11 0 0 1-2 20z" fill="#ffffff"/>
+          <path d="M52 74a9 9 0 0 1 1-18 13 13 0 0 1 24 3 8 8 0 0 1-1 15z" fill="#e2e8f0"/>
+        </g>
+        <g data-scene hidden>
+          <circle cx="50" cy="50" r="50" fill="url(#wr)"/>
+          <path d="M28 56a12 12 0 0 1 2-24 17 17 0 0 1 32 4 11 11 0 0 1-2 20z" fill="#e8eef5"/>
+          <g stroke="#bfe0ff" stroke-width="3.4" stroke-linecap="round">
+            <path d="M32 64l-4 12M46 64l-4 14M60 64l-4 12"/>
+          </g>
+        </g>
+        <g data-scene hidden>
+          <circle cx="50" cy="50" r="50" fill="url(#ws)"/>
+          <path d="M28 54a12 12 0 0 1 2-24 17 17 0 0 1 32 4 11 11 0 0 1-2 20z" fill="#5b5a86"/>
+          <path d="M50 54 38 76h10l-4 16 18-24H50l6-14z" fill="#fde047"/>
+        </g>
+        <g data-scene hidden>
+          <circle cx="50" cy="50" r="50" fill="url(#ww)"/>
+          <g stroke="#0f766e" stroke-width="3.6" stroke-linecap="round" fill="none" stroke-opacity=".65">
+            <path d="M14 40h44a7 7 0 1 0-7-7"/>
+            <path d="M18 54h50a7 7 0 1 1-7 7"/>
+            <path d="M22 68h30"/>
+          </g>
+        </g>
+      </svg></span>
+    </cth-knob>
+    <code>and five more — a face per<br>state, not a value per state</code>
   </div>
   <div class="tile">
     <cth-knob value="2841" min="0" max="4000" readout="value" unit="kWh" label="meter"
@@ -977,9 +1102,9 @@
 <h3>Buttons, gas and voice</h3>
 <div class="tiles">
   <div class="tile wide">
-    <cth-knob id="ex-play" button toggle value="37" readout="none" label="Midnight City"
-             color="#16a34a">
-      <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
+    <cth-knob id="ex-play" class="face" button toggle spin="26" value="37" readout="none"
+             label="Midnight City" color="#16a34a">
+      <span slot="icon" class="art"><svg viewBox="0 0 100 100" aria-hidden="true">
         <defs><linearGradient id="artg" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stop-color="#1e3a8a"/><stop offset=".55" stop-color="#7e22ce"/>
           <stop offset="1" stop-color="#db2777"/>
@@ -987,8 +1112,8 @@
         <circle cx="50" cy="50" r="50" fill="url(#artg)"/>
         <circle cx="50" cy="50" r="30" fill="#0b1120" fill-opacity=".5"/>
         <path d="M43 36.5a1.7 1.7 0 0 1 2.6-1.44l18 12.9a1.9 1.9 0 0 1 0 3.1l-18 12.9A1.7 1.7 0 0 1 43 63.5z" fill="#ffffff"/>
-      </svg>
-      <svg slot="icon-on" viewBox="0 0 100 100" aria-hidden="true">
+      </svg></span>
+      <span slot="icon-on" class="art"><svg viewBox="0 0 100 100" aria-hidden="true">
         <defs><linearGradient id="artg-on" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stop-color="#1e3a8a"/><stop offset=".55" stop-color="#7e22ce"/>
           <stop offset="1" stop-color="#db2777"/>
@@ -997,7 +1122,7 @@
         <circle cx="50" cy="50" r="30" fill="#0b1120" fill-opacity=".5"/>
         <rect x="39" y="35" width="7.5" height="30" rx="3" fill="#ffffff"/>
         <rect x="53.5" y="35" width="7.5" height="30" rx="3" fill="#ffffff"/>
-      </svg>
+      </svg></span>
     </cth-knob>
     <code><code>button toggle</code> with two icon slots.<br>The ring is how far through the song you are.</code>
   </div>
@@ -2061,6 +2186,19 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
       // the sky is the whole control, so the tile behind it turns too
       sky.closest('.tile')?.classList.toggle('is-night', e.detail.pressed);
     });
+    // A face per state: one <g> per scene, one shown at a time. The element
+    // already advances the state and recolours the ring; all that is left
+    // out here is which picture goes with it.
+    for (const id of ['w-season', 'w-weather']) {
+      const k = document.getElementById(id);
+      if (!k) continue;
+      const faces = [...k.querySelectorAll('.faceset > g[data-scene]')];
+      k.addEventListener('cth-press', (e) => {
+        const at = e.detail.state ?? 0;
+        faces.forEach((g, i) => g.toggleAttribute('hidden', i !== at));
+      });
+    }
+
     const sw = document.getElementById('w-switch');
     if (sw) sw.addEventListener('cth-press', (e) => {
       sw.setAttribute('color', e.detail.pressed ? '#16a34a' : '#ef4444');
