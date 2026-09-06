@@ -139,9 +139,9 @@
     letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-3);
   }
   .scene-name { min-inline-size: 7ch; }
-  .yr-mid { text-align: center; line-height: 1.15; }
-  .yr-mid b { display: block; font-size: var(--fs-stat); letter-spacing: -0.02em; }
-  .yr-mid span { font-size: var(--fs-sm); color: var(--text-2); }
+  .yr-mid { text-align: center; line-height: 1.2; max-inline-size: 96px; }
+  .yr-mid b { display: block; font-size: 1.5rem; letter-spacing: -0.02em; line-height: 1.1; }
+  .yr-mid span { display: block; font-size: var(--fs-xs); color: var(--text-2); }
 
   /* ---------- section furniture ---------- */
   .sub { max-inline-size: 56ch; margin-block: var(--s-3) var(--s-8); color: var(--text-2); }
@@ -247,6 +247,14 @@
   @media (width >= 900px) { #examples .tile cth-knob { --cth-size: 128px; } }
   .tubes .tile { padding-block-start: var(--s-5); }
 
+  /* Three readings of one year, so they are drawn to one size and their
+     middles line up across the row. */
+  .tiles--year cth-heat { --cth-size: 128px; }
+  @media (width >= 560px) { .tiles--year cth-heat { --cth-size: 150px; } }
+  @media (width >= 900px) { .tiles--year cth-heat { --cth-size: 178px; } }
+  #ex-twelve { --cth-num-size: 27px; }
+  .yr-mid em { display: block; font-style: normal; font-size: 10px; color: var(--text-3); }
+
   /* Two strips and a ring belong on one line: the strips need the run, the
      ring only needs to be square. Four equal columns could not give them
      that, so this group sets its own. */
@@ -307,11 +315,13 @@
     color: #ffffff;
     text-shadow: 0 1px 4px rgba(0, 0, 0, .7), 0 0 2px rgba(0, 0, 0, .5);
   }
-  /* One face at a time. [hidden] is an HTML attribute and the UA sheet does
-     not apply it to SVG, so the rule is written out here. The class is not
-     .scene: that belongs to the hero slider, which hides every .scene on the
-     page but the one it is showing. */
-  .faceset > g[hidden] { display: none; }
+  /* One face at a time, and it changes over rather than cutting: display
+     cannot be transitioned, so the scenes stack and fade on a class. The
+     class is not .scene — that belongs to the hero slider, which hides
+     every .scene on the page but the one it is showing. */
+  .faceset > g { opacity: 0; transition: opacity 420ms linear; }
+  .faceset > g.on { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .faceset > g { transition: none; } }
 
   /* The switch says its state in the middle in its own colour, which is
      the whole reading — so it carries no caption underneath. */
@@ -970,15 +980,15 @@
     <cth-knob id="w-light" button value="100" readout="none" style="--cth-thickness:11"
              states="stop:#ef4444, go:#22c55e, wait:#f59e0b">
       <svg slot="icon" class="faceset" viewBox="0 0 48 48" aria-hidden="true">
-        <g data-scene>
+        <g data-scene class="on">
           <circle cx="24" cy="24" r="24" fill="#ef4444"/>
           <rect x="11" y="21" width="26" height="6" rx="3" fill="#ffffff"/>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="24" cy="24" r="24" fill="#22c55e"/>
           <path d="M24 11 36 25h-7.5v12h-9V25H12z" fill="#ffffff"/>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="24" cy="24" r="24" fill="#f59e0b"/>
           <path d="M15 11h18v6.5L26 24l7 6.5V37H15v-6.5L22 24l-7-6.5z" fill="#ffffff"/>
         </g>
@@ -1049,7 +1059,7 @@
           <linearGradient id="aut" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c177"/><stop offset="1" stop-color="#f3ddb6"/></linearGradient>
           <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fbcd6"/><stop offset="1" stop-color="#e8f2fa"/></linearGradient>
         </defs>
-        <g data-scene>
+        <g data-scene class="on">
           <circle cx="50" cy="50" r="50" fill="url(#spr)"/>
           <path d="M0 70c12-9 24-9 34-3s22 7 34 1 22-6 32-1v39H0z" fill="#8fd08c"/>
           <path d="M0 80c14-6 26-5 38 0s26 4 38-2 18-3 24 0v28H0z" fill="#6bbd72"/>
@@ -1065,7 +1075,7 @@
             <circle cx="66" cy="30" r="1.8"/>
           </g>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#sum)"/>
           <circle cx="70" cy="26" r="18" fill="#fde047" fill-opacity=".22"/>
           <circle cx="70" cy="26" r="11" fill="#fde047"/>
@@ -1077,7 +1087,7 @@
             <circle cx="39" cy="45" r="8.5"/>
           </g>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#aut)"/>
           <path d="M0 70c12-9 24-9 34-3s22 7 34 1 22-6 32-1v39H0z" fill="#c2751f"/>
           <path d="M0 80c14-6 26-5 38 0s26 4 38-2 18-3 24 0v28H0z" fill="#96551a"/>
@@ -1091,7 +1101,7 @@
           <path d="M22 48c4 1.6 5 5.4 3 8s-6 2.6-8 0 1-7 5-8z" fill="#ea580c"/>
           <path d="M78 40c4 1.6 5 5.4 3 8s-6 2.6-8 0 1-7 5-8z" fill="#f97316"/>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#win)"/>
           <path d="M0 72c12-9 24-9 34-3s22 7 34 1 22-6 32-1v37H0z" fill="#f4fbff"/>
           <path d="M0 82c14-6 26-5 38 0s26 4 38-2 18-3 24 0v26H0z" fill="#dceaf6"/>
@@ -1122,7 +1132,7 @@
           <linearGradient id="ws" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#221f43"/><stop offset="1" stop-color="#4c4a76"/></linearGradient>
           <linearGradient id="ww" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5eead4"/><stop offset="1" stop-color="#dcfaf4"/></linearGradient>
         </defs>
-        <g data-scene>
+        <g data-scene class="on">
           <circle cx="50" cy="50" r="50" fill="url(#wc)"/>
           <circle cx="50" cy="38" r="19" fill="#fde047" fill-opacity=".22"/>
           <circle cx="50" cy="38" r="12" fill="#fde047"/>
@@ -1130,7 +1140,7 @@
             <path d="M50 19v-5M50 57v5M31 38h-5M69 38h5M36 24l-3.5-3.5M64 24l3.5-3.5M36 52l-3.5 3.5M64 52l3.5 3.5"/>
           </g>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#wo)"/>
           <g fill="#e6edf5">
             <circle cx="62" cy="34" r="8"/><circle cx="72" cy="39" r="7"/>
@@ -1141,7 +1151,7 @@
             <circle cx="61" cy="44" r="9"/><rect x="27" y="43" width="40" height="12" rx="6"/>
           </g>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#wr)"/>
           <g fill="#e8eef5">
             <circle cx="38" cy="34" r="10"/><circle cx="51" cy="30" r="12"/>
@@ -1153,7 +1163,7 @@
             <path d="M61 50c2.4 3.6 3.4 5.4 3.4 6.8a3.4 3.4 0 0 1-6.8 0c0-1.4 1-3.2 3.4-6.8z"/>
           </g>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#ws)"/>
           <g fill="#5f5d8c">
             <circle cx="38" cy="32" r="10"/><circle cx="51" cy="28" r="12"/>
@@ -1162,7 +1172,7 @@
           <path d="M50 42 40 60h7.5l-3 12 15-19h-8l5-11z" fill="#fde047"/>
           <g fill="#8f8dc0"><circle cx="35" cy="54" r="2"/><circle cx="66" cy="52" r="1.8"/></g>
         </g>
-        <g data-scene hidden>
+        <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#ww)"/>
           <g stroke="#0f766e" stroke-width="3.2" stroke-linecap="round" fill="none" stroke-opacity=".6">
             <path d="M22 30h30a6.5 6.5 0 1 0-6.5-6.5"/>
@@ -1203,9 +1213,69 @@
   </div>
 </div>
 
-<h3>Buttons, gas and voice</h3>
+<h3>Gas — density where a level cannot go</h3>
 <div class="tiles">
+  <div class="tile">
+    <cth-knob gas value="26" readout="value" unit="ppm" label="CO₂" color="#a3e635"
+             style="--cth-gas:#a3e635"></cth-knob>
+    <code><code>gas</code> — liquid has a surface,<br>a gas only has density</code>
+  </div>
+  <div class="tile">
+    <cth-knob gas value="81" readout="value" unit="ppm" label="CO₂" color="#f87171"
+             style="--cth-gas:#f87171"></cth-knob>
+    <code>the same dial, thicker air</code>
+  </div>
+  <div class="tile">
+    <cth-knob gas interactive value="34" readout="value" unit="ppm" label="drag it"
+             color="#38bdf8" style="--cth-gas:#38bdf8"></cth-knob>
+    <code>the haze is an input too —<br>drag, or use the arrow keys</code>
+  </div>
+  <div class="tile">
+    <cth-knob id="ex-leak" gas min="0" max="120" value="18" readout="value" unit="ppm"
+             label="CO₂" benchmark="80" zones="80-120:#fee2e2" color="#f59e0b"
+             trend="0" trend-unit="ppm" style="--cth-gas:#f59e0b"></cth-knob>
+    <code>a leak building against its limit —<br>the band is the alarm, the delta the rate</code>
+  </div>
+</div>
+
+<h3>Voice — the dial listening</h3>
+<div class="tiles">
+  <div class="tile">
+    <cth-knob id="w-mic" button toggle value="0" readout="none" color="#ef4444"
+             aria-label="Microphone. Off. Press to listen." style="--cth-thickness:9">
+      <svg slot="icon" viewBox="0 0 48 48" fill="none" stroke="#94a3b8" stroke-width="3.6"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="18" y="6" width="12" height="21" rx="6"/>
+        <path d="M12 22a12 12 0 0 0 24 0M24 34v8M18 42h12"/>
+      </svg>
+      <svg slot="icon-on" viewBox="0 0 48 48" fill="none" stroke="#ef4444" stroke-width="3.6"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="18" y="6" width="12" height="21" rx="6" fill="#ef4444"/>
+        <path d="M12 22a12 12 0 0 0 24 0M24 34v8M18 42h12"/>
+      </svg>
+    </cth-knob>
+    <code>press to listen — the ring is the level<br>off your own microphone, not a simulation</code>
+  </div>
   <div class="tile wide">
+    <cth-trace id="ex-mic-wave" label="waveform" readout="none" grid
+              samples="240" style="--cth-trace:#ef4444;--cth-height:120px"></cth-trace>
+    <code>the same input as the dial beside it, drawn instead of measured:
+      <code>.push(v)</code> takes the samples straight off the analyser.</code>
+  </div>
+  <div class="tile">
+    <cth-knob id="ex-listen" value="0" readout="none" label="listening" color="#0ea5e9"
+             style="--cth-size:150px;--cth-thickness:6">
+      <cth-trace slot="inset" id="ex-voice" voice mirror pen="none" readout="none"
+                style="--cth-height:34px;--cth-trace:#0ea5e9;--cth-width:1.3"></cth-trace>
+    </cth-knob>
+    <code>the same trace inside a dial, and the ring following its <code>.level</code>.
+      It talks to itself until the microphone is on, and then it is you.
+      <span id="ex-voice-state">silent</span></code>
+  </div>
+</div>
+<h3>The dial as a record player</h3>
+<div class="tiles">
+  <div class="tile">
     <cth-knob id="ex-play" class="face" button toggle spin="26" value="37" readout="none"
              label="Midnight City" color="#16a34a">
       <span slot="icon" class="art"><svg viewBox="0 0 100 100" aria-hidden="true">
@@ -1230,30 +1300,6 @@
     </cth-knob>
     <code><code>button toggle</code> with two icon slots.<br>The ring is how far through the song you are.</code>
   </div>
-  <div class="tile">
-    <cth-knob gas value="26" readout="value" unit="ppm" label="CO₂" color="#a3e635"
-             style="--cth-gas:#a3e635"></cth-knob>
-    <code><code>gas</code> — liquid has a surface,<br>a gas only has density</code>
-  </div>
-  <div class="tile">
-    <cth-knob gas value="81" readout="value" unit="ppm" label="CO₂" color="#f87171"
-             style="--cth-gas:#f87171"></cth-knob>
-    <code>the same dial, thicker air</code>
-  </div>
-  <div class="tile wide">
-    <cth-knob id="ex-listen" value="0" readout="none" label="listening" color="#0ea5e9"
-             style="--cth-size:150px;--cth-thickness:6">
-      <cth-trace slot="inset" id="ex-voice" voice mirror pen="none"
-                style="--cth-height:34px;--cth-trace:#0ea5e9;--cth-width:1.3"></cth-trace>
-    </cth-knob>
-    <code>a voice inside the dial: it jumps while someone is talking and lies flat
-      while nobody is, and the ring follows <code>.level</code>.
-      <span id="ex-voice-state">silent</span></code>
-  </div>
-</div>
-
-<h3>The dial as a turntable</h3>
-<div class="tiles">
   <div class="tile wide">
     <cth-knob id="ex-vinyl" button toggle spin="33" value="21" readout="none" label="Blue Train"
              color="#e0b04a" style="--cth-size:170px;--cth-thickness:5">
@@ -1357,22 +1403,31 @@
 </div>
 
 <h3>&lt;cth-heat shape="bars"&gt; — a year you can read like a skyline</h3>
-<div class="tiles">
+<div class="tiles tiles--year">
   <div class="tile wide">
     <cth-heat id="ex-year" shape="bars" readout="none" scale="#22c55e" interactive
-             labels="Dec,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov"
-             style="--cth-size:212px">
+             labels="Dec,Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov">
       <div slot="center" class="yr-mid">
-        <b>2025</b><span id="ex-year-total">—</span>
+        <b>2025</b><span id="ex-year-total">—</span><em id="ex-year-avg">—</em>
       </div>
     </cth-heat>
     <code id="ex-year-cap">365 days round one ring</code>
   </div>
   <div class="tile">
-    <cth-heat shape="bars" label="monthly average" unit="mm" decimals="0" scale="#22c55e"
-             style="--cth-size:150px;--cth-gap:.3"
-             values="42,38,55,71,96,120,141,133,101,74,52,45"></cth-heat>
-    <code>the same thing with twelve</code>
+    <cth-heat id="ex-month" shape="bars" readout="none" scale="#22c55e" interactive
+             labels="1,,,,,6,,,,,11,,,,,16,,,,,21,,,,,26,,,,,31"
+             style="--cth-gap:.28">
+      <div slot="center" class="yr-mid">
+        <b>Oct</b><span id="ex-month-total">—</span><em id="ex-month-avg">—</em>
+      </div>
+    </cth-heat>
+    <code>thirty-one of those days, at the height of the season</code>
+  </div>
+  <div class="tile">
+    <cth-heat id="ex-twelve" shape="bars" readout="sum" label="the year" decimals="0"
+             scale="#22c55e" interactive style="--cth-gap:.3"
+             labels="J,F,M,A,M,J,J,A,S,O,N,D"></cth-heat>
+    <code>and the twelve totals they add up to</code>
   </div>
 </div>
 
@@ -2216,6 +2271,10 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
       state.textContent = e.detail.speaking ? 'speaking' : 'silent';
     });
   }
+  // .level is written by the built-in talker only, so a trace being fed real
+  // samples reports zero. While the microphone is on, the dial is driven from
+  // the microphone instead and this flag keeps the two from fighting.
+  let micLive = false;
   const listen = document.getElementById('ex-listen');
   const listenTrace = listen?.querySelector('cth-trace');
 
@@ -2299,7 +2358,7 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
       const faces = [...k.querySelectorAll('.faceset > g[data-scene]')];
       k.addEventListener('cth-press', (e) => {
         const at = e.detail.state ?? 0;
-        faces.forEach((g, i) => g.toggleAttribute('hidden', i !== at));
+        faces.forEach((g, i) => g.classList.toggle('on', i === at));
       });
     }
 
@@ -2309,6 +2368,114 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
     if (step) step.addEventListener('cth-press', (e) => {
       step.setAttribute('value', String(e.detail.state ?? 0));
     });
+
+    // ---- the microphone -------------------------------------------------
+    // The voice dial above it is a simulation. This one is the real level off
+    // the machine's own input: the analyser reads amplitude in the page and
+    // the number goes straight onto the ring. Nothing is recorded, nothing
+    // leaves the page, and the track is stopped the moment it is switched off
+    // so the browser's recording indicator goes out with it.
+    // One stream, read by everything that wants it. Opening it once per
+    // demo would mean a permission prompt and a recording indicator each,
+    // for one microphone. Nothing is recorded and nothing leaves the page;
+    // the tracks are stopped the moment the last reader lets go, so the
+    // browser's indicator goes out with them.
+    const readers = new Set();
+    let stream = null, audio = null, analyser = null, buf = null, frame = 0;
+    const pump = () => {
+      analyser.getFloatTimeDomainData(buf);
+      let sum = 0;
+      for (const v of buf) sum += v * v;
+      const rms = Math.sqrt(sum / buf.length);
+      for (const read of readers) read(rms, buf);
+      frame = requestAnimationFrame(pump);
+    };
+    const openMic = async (read) => {
+      readers.add(read);
+      if (stream) return true;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch {
+        // refused, or no input, or an insecure context
+        readers.delete(read);
+        return false;
+      }
+      audio = new (window.AudioContext ?? window.webkitAudioContext)();
+      analyser = audio.createAnalyser();
+      analyser.fftSize = 1024;
+      audio.createMediaStreamSource(stream).connect(analyser);
+      buf = new Float32Array(analyser.fftSize);
+      pump();
+      return true;
+    };
+    const closeMic = (read) => {
+      readers.delete(read);
+      if (readers.size) return;
+      cancelAnimationFrame(frame);
+      stream?.getTracks().forEach((t) => t.stop());
+      audio?.close();
+      stream = audio = analyser = buf = null;
+    };
+
+    const mic = document.getElementById('w-mic');
+    const wave = document.getElementById('ex-mic-wave');
+    if (mic) {
+      let level = 0;
+      // Two readings of one input: the dial measures it, the trace draws it.
+      const inset = document.getElementById('ex-voice');
+      const read = (rms, samples) => {
+        const now = Math.min(100, rms * 340);
+        // fast up, slow down — the ballistics a level meter is read with
+        level = now > level ? now : level * 0.86 + now * 0.14;
+        mic.setAttribute('value', level.toFixed(1));
+        // a handful of the actual samples, not the envelope of them
+        for (let i = 0; i < samples.length; i += 96) {
+          const v = 50 + Math.max(-50, Math.min(50, samples[i] * 260));
+          wave?.push(v);
+          inset?.push(v);
+        }
+        listen?.setAttribute('value', level.toFixed(1));
+      };
+      mic.addEventListener('cth-press', async (e) => {
+        if (!e.detail.pressed) {
+          closeMic(read);
+          micLive = false;
+          level = 0;
+          mic.setAttribute('value', '0');
+          mic.setAttribute('aria-label', 'Microphone. Off. Press to listen.');
+          wave?.clear();
+          // the dial goes back to talking to itself
+          inset?.setAttribute('voice', '');
+          return;
+        }
+        if (!await openMic(read)) return void (mic.pressed = false);
+        micLive = true;
+        mic.setAttribute('aria-label', 'Microphone. Listening. Press to stop.');
+        // a trace cannot be fed and self-driving at once: the built-in
+        // talker stands down while there is a real voice to draw
+        inset?.removeAttribute('voice');
+        inset?.clear();
+      });
+    }
+
+    // A leak builds, trips its limit, is vented, and starts again.
+    const leak = document.getElementById('ex-leak');
+    if (leak) {
+      let ppm = 18, rising = true, last = 0;
+      const climb = (now) => {
+        if (now - last >= 260) {
+          last = now;
+          const step = rising ? 1.6 + Math.random() * 1.4 : -4.5;
+          ppm = Math.max(14, Math.min(112, ppm + step));
+          if (ppm > 104) rising = false;
+          if (ppm < 20) rising = true;
+          leak.setAttribute('value', ppm.toFixed(0));
+          leak.setAttribute('trend', (step * 4).toFixed(1));
+        }
+        requestAnimationFrame(climb);
+      };
+      requestAnimationFrame(climb);
+    }
 
     const sw = document.getElementById('w-switch');
     if (sw) sw.addEventListener('cth-press', (e) => {
@@ -2340,10 +2507,28 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
       });
       yearRing.values = days;
       const active = days.filter((x) => x > 0).length;
-      const total = document.getElementById('ex-year-total');
-      const cap = document.getElementById('ex-year-cap');
-      if (total) total.textContent = days.reduce((a, b) => a + b, 0).toLocaleString();
-      if (cap) cap.textContent = active + ' active days · peak ' + Math.max(...days) + ' in a day';
+      const sum = (a) => a.reduce((x, y) => x + y, 0);
+      const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+      set('ex-year-total', sum(days).toLocaleString());
+      set('ex-year-avg', 'avg ' + (sum(days) / active).toFixed(1));
+      set('ex-year-cap', active + ' active days · peak ' + Math.max(...days)
+        + ' · ' + (sum(days) / 365).toFixed(1) + ' a day across the year');
+
+      // The other two are windows onto the same series rather than data of
+      // their own: one month of it, and the twelve totals it adds up to.
+      const monthRing = document.getElementById('ex-month');
+      if (monthRing) {
+        const oct = days.slice(273, 304);
+        monthRing.values = oct;
+        set('ex-month-total', sum(oct).toLocaleString());
+        set('ex-month-avg', oct.filter((x) => x > 0).length + ' of 31');
+      }
+      const twelve = document.getElementById('ex-twelve');
+      if (twelve) {
+        const lengths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        let at = 0;
+        twelve.values = lengths.map((n) => { const m = sum(days.slice(at, at + n)); at += n; return m; });
+      }
     }
     const week = document.getElementById('ex-heat-week');
     if (week) {
@@ -2505,7 +2690,7 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
 
     // the ring reads the trace's own envelope, which is the whole reason
     // .level exists rather than making everyone sample the buffer themselves
-    if (listen && listenTrace) listen.value = (listenTrace.level * 100).toFixed(1);
+    if (listen && listenTrace && !micLive) listen.value = (listenTrace.level * 100).toFixed(1);
 
     // a resting heart rate is never a constant, and pulse="auto" has nothing to
     // show off if the number never moves
