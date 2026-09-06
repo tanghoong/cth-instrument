@@ -89,6 +89,25 @@ and dimmed the background while the line still crossed the digits.
 
 ---
 
+## The lab, page by page
+
+Every dashboard already had its own palette. This pass gives each one the
+furniture of the thing it is actually depicting — a cockpit gets a cockpit,
+not a blue-tinted grid of the same dials. Deliberately inconsistent between
+pages: the shared framework is `panel.js`, the character is per page.
+
+Done, and what it got:
+
+| Page | Treatment |
+| --- | --- |
+| `gundam` | A linear seat: panoramic band of attitude + Minovsky scope + psycommu waveform above the gauges, armour plates notched at two corners, scanlines and a glass vignette over the lot, a caution lamp that only exists when there is something to say, and a mobile-suit head where an emoji was. |
+
+Not started: aviation, alien, body, business, charm, countries, emotion,
+ferrari, food, futuristic, jobs, kitchen, lifeos, malaysia, micro,
+money, nuclear, population, religions, resources, salary, server, singapore,
+spacex, steampunk, stocks, submarine, war, worldclock.
+---
+
 ## Next
 
 Nothing here is started.
