@@ -316,9 +316,13 @@
   /* The switch says its state in the middle in its own colour, which is
      the whole reading — so it carries no caption underneath. */
   #w-switch > span {
-    font-family: var(--font-mono); font-size: 30px; font-weight: 700;
+    font-family: var(--font-mono); font-size: 21px; font-weight: 700;
     letter-spacing: .04em; line-height: 1;
   }
+  /* A states dial lights a lamp in the middle when nothing is slotted there.
+     On a detent selector the needle and the graduations are the reading, and
+     a lamp behind them is one thing too many. */
+  #w-step::part(lamp) { display: none; }
   #w-switch > .sw-off { color: #ef4444; }
   #w-switch > .sw-on { color: #16a34a; }
   .tile { transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease); }
@@ -964,8 +968,30 @@
   </div>
   <div class="tile">
     <cth-knob id="w-light" button value="100" readout="none" style="--cth-thickness:11"
-             states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cth-knob>
+             states="stop:#ef4444, go:#22c55e, wait:#f59e0b">
+      <svg slot="icon" class="faceset" viewBox="0 0 48 48" aria-hidden="true">
+        <g data-scene>
+          <circle cx="24" cy="24" r="24" fill="#ef4444"/>
+          <rect x="11" y="21" width="26" height="6" rx="3" fill="#ffffff"/>
+        </g>
+        <g data-scene hidden>
+          <circle cx="24" cy="24" r="24" fill="#22c55e"/>
+          <path d="M24 11 36 25h-7.5v12h-9V25H12z" fill="#ffffff"/>
+        </g>
+        <g data-scene hidden>
+          <circle cx="24" cy="24" r="24" fill="#f59e0b"/>
+          <path d="M15 11h18v6.5L26 24l7 6.5V37H15v-6.5L22 24l-7-6.5z" fill="#ffffff"/>
+        </g>
+      </svg>
+    </cth-knob>
     <code><code>states</code> — press to advance.<br>A light is not a low value of green.</code>
+  </div>
+  <div class="tile">
+    <cth-knob id="w-step" button sweep="270" ticks="5" tick-major="5" needle
+             min="0" max="5" value="0" readout="none"
+             states="off:#94a3b8, low:#4ade80, 2:#4ade80, 3:#f59e0b, 4:#f97316, high:#ef4444">
+    </cth-knob>
+    <code>six detents — the needle clicks<br>round one graduation a press</code>
   </div>
   <div class="tile">
     <cth-knob id="w-sky" class="face" button toggle turn="180" value="100" readout="none"
@@ -1083,9 +1109,6 @@
         </g>
       </svg></span>
     </cth-knob>
-    <code>the same button, four faces
-      </svg></span>
-    </cth-knob>
     <code>the same button, four faces —<br><code>states</code> walks the year round</code>
   </div>
   <div class="tile">
@@ -1148,9 +1171,6 @@
           </g>
           <path d="M64 60c4-2 8-1 9 2s-2 6-6 5-4-5-3-7z" fill="#0f766e" fill-opacity=".45"/>
         </g>
-      </svg></span>
-    </cth-knob>
-    <code>and five more
       </svg></span>
     </cth-knob>
     <code>and five more — a face per<br>state, not a value per state</code>
@@ -2273,7 +2293,7 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
     // A face per state: one <g> per scene, one shown at a time. The element
     // already advances the state and recolours the ring; all that is left
     // out here is which picture goes with it.
-    for (const id of ['w-season', 'w-weather']) {
+    for (const id of ['w-season', 'w-weather', 'w-light']) {
       const k = document.getElementById(id);
       if (!k) continue;
       const faces = [...k.querySelectorAll('.faceset > g[data-scene]')];
@@ -2282,6 +2302,13 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
         faces.forEach((g, i) => g.toggleAttribute('hidden', i !== at));
       });
     }
+
+    // The element advances the state and recolours the ring; the needle is
+    // the page's job, because a detent is a position as well as a name.
+    const step = document.getElementById('w-step');
+    if (step) step.addEventListener('cth-press', (e) => {
+      step.setAttribute('value', String(e.detail.state ?? 0));
+    });
 
     const sw = document.getElementById('w-switch');
     if (sw) sw.addEventListener('cth-press', (e) => {
