@@ -18,46 +18,72 @@
     --cell-shadow: inset 0 0 0 1px rgba(53,201,255,.06);
   }
   body { background-size: auto, 40px 40px, 40px 40px; }
-  h1 { color: var(--a1); }
-  /* cockpit HUD brackets on every readout */
-  .cell::before, .cell::after {
-    content: ''; position: absolute; width: 10px; height: 10px; pointer-events: none;
-    border: 1px solid var(--a1); opacity: .5;
-  }
-  .cell::before { top: 3px; left: 3px; border-right: 0; border-bottom: 0; }
-  .cell::after { bottom: 3px; right: 3px; border-left: 0; border-top: 0; }
+  h1 { color: var(--a1); padding-left: .5rem; border-left: 3px solid var(--a1); }
   cth-knob::part(value) { filter: drop-shadow(0 0 4px currentColor); }
 
-  /* ---- the linear seat -----------------------------------------------
+  /* ---- the linear seat ---------------------------------------------------
      A mobile suit cockpit is a sphere of screen: the pilot sits inside the
-     view and the instruments are bevelled into the wall around it. Three
-     things carry that here — the panoramic band across the top, the notch
-     cut off every panel, and the scanlines the whole wall is drawn on. */
+     view with the instruments bevelled into the wall around it. The suit
+     itself is the thing in the middle, big, because it is what the sortie is
+     about — everything else is arranged in reading order around it. */
 
-  /* Plates are cut, not rounded. Two opposite corners come off, which is
-     what makes a panel read as armour rather than as a card. */
+  /* Plates are cut, not rounded. Two opposite corners come off, which is what
+     makes a panel read as armour rather than as a card. */
   .cell {
     clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px),
                        calc(100% - 13px) 100%, 0 100%, 0 13px);
   }
+  .cell::before, .cell::after {
+    content: ''; position: absolute; width: 10px; height: 10px; pointer-events: none;
+    border: 1px solid var(--a1); opacity: .5;
+  }
   .cell::before { top: 3px; left: 16px; border-right: 0; border-bottom: 0; }
   .cell::after  { bottom: 3px; right: 16px; border-left: 0; border-top: 0; }
 
-  /* The panoramic band: the outside, across the top of the wall. Attitude
-     at the left where a pilot looks first, the scope beside it, and the
-     psycommu trace given the width because a waveform needs run. */
-  .row.pano { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2.2fr); }
-  .row.pano .cell { background: #04080f; }
-  .row.pano cth-horizon { --cthh-size: 162px; }
-  .row.pano cth-radar { --cthr-size: 162px; }
-  .row.pano cth-trace {
-    --cth-height: 162px; --cth-trace: var(--a1); --cth-grid: rgba(53,201,255,.16);
-    --cth-face: transparent;
+  /* Attitude left, the suit centre and large, the scope right — but only
+     once there is width for three. Below that panel.css auto-fits them. */
+  @media (min-width: 900px) {
+    .row.main { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr); }
+    .row.crew { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr); }
   }
+  .row.main .cell { background: #04080f; }
+  .row.main cth-horizon { --cthh-size: min(27vh, 260px); }
+  .row.main cth-radar { --cthr-size: min(27vh, 260px); }
 
-  /* Scanlines and the curve of the glass. Static: a cockpit does not need
-     a flicker, and an animated overlay under everything is a tax on every
-     frame the dials are already paying for. */
+  /* The pilot's own band, under the suit. */
+  .row.crew cth-trace {
+    --cth-height: min(15vh, 140px); --cth-trace: #ff5c5c;
+    --cth-grid: rgba(255, 92, 92, .14); --cth-face: transparent; --cth-pen: #ff9aa0;
+  }
+  .vitals-line {
+    margin-top: .2rem; font-size: 10px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--dim);
+  }
+  .vitals-line b { color: var(--a2); font-weight: 600; }
+  .vitals-line b.strained { color: var(--a3); }
+  .vitals-line b.critical { color: var(--a4); }
+
+  /* ---- the frame ---------------------------------------------------------
+     Armour sections take their colour from their own integrity; the joints,
+     vents and the cockpit hatch are drawn in the panel's own edge colour so
+     they read as detail rather than as another reading. */
+  .mech { block-size: min(32vh, 320px); inline-size: auto; }
+  .mech [data-part] {
+    fill: currentColor; fill-opacity: .22;
+    stroke: currentColor; stroke-width: 1.5;
+    stroke-linejoin: round;
+    transition: color .3s linear, fill-opacity .3s linear;
+  }
+  .mech .frame-line { fill: none; stroke: var(--edge); stroke-width: 1.1; }
+  .mech .lens { fill: var(--a1); fill-opacity: .5; stroke: none; }
+  /* Held equipment carries no integrity, so it never takes a damage
+     colour — it is drawn as hardware and left alone. */
+  .mech .gear { fill: #0b1c30; stroke: var(--a1); stroke-width: 1.1;
+                stroke-linejoin: round; opacity: .82; }
+
+  /* Scanlines and the curve of the glass. Static: a cockpit does not need a
+     flicker, and an animated overlay under everything is a tax on every frame
+     the dials are already paying for. */
   body::after {
     content: ''; position: fixed; inset: 0; z-index: 5; pointer-events: none;
     background:
@@ -68,7 +94,7 @@
   /* The caution lamp only exists when there is something to say. */
   .strip .flag > span:not(:empty) {
     display: inline-block; padding: .1rem .45rem;
-    border: 1px solid currentColor; color: var(--a4, #ff5c5c);
+    border: 1px solid currentColor; color: var(--a4);
     text-shadow: 0 0 8px currentColor;
     animation: caution 1.1s steps(2, end) infinite;
   }
@@ -76,44 +102,14 @@
   @media (prefers-reduced-motion: reduce) {
     .strip .flag > span:not(:empty) { animation: none; }
   }
-
-  h1 { padding-left: .5rem; border-left: 3px solid var(--a1); }
-
-  /* The middle of the wall is the suit itself: reactor on the left, the
-     frame in the centre where a pilot glances for damage, the pilot's own
-     trace on the right. */
-  .row.frame { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1.1fr); }
-
-  .mech { inline-size: auto; block-size: 188px; }
-  /* Each section is filled from its own integrity, so the whole silhouette
-     is readable at a glance and the eight dials below are the detail. */
-  .mech [data-part] {
-    fill: currentColor; fill-opacity: .22;
-    stroke: currentColor; stroke-width: 1.6;
-    stroke-linejoin: round;
-    transition: color .3s linear, fill-opacity .3s linear;
-  }
-  .mech .frame-line { fill: none; stroke: var(--edge); stroke-width: 1; }
-
-  .row.frame cth-trace {
-    --cth-height: 132px; --cth-trace: #ff5c5c; --cth-grid: rgba(255, 92, 92, .14);
-    --cth-face: transparent; --cth-pen: #ff9aa0;
-  }
-  .vitals-line {
-    margin-top: .25rem; font-size: 10px; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--dim);
-  }
-  .vitals-line b { color: var(--a2); font-weight: 600; }
-  .vitals-line b.strained { color: var(--a3); }
-  .vitals-line b.critical { color: #ff5c5c; }
 </style>
 </head>
 <body>
 <script type="module">
   import { buildPanel, wave, clamp } from './panel.js';
-import '../src/cth-horizon.js';
-import '../src/cth-radar.js';
-import '../src/cth-trace.js';
+  import '../src/cth-horizon.js';
+  import '../src/cth-radar.js';
+  import '../src/cth-trace.js';
 
   const LIMBS = [
     ['head', '#35c9ff'], ['torso', '#35c9ff'], ['l-arm', '#64e37a'], ['r-arm', '#64e37a'],
@@ -132,24 +128,27 @@ import '../src/cth-trace.js';
       { id: 'alert', flag: true, value: '' },
     ],
     rows: [
-      // The band the pilot actually flies on. None of these three are dials,
-      // which is the point: a cockpit is a view first and a gauge second.
+      // Where the pilot looks first: how the suit is lying, what it is, and
+      // what is around it. The silhouette is inserted between these two.
       {
-        size: 'lg', items: [
+        size: 'lg', flex: '2.4', items: [
           { id: 'att', tag: 'cth-horizon', cap: 'Attitude · linear seat' },
-          { id: 'scope', tag: 'cth-radar', cap: 'Minovsky scope' },
-          { id: 'wave', tag: 'cth-trace', cap: 'Psycommu waveform' },
+          { id: 'scope', tag: 'cth-radar', cap: 'Minovsky scope · contacts' },
         ],
       },
+      // The pilot's own band.
       {
-        size: 'lg', items: [
+        size: 'lg', flex: '1', items: [
           { id: 'reactor', cap: 'Fusion output', min: 0, max: 120, sweep: 270, readout: 'value',
             decimals: 1, ticks: 12, tickMajor: 6, label: '% rated', color: 'var(--a1)',
             zones: '100-110:#4a3d10, 110-120:#4a1a1a', benchmark: 100 },
-          // the silhouette is inserted here once the row exists
           { id: 'vitals', tag: 'cth-trace', cap: 'Pilot vitals' },
+          { id: 'beam', cap: 'Beam charge', min: 0, max: 100, sweep: 270, readout: 'value',
+            ticks: 10, tickMajor: 5, label: '%', color: 'var(--a1)', benchmark: 80,
+            zones: '0-25:#4a1a1a' },
         ],
       },
+      // The eight numbers behind the silhouette.
       {
         size: 'sm',
         items: LIMBS.map(([name, color]) => ({
@@ -157,13 +156,11 @@ import '../src/cth-trace.js';
           ticks: 10, tickMajor: 5, label: '%', color, zones: '0-25:#4a1a1a',
         })),
       },
+      // Everything that is a quantity rather than a state.
       {
         size: 'md', items: [
           { id: 'thrust', cap: 'Thruster vector', min: 0, max: 100, sweep: 270, readout: 'value',
             ticks: 10, tickMajor: 5, label: '%', color: 'var(--a3)' },
-          { id: 'beam', cap: 'Beam charge', min: 0, max: 100, sweep: 270, readout: 'value',
-            ticks: 10, tickMajor: 5, label: '%', color: 'var(--a1)', benchmark: 80,
-            zones: '0-25:#4a1a1a' },
           { id: 'propellant', cap: 'Propellant', min: 0, max: 100, sweep: 270, readout: 'value',
             ticks: 10, tickMajor: 5, label: '%', color: 'var(--a2)', zones: '0-15:#4a1a1a' },
           { id: 'gforce', cap: 'Pilot g-load', min: 0, max: 12, sweep: 270, readout: 'value',
@@ -179,16 +176,15 @@ import '../src/cth-trace.js';
           { id: 'vulcan', cap: 'Head vulcan', min: 0, max: 60, sweep: 270, readout: 'value',
             ticks: 6, tickMajor: 3, label: 'rds', color: 'var(--a3)' },
           { id: 'radar', cap: 'Minovsky density', min: 0, max: 100, sweep: 270, readout: 'value',
-            ticks: 10, tickMajor: 5, label: '%', color: 'var(--a4)',
-            zones: '70-100:#4a3d10' },
+            ticks: 10, tickMajor: 5, label: '%', color: 'var(--a4)', zones: '70-100:#4a3d10' },
           { id: 'contacts', cap: 'Contacts', min: 0, max: 24, sweep: 360, readout: 'value',
             ticks: 24, tickMajor: 6, label: 'bogeys', color: 'var(--a4)' },
         ],
       },
     ],
 
-    // a sortie on a loop: three engagements, each of which spikes thrust, heat and
-    // g-load together and eats propellant, ammunition and armour
+    // A sortie on a loop: three engagements, each of which spikes thrust, heat
+    // and g-load together and eats propellant, ammunition and armour.
     tick(t, set) {
       const CYCLE = 96;
       const u = t % CYCLE;
@@ -199,6 +195,7 @@ import '../src/cth-trace.js';
 
       const thrust = 18 + intensity * 78;
       const heat = 22 + intensity * 68;
+      const contacts = Math.round(intensity * 18 + 2);
 
       set('reactor', 62 + intensity * 46, 1);
       set('thrust', thrust);
@@ -210,45 +207,17 @@ import '../src/cth-trace.js';
       set('ammo', Math.max(0, Math.round(20 - (u / CYCLE) * 17)));
       set('vulcan', Math.max(0, Math.round(60 - (u / CYCLE) * 44)));
       set('radar', 34 + intensity * 52);
-      const contacts = Math.round(intensity * 18 + 2);
       set('contacts', contacts);
 
       const damage = (u / CYCLE) * 34;
       LIMBS.forEach(([name], i) => {
         set(name, clamp(100 - damage * (0.5 + (i % 4) * 0.42) - wave(t, 13 + i, 6, i), 0, 100));
       });
+
       // The silhouette reads the same eight numbers the dials below do.
       paintFrame(LIMBS.map(([name]) => [name, +(set.knob(name)?.getAttribute('value') ?? 100)]));
 
-      // The pilot. A linear seat takes the g-load straight into the spine,
-      // so the heart follows the manoeuvre and the condition follows the g.
-      const g = 1 + intensity * 9.4;
-      const bpm = Math.round(64 + intensity * 74 + g * 2.2);
-      if (vitals && vitals.getAttribute('beat') !== String(bpm)) {
-        vitals.setAttribute('beat', bpm);
-      }
-      if (bpmEl) bpmEl.textContent = bpm + ' bpm';
-      const cond = g > 8.2 ? ['GREY-OUT RISK', 'critical']
-        : g > 5.4 ? ['STRAINED', 'strained'] : ['STABLE', ''];
-      if (condEl && condEl.textContent !== cond[0]) {
-        condEl.textContent = cond[0];
-        condEl.className = cond[1];
-      }
-      set.text('pilot', bpm + ' bpm · ' + cond[0].toLowerCase());
-
-      // Where they are coming from, not just how many.
-      const near = (0.3 + (1 - intensity) * 1.9).toFixed(1);
-      set.text('threat', contacts + ' contacts · nearest ' + near + ' km');
-
-      set.text('state', intensity > 0.5 ? 'ENGAGED' : 'SORTIE');
-      set.text('gen', (62 + intensity * 46).toFixed(0) + ' %');
-      set.text('prop', clamp(96 - (u / CYCLE) * 62, 0, 100).toFixed(0) + ' %');
-      set.text('apo', heat > 78 ? 'THERMAL LIMIT' : 'NOMINAL');
-      set.text('alert', heat > 82 ? '▲ HEAT CRITICAL — VENT'
-        : intensity > 0.7 ? '▲ MULTIPLE CONTACTS' : '');
-
-      // The band. The suit banks into an engagement and levels out of it,
-      // so attitude is driven by the same intensity as everything else.
+      // The suit banks into an engagement and levels out of it.
       set.attr('att', 'pitch', (wave(t, 7, 14) - intensity * 16).toFixed(1));
       set.attr('att', 'roll', (wave(t, 5, 22) * (0.4 + intensity)).toFixed(1));
 
@@ -261,51 +230,115 @@ import '../src/cth-trace.js';
       }
       set.attr('scope', 'blips', blips.join(', '));
 
-      psycommu?.push(80 + wave(t, 0.33, 9) + wave(t, 0.085, 5)
-        + wave(t, 0.021, 2.5) + wave(t, 1.7, 10) * intensity
-        + (Math.random() - 0.5) * 3 * (0.3 + intensity));
+      // A linear seat takes the g straight into the spine, so the heart
+      // follows the manoeuvre and the condition follows the g.
+      const g = 1 + intensity * 9.4;
+      const bpm = Math.round(64 + intensity * 74 + g * 2.2);
+      if (vitals.getAttribute('beat') !== String(bpm)) vitals.setAttribute('beat', bpm);
+      bpmEl.textContent = bpm + ' bpm';
+      const cond = g > 8.2 ? ['GREY-OUT RISK', 'critical']
+        : g > 5.4 ? ['STRAINED', 'strained'] : ['STABLE', ''];
+      if (condEl.textContent !== cond[0]) {
+        condEl.textContent = cond[0];
+        condEl.className = cond[1];
+      }
+
+      set.text('state', intensity > 0.5 ? 'ENGAGED' : 'SORTIE');
+      set.text('gen', (62 + intensity * 46).toFixed(0) + ' %');
+      set.text('prop', clamp(96 - (u / CYCLE) * 62, 0, 100).toFixed(0) + ' %');
+      set.text('apo', heat > 78 ? 'THERMAL LIMIT' : 'NOMINAL');
+      set.text('pilot', bpm + ' bpm · ' + cond[0].toLowerCase());
+      set.text('threat', contacts + ' contacts · nearest '
+        + (0.3 + (1 - intensity) * 1.9).toFixed(1) + ' km');
+      set.text('alert', heat > 82 ? '▲ HEAT CRITICAL — VENT'
+        : intensity > 0.7 ? '▲ MULTIPLE CONTACTS' : '');
     },
   });
 
-  // Attributes these three need are not in the shared list panel.js writes,
-  // so they go on directly once the panel exists.
-  const att = panel.knobs.att, scope = panel.knobs.scope, psycommu = panel.knobs.wave;
+  // ---- the band -----------------------------------------------------------
+  // Attributes these three need are not in the shared list panel.js writes.
+  const att = panel.knobs.att, scope = panel.knobs.scope, vitals = panel.knobs.vitals;
   att.setAttribute('ladder-step', '10');
   scope.setAttribute('rings', '4');
   scope.setAttribute('spokes', '12');
   scope.setAttribute('period', '4');
   scope.setAttribute('labels', 'N,E,S,W');
-  psycommu.setAttribute('grid', '');
-  psycommu.setAttribute('min', '56');
-  psycommu.setAttribute('max', '106');
-  psycommu.setAttribute('rate', '90');
-  psycommu.setAttribute('readout', 'none');
-  document.querySelector('.row')?.classList.add('pano');
+  vitals.setAttribute('grid', '');
+  vitals.setAttribute('readout', 'none');
+  vitals.setAttribute('rate', '90');
+  vitals.setAttribute('beat', '64');
 
-  // ---- the frame ------------------------------------------------------
-  // A front elevation with one shape per section, coloured from that
-  // section's own integrity. Angular on purpose: a mobile suit is plate,
-  // not moulding, and the eight dials below carry the numbers.
-  const MECH =
-    '<svg class="mech" viewBox="0 0 200 250" role="img"' +
-    ' aria-label="Frame integrity by section">' +
-      '<path data-part="backpack" d="M60 46h80v30l-9 13h-62l-9-13z"/>' +
-      '<path data-part="backpack" d="M56 90h16v30l-8 8-8-8zM128 90h16v30l-8 8-8-8z"/>' +
-      '<path data-part="head" d="M100 4 88 12v4l-6-8 5 12v10l6 7h14l6-7V20l5-12-6 8v-4z"/>' +
-      '<path data-part="torso" d="M74 46h52l10 22-5 40-11 14H80l-11-14-5-40z"/>' +
-      '<path class="frame-line" d="M86 68h28v22H86z"/>' +
-      '<path data-part="torso" d="M84 124h32l6 20-8 12H86l-8-12z"/>' +
-      '<path data-part="l-arm" d="M40 50h26v26H40zM45 80h16v32l-3 24h-10l-3-24z"/>' +
-      '<path data-part="r-arm" d="M134 50h26v26h-26zM139 80h16v32l-3 24h-10l-3-24z"/>' +
-      '<path data-part="shield" d="M8 46h22l6 16v58l-17 18-17-18V62z"/>' +
-      '<path data-part="l-leg" d="M76 158h20l4 34-2 30 4 18H70l4-18-2-30z"/>' +
-      '<path data-part="r-leg" d="M104 158h20l2 34-2 30 4 18h-26l4-18-2-30z"/>' +
-      '<path data-part="l-leg" d="M66 240h32v10H66z"/>' +
-      '<path data-part="r-leg" d="M102 240h32v10h-32z"/>' +
-    '</svg>';
+  const rows = document.querySelectorAll('.row');
+  rows[0].classList.add('main');
+  rows[1].classList.add('crew');
 
-  const frameRow = document.querySelectorAll('.row')[1];
-  frameRow.classList.add('frame');
+  // ---- the frame ----------------------------------------------------------
+  // A front elevation: one shape per armour section, coloured from that
+  // section's own integrity, with the joints and vents drawn as detail so the
+  // colour never has to compete with the linework.
+  const MECH = [
+    '<svg class="mech" viewBox="0 0 220 300" role="img"',
+    ' aria-label="Frame integrity by section">',
+
+    // backpack, behind everything
+    '<path data-part="backpack" d="M78 46h64v16l-6 8H84l-6-8z"/>',
+    '<path data-part="backpack" d="M72 66h18v40l-9 12-9-12z"/>',
+    '<path data-part="backpack" d="M130 66h18v40l-9 12-9-12z"/>',
+
+    // head: V-fin, helmet, visor, chin
+    '<path data-part="head" d="M104 18 80 4l9 14z"/>',
+    '<path data-part="head" d="M116 18 140 4l-9 14z"/>',
+    '<path data-part="head" d="M110 4 103 18h14z"/>',
+    '<path data-part="head" d="M110 16 97 22v13l5 10h16l5-10V22z"/>',
+    '<path class="frame-line" d="M101 26h18l-2 8h-14z"/>',
+    '<circle class="lens" cx="104" cy="30" r="2.1"/>',
+    '<circle class="lens" cx="116" cy="30" r="2.1"/>',
+    '<path class="frame-line" d="M104 40h12M110 45v6"/>',
+
+    // torso: chest, cockpit hatch, abdomen, skirt
+    '<path data-part="torso" d="M84 50h52l10 15v33l-9 13H83l-9-13V65z"/>',
+    '<path class="frame-line" d="M92 60h11v15H92zM117 60h11v15h-11z"/>',
+    '<path class="frame-line" d="M100 82h20v14h-20z"/>',
+    '<path data-part="torso" d="M94 112h32l3 15-3 9H94l-3-9z"/>',
+    '<path data-part="torso" d="M80 138h60l6 15-9 9h-54l-9-9z"/>',
+    '<path class="frame-line" d="M110 138v24"/>',
+
+    // arms: pauldron, upper, forearm, hand
+    '<path data-part="l-arm" d="M46 50h30v7l4 4v18l-6 7H50l-4-7V57z"/>',
+    '<path data-part="l-arm" d="M54 89h18v25H54z"/>',
+    '<path data-part="l-arm" d="M51 116h24v33l-4 11H55l-4-11z"/>',
+    '<path data-part="l-arm" d="M55 162h16v11H55z"/>',
+    '<path class="frame-line" d="M54 114h18"/>',
+    '<path data-part="r-arm" d="M174 50h-30v7l-4 4v18l6 7h20l4-7V57z"/>',
+    '<path data-part="r-arm" d="M166 89h-18v25h18z"/>',
+    '<path data-part="r-arm" d="M169 116h-24v33l4 11h16l4-11z"/>',
+    '<path data-part="r-arm" d="M165 162h-16v11h16z"/>',
+    '<path class="frame-line" d="M148 114h18"/>',
+
+    // beam rifle, held in the right hand
+    '<path class="gear" d="M166 122h20v42h-20z"/>',
+    '<path class="gear" d="M172 92h8v30h-8z"/>',
+    '<path class="gear" d="M164 130h24v8h-24z"/>',
+    '<path class="gear" d="M186 140h7v18h-7z"/>',
+    '<path class="gear" d="M168 164h12v12h-12z"/>',
+    '<path class="frame-line" d="M176 96v24"/>',
+
+    // shield, outboard on the left arm
+    '<path data-part="shield" d="M14 44h26l6 16v72l-19 22-19-22V60z"/>',
+    '<path class="frame-line" d="M20 62h20M20 78h20M27 96v40"/>',
+
+    // legs: thigh, knee, shin, foot
+    '<path data-part="l-leg" d="M86 162h18l2 30-2 26H84l-2-26z"/>',
+    '<path data-part="l-leg" d="M84 220h22l2 38-4 18H86l-4-18z"/>',
+    '<path data-part="l-leg" d="M76 278h30v12H76z"/>',
+    '<path class="frame-line" d="M84 218h22"/>',
+    '<path data-part="r-leg" d="M134 162h-18l-2 30 2 26h18l2-26z"/>',
+    '<path data-part="r-leg" d="M136 220h-22l-2 38 4 18h16l4-18z"/>',
+    '<path data-part="r-leg" d="M144 278h-30v12h30z"/>',
+    '<path class="frame-line" d="M114 218h22"/>',
+    '</svg>',
+  ].join('');
+
   const mechCell = document.createElement('div');
   mechCell.className = 'cell';
   mechCell.innerHTML = MECH
@@ -313,32 +346,28 @@ import '../src/cth-trace.js';
     + '<div class="legend">'
     +   '<span><i style="background:#64e37a"></i>intact</span>'
     +   '<span><i style="background:#ffd23f"></i>damaged</span>'
+    +   '<span><i style="background:#ff8a3d"></i>failing</span>'
     +   '<span><i style="background:#ff5c5c"></i>lost</span>'
     + '</div>';
-  frameRow.insertBefore(mechCell, frameRow.children[1]);
+  rows[0].insertBefore(mechCell, rows[0].children[1]);
 
-  // One colour per section, stepped rather than ramped: a pilot needs to
-  // know which band a limb is in, not its exact percentage.
+  // One colour per section, stepped rather than ramped: a pilot needs to know
+  // which band a limb is in, not its exact percentage.
   const parts = {};
   for (const el of mechCell.querySelectorAll('[data-part]')) {
     (parts[el.dataset.part] ??= []).push(el);
   }
-  const band = (v) => v > 75 ? '#64e37a' : v > 45 ? '#ffd23f'
-    : v > 20 ? '#ff8a3d' : '#ff5c5c';
-  const paintFrame = (readings) => {
+  const band = (v) => v > 75 ? '#64e37a' : v > 45 ? '#ffd23f' : v > 20 ? '#ff8a3d' : '#ff5c5c';
+  function paintFrame(readings) {
     for (const [name, v] of readings) {
       for (const el of parts[name] ?? []) {
         el.style.color = band(v);
         el.style.fillOpacity = 0.1 + (v / 100) * 0.28;
       }
     }
-  };
+  }
 
-  // ---- the pilot ------------------------------------------------------
-  const vitals = panel.knobs.vitals;
-  vitals.setAttribute('grid', '');
-  vitals.setAttribute('readout', 'none');
-  vitals.setAttribute('beat', '64');
+  // ---- the pilot ----------------------------------------------------------
   const bpmEl = document.createElement('b');
   bpmEl.textContent = '64 bpm';
   const condEl = document.createElement('b');
@@ -347,8 +376,6 @@ import '../src/cth-trace.js';
   vLine.className = 'vitals-line';
   vLine.append(bpmEl, document.createTextNode(' · '), condEl);
   vitals.closest('.cell').append(vLine);
-
-
 </script>
 </body>
 </html>
