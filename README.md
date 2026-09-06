@@ -1,6 +1,8 @@
 # cth-instrument
 
-A knob, gauge and meter as a single custom element. **Zero runtime dependencies, no build step, no framework.**
+Seven instruments as custom elements: a dial, a waveform, a heat ring, a radar
+scope, a level column, an attitude indicator, and the layout that nests them.
+**Zero runtime dependencies, no build step, no framework.**
 
 ```html
 <script type="module" src="cth-instrument/src/cth-knob.js"></script>
@@ -10,7 +12,11 @@ A knob, gauge and meter as a single custom element. **Zero runtime dependencies,
 <cth-knob value="60" interactive label="Volume"></cth-knob>
 ```
 
-Because it is a custom element it works the same in plain HTML, React, Vue, Svelte, Astro or anything else that renders DOM.
+`<cth-knob>` is the dial the rest orbit — a knob, a gauge and a meter in one
+element — and it is what most of this README is about. The six siblings are
+separate modules; you import only the ones you use. Because they are custom
+elements they work the same in plain HTML, React, Vue, Svelte, Astro or anything
+else that renders DOM.
 
 ## Before it loads
 

@@ -1,7 +1,7 @@
 {
   "name": "cth-instrument",
   "version": "1.0.0",
-  "description": "A zero-dependency SVG knob, gauge and meter web component.",
+  "description": "Seven zero-dependency SVG instruments as custom elements: dial, waveform, heat ring, radar scope, level column and attitude indicator.",
   "type": "module",
   "main": "./src/cth-knob.js",
   "module": "./src/cth-knob.js",
@@ -51,6 +51,7 @@
     "./src/cth-rings.js"
   ],
   "keywords": [
+    "instrument",
     "knob",
     "gauge",
     "meter",
