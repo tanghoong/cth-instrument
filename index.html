@@ -295,6 +295,10 @@
     max-inline-size: none;
     inline-size: calc(var(--cth-size) * (1 - var(--cth-thickness, 8) / 50));
     translate: -50% -50%;
+    /* A scene is drawn to the edges of its box, and only a sky disc is a
+       circle to start with — without this the ground runs out past the
+       ring. */
+    clip-path: circle(50%);
   }
   .face::part(label) {
     color: #ffffff;
@@ -948,6 +952,14 @@
     <code><code>trend</code> — a price is two readings:<br>where it is and which way it went</code>
   </div>
   <div class="tile">
+    <cth-knob id="w-switch" button toggle value="100" readout="none" color="#ef4444"
+             aria-label="Power. Off." style="--cth-thickness:10">
+      <span slot="icon" class="sw-off">OFF</span>
+      <span slot="icon-on" class="sw-on">ON</span>
+    </cth-knob>
+    <code>a switch — <code>toggle</code> and two<br>icon slots is the whole of it</code>
+  </div>
+  <div class="tile">
     <cth-knob id="w-light" button value="100" readout="none" style="--cth-thickness:11"
              states="stop:#ef4444, go:#22c55e, wait:#f59e0b"></cth-knob>
     <code><code>states</code> — press to advance.<br>A light is not a low value of green.</code>
@@ -956,22 +968,36 @@
     <cth-knob id="w-sky" class="face" button toggle turn="180" value="100" readout="none"
              label="day" color="#fbbf24">
       <span slot="icon" class="art"><svg viewBox="0 0 100 100" aria-hidden="true">
-        <defs><linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#38bdf8"/><stop offset=".34" stop-color="#a5dcfb"/>
-          <stop offset=".5" stop-color="#fcd9a0"/><stop offset=".64" stop-color="#3f4a63"/>
-          <stop offset="1" stop-color="#070c1a"/>
+        <defs><linearGradient id="dayg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1f92d8"/><stop offset=".5" stop-color="#7fc9ef"/>
+          <stop offset="1" stop-color="#dcf0fb"/>
         </linearGradient></defs>
-        <circle cx="50" cy="50" r="50" fill="url(#skyg)"/>
-        <circle cx="50" cy="24" r="11.5" fill="#fbbf24"/>
-        <circle cx="50" cy="24" r="16" fill="#fbbf24" fill-opacity=".28"/>
-        <path d="M57 78a11 11 0 1 1-11-11 9 9 0 0 0 11 11z" fill="#e8eefc"/>
-        <circle cx="28" cy="76" r="1.5" fill="#e8eefc"/>
-        <circle cx="72" cy="83" r="1.2" fill="#e8eefc"/>
-        <circle cx="38" cy="90" r="1" fill="#e8eefc"/>
-        <circle cx="63" cy="93" r="1.3" fill="#e8eefc"/>
+        <circle cx="50" cy="50" r="50" fill="url(#dayg)"/>
+        <circle cx="50" cy="36" r="21" fill="#fde047" fill-opacity=".22"/>
+        <circle cx="50" cy="36" r="14" fill="#fde047"/>
+        <path d="M20 62a8 8 0 0 1 2-15 11 11 0 0 1 20 2 7 7 0 0 1-1 13z" fill="#ffffff" fill-opacity=".9"/>
+        <path d="M64 66a6 6 0 0 1 1-12 9 9 0 0 1 16 2 5 5 0 0 1-1 10z" fill="#ffffff" fill-opacity=".72"/>
+      </svg></span>
+      <!-- Drawn upright and pre-turned: the dial swings it 180 degrees when
+           it is pressed, which lands this the right way up. -->
+      <span slot="icon-on" class="art"><svg viewBox="0 0 100 100" aria-hidden="true">
+        <defs><linearGradient id="nightg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#050a1c"/><stop offset=".55" stop-color="#16224a"/>
+          <stop offset="1" stop-color="#33406e"/>
+        </linearGradient></defs>
+        <g transform="rotate(180 50 50)">
+          <circle cx="50" cy="50" r="50" fill="url(#nightg)"/>
+          <circle cx="50" cy="36" r="20" fill="#e8eefc" fill-opacity=".12"/>
+          <path d="M58 36a14 14 0 1 1-14-14 11 11 0 0 0 14 14z" fill="#eef3ff"/>
+          <g fill="#eef3ff">
+            <circle cx="22" cy="30" r="1.9"/><circle cx="78" cy="24" r="1.6"/>
+            <circle cx="30" cy="56" r="1.5"/><circle cx="72" cy="52" r="2"/>
+            <circle cx="16" cy="46" r="1.3"/><circle cx="60" cy="16" r="1.4"/>
+          </g>
+        </g>
       </svg></span>
     </cth-knob>
-    <code><code>turn="180"</code> — press and it<br>swings round to the other half</code>
+    <code>two whole faces, and <code>turn="180"</code><br>swings the dial round as it changes</code>
   </div>
   <div class="tile">
     <cth-knob id="w-season" class="face" button value="100" readout="none"
@@ -985,7 +1011,7 @@
         </defs>
         <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#spr)"/>
-          <path d="M0 66c14-7 26-7 34-3s20 5 34-1 22-4 32 1v37H0z" fill="#7cc47f"/>
+          <path d="M0 62c14-7 26-7 34-3s20 5 34-1 22-4 32 1v45H0z" fill="#7cc47f"/>
           <path d="M47 70V44" stroke="#6b4a2f" stroke-width="4" stroke-linecap="round"/>
           <circle cx="47" cy="36" r="13" fill="#f9a8d4"/><circle cx="37" cy="43" r="8" fill="#fbcfe8"/>
           <circle cx="57" cy="43" r="8" fill="#fbcfe8"/><circle cx="70" cy="60" r="3" fill="#fbcfe8"/>
@@ -994,12 +1020,12 @@
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#sum)"/>
           <circle cx="50" cy="26" r="13" fill="#fde047"/><circle cx="50" cy="26" r="19" fill="#fde047" fill-opacity=".3"/>
-          <path d="M0 70c16-6 28-6 36-2s20 4 32-2 22-3 32 2v34H0z" fill="#22a447"/>
-          <path d="M0 82c18-5 30-4 40 0s24 3 34-2 18-2 26 2v20H0z" fill="#15803d"/>
+          <path d="M0 64c16-6 28-6 36-2s20 4 32-2 22-3 32 2v42H0z" fill="#22a447"/>
+          <path d="M0 78c18-5 30-4 40 0s24 3 34-2 18-2 26 2v26H0z" fill="#15803d"/>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#aut)"/>
-          <path d="M0 72c16-6 28-5 36-1s22 3 34-3 20-2 30 2v32H0z" fill="#b45309"/>
+          <path d="M0 66c16-6 28-5 36-1s22 3 34-3 20-2 30 2v40H0z" fill="#b45309"/>
           <path d="M52 74V48" stroke="#5b3a21" stroke-width="4" stroke-linecap="round"/>
           <circle cx="52" cy="40" r="13" fill="#ea580c"/><circle cx="42" cy="47" r="8" fill="#f97316"/>
           <circle cx="62" cy="47" r="8" fill="#fb923c"/>
@@ -1008,7 +1034,7 @@
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#win)"/>
-          <path d="M0 74c16-7 28-6 36-2s22 2 34-4 20-2 30 3v33H0z" fill="#ffffff"/>
+          <path d="M0 68c16-7 28-6 36-2s22 2 34-4 20-2 30 3v41H0z" fill="#ffffff"/>
           <path d="M50 76V50m0-8V50m0 0-9-7m9 7 9-7" stroke="#6b7f93" stroke-width="3.4" stroke-linecap="round" fill="none"/>
           <g fill="#ffffff"><circle cx="24" cy="30" r="2.6"/><circle cx="72" cy="24" r="2.2"/><circle cx="34" cy="52" r="2"/><circle cx="78" cy="46" r="2.4"/><circle cx="16" cy="46" r="1.8"/></g>
         </g>
@@ -1029,34 +1055,34 @@
         </defs>
         <g data-scene>
           <circle cx="50" cy="50" r="50" fill="url(#wc)"/>
-          <circle cx="50" cy="46" r="16" fill="#fde047"/>
-          <g stroke="#fde047" stroke-width="3.6" stroke-linecap="round">
-            <path d="M50 20v-8M50 80v8M24 46h-8M76 46h8M32 28l-6-6M68 28l6-6M32 64l-6 6M68 64l6 6"/>
+          <circle cx="50" cy="40" r="12.5" fill="#fde047"/>
+          <g stroke="#fde047" stroke-width="3" stroke-linecap="round">
+            <path d="M50 20v-6M28 40h-6M72 40h6M34 24l-4-4M66 24l4-4M34 56l-4 4M66 56l4 4"/>
           </g>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#wo)"/>
-          <path d="M28 62a12 12 0 0 1 2-24 17 17 0 0 1 32 4 11 11 0 0 1-2 20z" fill="#ffffff"/>
-          <path d="M52 74a9 9 0 0 1 1-18 13 13 0 0 1 24 3 8 8 0 0 1-1 15z" fill="#e2e8f0"/>
+          <path d="M30 52a10 10 0 0 1 2-20 14 14 0 0 1 26 3 9 9 0 0 1-2 17z" fill="#ffffff"/>
+          <path d="M52 62a7 7 0 0 1 1-14 10 10 0 0 1 19 2 6 6 0 0 1-1 12z" fill="#e2e8f0"/>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#wr)"/>
-          <path d="M28 56a12 12 0 0 1 2-24 17 17 0 0 1 32 4 11 11 0 0 1-2 20z" fill="#e8eef5"/>
-          <g stroke="#bfe0ff" stroke-width="3.4" stroke-linecap="round">
-            <path d="M32 64l-4 12M46 64l-4 14M60 64l-4 12"/>
+          <path d="M30 46a10 10 0 0 1 2-20 14 14 0 0 1 26 3 9 9 0 0 1-2 17z" fill="#e8eef5"/>
+          <g stroke="#bfe0ff" stroke-width="3" stroke-linecap="round">
+            <path d="M34 52l-3 9M46 52l-3 11M58 52l-3 9"/>
           </g>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#ws)"/>
-          <path d="M28 54a12 12 0 0 1 2-24 17 17 0 0 1 32 4 11 11 0 0 1-2 20z" fill="#5b5a86"/>
-          <path d="M50 54 38 76h10l-4 16 18-24H50l6-14z" fill="#fde047"/>
+          <path d="M30 44a10 10 0 0 1 2-20 14 14 0 0 1 26 3 9 9 0 0 1-2 17z" fill="#5b5a86"/>
+          <path d="M48 44 38 62h8l-3 12 15-19h-8l5-11z" fill="#fde047"/>
         </g>
         <g data-scene hidden>
           <circle cx="50" cy="50" r="50" fill="url(#ww)"/>
-          <g stroke="#0f766e" stroke-width="3.6" stroke-linecap="round" fill="none" stroke-opacity=".65">
-            <path d="M14 40h44a7 7 0 1 0-7-7"/>
-            <path d="M18 54h50a7 7 0 1 1-7 7"/>
-            <path d="M22 68h30"/>
+          <g stroke="#0f766e" stroke-width="3" stroke-linecap="round" fill="none" stroke-opacity=".62">
+            <path d="M20 32h34a6 6 0 1 0-6-6"/>
+            <path d="M24 44h40a6 6 0 1 1-6 6"/>
+            <path d="M28 56h24"/>
           </g>
         </g>
       </svg></span>
@@ -1083,14 +1109,6 @@
     <cth-knob id="w-bright" value="72" readout="value" unit="%" label="brightness"
              interactive color="#f59e0b" style="--cth-thickness:12"></cth-knob>
     <code>brightness — drag it.<br>The same ring, now an input.</code>
-  </div>
-  <div class="tile">
-    <cth-knob id="w-switch" button toggle value="100" readout="none" color="#ef4444"
-             aria-label="Power. Off." style="--cth-thickness:10">
-      <span slot="icon" class="sw-off">OFF</span>
-      <span slot="icon-on" class="sw-on">ON</span>
-    </cth-knob>
-    <code>a switch — <code>toggle</code> and two<br>icon slots is the whole of it</code>
   </div>
   <div class="tile">
     <cth-knob value="41" min="0" max="100" liquid readout="value" unit="%" label="tank"
