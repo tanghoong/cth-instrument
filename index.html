@@ -246,6 +246,43 @@
      dial grows to match. An inline --cth-size on a specific tile still wins. */
   @media (width >= 900px) { #examples .tile cth-knob { --cth-size: 128px; } }
   .tubes .tile { padding-block-start: var(--s-5); }
+
+  /* Two strips and a ring belong on one line: the strips need the run, the
+     ring only needs to be square. Four equal columns could not give them
+     that, so this group sets its own. */
+  @media (width >= 900px) {
+    .tiles--trace { grid-template-columns: minmax(0, 1.4fr) minmax(0, .85fr) minmax(0, 1.4fr); }
+  }
+
+  /* Four of the demos below are the graphic rather than a dial with a
+     graphic in it, so they are drawn larger than the rest of the grid.
+
+     Two things had to be worked around. --cth-size needs the same weight
+     as the grid's own rule to beat it, hence the #examples .tile prefix.
+     And --cth-icon-size cannot be set from out here at all: the element
+     redefines it on an inner node, which wins for that subtree. A rule on
+     the slotted graphic itself does work — a document rule beats the
+     shadow tree's ::slotted() for the same element. */
+  #examples .tile #w-sky { --cth-size: 152px; }
+  #examples .tile #ex-play { --cth-size: 176px; }
+  #examples .tile .platter { --cth-size: 152px; }
+  /* Two more caps sit on a slotted graphic. base.css holds every svg to
+     max-width:100%, and on a [turn] or [spin] dial the slot itself is a
+     fixed --cth-icon-size box — between them the artwork can never grow.
+     Lift the cap only where the graphic is the point of the demo.
+
+     The ceiling is the caption, not the ring: the in-dial label sits 26%
+     of the dial below centre, so anything past about 66px buries it. The
+     sky gives its label up for the size — the sky, the rim and the tile
+     all say which it is — and keeps its name in aria-label. */
+  #w-sky > svg, .platter > svg { max-inline-size: none; }
+  #w-sky > svg { inline-size: 102px; }
+  #w-switch > svg { inline-size: 84px; }
+  #ex-play > svg { inline-size: 124px; }
+  .platter > svg { inline-size: 64px; }
+  .tile { transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease); }
+  .tile.is-night { background: #0b1120; border-color: #1e293b; }
+  .tile.is-night code { color: #7b8aa3; }
   .wide { grid-column: span 2; }
   .scale {
     display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--s-6);
@@ -850,20 +887,20 @@
 </div>
 
 <h3>&lt;cth-trace&gt; — the one reading a dial cannot give</h3>
-<div class="tiles">
-  <div class="tile wide">
+<div class="tiles tiles--trace">
+  <div class="tile">
     <cth-trace beat="72" label="heart" grid style="--cth-trace:#16a34a;--cth-height:120px"></cth-trace>
     <code>beat="72" grid — a built-in ECG,<br>no script at all</code>
-  </div>
-  <div class="tile wide">
-    <cth-trace id="ex-trace-live" label="cpu" readout="value" unit="%" grid
-              samples="180" style="--cth-trace:#f59e0b;--cth-height:120px"></cth-trace>
-    <code>trace.push(v) — feed it your own numbers</code>
   </div>
   <div class="tile">
     <cth-trace shape="ring" beat="66" label="pulse"
               style="--cth-trace:#0ea5e9;--cth-size:150px"></cth-trace>
     <code>shape="ring" — the same trace,<br>wrapped round the dial</code>
+  </div>
+  <div class="tile">
+    <cth-trace id="ex-trace-live" label="cpu" readout="value" unit="%" grid
+              samples="180" style="--cth-trace:#f59e0b;--cth-height:120px"></cth-trace>
+    <code>trace.push(v) — feed it your own numbers</code>
   </div>
 </div>
 
@@ -882,17 +919,22 @@
     <code><code>states</code> — press to advance.<br>A light is not a low value of green.</code>
   </div>
   <div class="tile">
-    <cth-knob id="w-sky" button toggle turn="180" readout="none" label="day" color="#fbbf24">
+    <cth-knob id="w-sky" button toggle turn="180" value="100" readout="none"
+             aria-label="Day. Press for night." color="#fbbf24">
       <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
         <defs><linearGradient id="skyg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#7dd3fc"/><stop offset=".5" stop-color="#fde68a"/>
-          <stop offset=".5" stop-color="#1e293b"/><stop offset="1" stop-color="#0b1120"/>
+          <stop offset="0" stop-color="#38bdf8"/><stop offset=".34" stop-color="#a5dcfb"/>
+          <stop offset=".5" stop-color="#fcd9a0"/><stop offset=".64" stop-color="#3f4a63"/>
+          <stop offset="1" stop-color="#070c1a"/>
         </linearGradient></defs>
         <circle cx="50" cy="50" r="50" fill="url(#skyg)"/>
-        <circle cx="50" cy="27" r="11" fill="#f59e0b"/>
-        <path d="M56 73a11 11 0 1 1-11-11 9 9 0 0 0 11 11z" fill="#e2e8f0"/>
-        <circle cx="30" cy="80" r="1.6" fill="#e2e8f0"/><circle cx="70" cy="84" r="1.3" fill="#e2e8f0"/>
-        <circle cx="62" cy="92" r="1.1" fill="#e2e8f0"/>
+        <circle cx="50" cy="24" r="11.5" fill="#fbbf24"/>
+        <circle cx="50" cy="24" r="16" fill="#fbbf24" fill-opacity=".28"/>
+        <path d="M57 78a11 11 0 1 1-11-11 9 9 0 0 0 11 11z" fill="#e8eefc"/>
+        <circle cx="28" cy="76" r="1.5" fill="#e8eefc"/>
+        <circle cx="72" cy="83" r="1.2" fill="#e8eefc"/>
+        <circle cx="38" cy="90" r="1" fill="#e8eefc"/>
+        <circle cx="63" cy="93" r="1.3" fill="#e8eefc"/>
       </svg>
     </cth-knob>
     <code><code>turn="180"</code> — press and it<br>swings round to the other half</code>
@@ -921,7 +963,16 @@
   <div class="tile">
     <cth-knob id="w-switch" button toggle readout="none" label="off" color="#64748b"
              style="--cth-thickness:10">
-      <span slot="icon">⏻</span><span slot="icon-on">⏻</span>
+      <svg slot="icon" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="23" fill="#94a3b8" fill-opacity=".12"/>
+        <path d="M24 11v13" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+        <path d="M15.5 16a12 12 0 1 0 17 0" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <svg slot="icon-on" viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="23" fill="#22c55e"/>
+        <path d="M24 11v13" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+        <path d="M15.5 16a12 12 0 1 0 17 0" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+      </svg>
     </cth-knob>
     <code>a switch — <code>toggle</code> and two<br>icon slots is the whole of it</code>
   </div>
@@ -936,9 +987,26 @@
 <div class="tiles">
   <div class="tile wide">
     <cth-knob id="ex-play" button toggle value="37" readout="none" label="Midnight City"
-             color="#16a34a" style="--cth-size:150px">
-    <svg slot="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.4 5.6a1 1 0 0 1 1.52-.85l8.2 5.4a1.2 1.2 0 0 1 0 2l-8.2 5.4a1 1 0 0 1-1.52-.85z"/></svg>
-        <svg slot="icon-on" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7.2" y="5" width="3.9" height="14" rx="1.5"/><rect x="12.9" y="5" width="3.9" height="14" rx="1.5"/></svg>
+             color="#16a34a">
+      <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><linearGradient id="artg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#1e3a8a"/><stop offset=".55" stop-color="#7e22ce"/>
+          <stop offset="1" stop-color="#db2777"/>
+        </linearGradient></defs>
+        <circle cx="50" cy="50" r="50" fill="url(#artg)"/>
+        <circle cx="50" cy="50" r="30" fill="#0b1120" fill-opacity=".5"/>
+        <path d="M43 36.5a1.7 1.7 0 0 1 2.6-1.44l18 12.9a1.9 1.9 0 0 1 0 3.1l-18 12.9A1.7 1.7 0 0 1 43 63.5z" fill="#ffffff"/>
+      </svg>
+      <svg slot="icon-on" viewBox="0 0 100 100" aria-hidden="true">
+        <defs><linearGradient id="artg-on" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#1e3a8a"/><stop offset=".55" stop-color="#7e22ce"/>
+          <stop offset="1" stop-color="#db2777"/>
+        </linearGradient></defs>
+        <circle cx="50" cy="50" r="50" fill="url(#artg-on)"/>
+        <circle cx="50" cy="50" r="30" fill="#0b1120" fill-opacity=".5"/>
+        <rect x="39" y="35" width="7.5" height="30" rx="3" fill="#ffffff"/>
+        <rect x="53.5" y="35" width="7.5" height="30" rx="3" fill="#ffffff"/>
+      </svg>
     </cth-knob>
     <code><code>button toggle</code> with two icon slots.<br>The ring is how far through the song you are.</code>
   </div>
@@ -1012,9 +1080,20 @@
       like a motor and coasts down like friction, and the track carries the song.</code>
   </div>
   <div class="tile">
-    <cth-knob spin="78" value="64" readout="value" unit="%" label="platter"
+    <cth-knob class="platter" spin="78" value="64" readout="none" label="78 rpm"
              color="#94a3b8" style="--cth-thickness:5">
-      <span slot="icon">💿</span>
+      <svg slot="icon" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="50" fill="#17171a"/>
+        <g fill="none" stroke="#ffffff" stroke-opacity=".11">
+          <circle cx="50" cy="50" r="45"/><circle cx="50" cy="50" r="40"/>
+          <circle cx="50" cy="50" r="35"/><circle cx="50" cy="50" r="30"/>
+          <circle cx="50" cy="50" r="25"/>
+        </g>
+        <circle cx="50" cy="50" r="18" fill="#cbd5e1"/>
+        <!-- half the label is darker, so the turn is visible at a glance -->
+        <path d="M50 32a18 18 0 0 1 0 36z" fill="#8fa0b4"/>
+        <circle cx="50" cy="50" r="2.4" fill="#0e131a"/>
+      </svg>
     </cth-knob>
     <code>any middle can turn —<br><code>spin</code> is revolutions per minute</code>
   </div>
@@ -1987,8 +2066,13 @@ cth-knob::part(value) { <span class="a">filter</span>: <span class="s">drop-shad
   {
     const sky = document.getElementById('w-sky');
     if (sky) sky.addEventListener('cth-press', (e) => {
-      sky.setAttribute('label', e.detail.pressed ? 'night' : 'day');
+      // the disc fills the face here, so the state is said in the name
+      // rather than printed under it
+      sky.setAttribute('aria-label', e.detail.pressed
+        ? 'Night. Press for day.' : 'Day. Press for night.');
       sky.setAttribute('color', e.detail.pressed ? '#64748b' : '#fbbf24');
+      // the sky is the whole control, so the tile behind it turns too
+      sky.closest('.tile')?.classList.toggle('is-night', e.detail.pressed);
     });
     const sw = document.getElementById('w-switch');
     if (sw) sw.addEventListener('cth-press', (e) => {
